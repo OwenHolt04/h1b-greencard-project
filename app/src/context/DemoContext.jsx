@@ -15,14 +15,15 @@ const defaultState = {
   syncing: false,
   employerNameFixed: false,
   stageAdvanced: false,
-  overviewMode: 'future', // 'current' or 'future'
+  overviewMode: 'future',
+  documentChecks: {}, // key: "stageNum-docIdx" => boolean override
+  openFormCode: null, // null or form code string like 'I-485'
 };
 
-// Parse URL params for Remotion deep-linking: ?screen=intake&role=attorney&validated=true&fixed=employer-name
 function getInitialState() {
   if (typeof window === 'undefined') return defaultState;
   const params = new URLSearchParams(window.location.search);
-  const state = { ...defaultState };
+  const state = { ...defaultState, issues: { ...defaultState.issues }, documentChecks: {} };
 
   const screen = params.get('screen');
   if (screen && ['overview', 'dashboard', 'intake', 'roles', 'impact'].includes(screen)) {
@@ -76,15 +77,27 @@ function demoReducer(state, action) {
       return { ...state, stageAdvanced: true };
     case 'SET_OVERVIEW_MODE':
       return { ...state, overviewMode: action.payload };
+    case 'TOGGLE_DOCUMENT': {
+      const key = action.payload.key;
+      const wasChecked = action.payload.wasChecked;
+      return {
+        ...state,
+        documentChecks: { ...state.documentChecks, [key]: !wasChecked },
+      };
+    }
+    case 'OPEN_FORM':
+      return { ...state, openFormCode: action.payload };
+    case 'CLOSE_FORM':
+      return { ...state, openFormCode: null };
     case 'RESET_DEMO':
-      return { ...defaultState };
+      return { ...defaultState, issues: { ...defaultState.issues }, documentChecks: {} };
     default:
       return state;
   }
 }
 
 export function computeReadiness(issues) {
-  let score = 95; // 95 max because attorney review still pending (-5 inherent)
+  let score = 95;
   if (!issues['employer-name']) score -= 8;
   if (!issues['soc-wage']) score -= 10;
   if (!issues['travel-history']) score -= 5;
@@ -93,71 +106,46 @@ export function computeReadiness(issues) {
 
 export function getCaseHealth(issues) {
   const unresolvedHigh = !issues['soc-wage'];
-  const unresolvedCount = Object.values(issues).filter((v) => !v).length;
   if (unresolvedHigh) return 'Needs Review';
-  if (unresolvedCount > 0) return 'On Track';
   return 'On Track';
 }
 
 export function DemoProvider({ children }) {
   const [state, dispatch] = useReducer(demoReducer, initialState);
 
-  const navigate = useCallback((screen) => {
-    dispatch({ type: 'NAVIGATE', payload: screen });
-  }, []);
-
-  const switchRole = useCallback((role) => {
-    dispatch({ type: 'SWITCH_ROLE', payload: role });
-  }, []);
-
+  const navigate = useCallback((screen) => dispatch({ type: 'NAVIGATE', payload: screen }), []);
+  const switchRole = useCallback((role) => dispatch({ type: 'SWITCH_ROLE', payload: role }), []);
   const runValidation = useCallback(() => {
     dispatch({ type: 'START_VALIDATION' });
-    setTimeout(() => {
-      dispatch({ type: 'COMPLETE_VALIDATION' });
-    }, 1200);
+    setTimeout(() => dispatch({ type: 'COMPLETE_VALIDATION' }), 1200);
   }, []);
-
   const resolveIssue = useCallback((issueId) => {
     dispatch({ type: 'RESOLVE_ISSUE', payload: issueId });
-    setTimeout(() => {
-      dispatch({ type: 'SYNC_COMPLETE' });
-    }, 800);
+    setTimeout(() => dispatch({ type: 'SYNC_COMPLETE' }), 800);
   }, []);
-
-  const advanceStage = useCallback(() => {
-    dispatch({ type: 'ADVANCE_STAGE' });
-  }, []);
-
-  const setOverviewMode = useCallback((mode) => {
-    dispatch({ type: 'SET_OVERVIEW_MODE', payload: mode });
-  }, []);
-
-  const resetDemo = useCallback(() => {
-    dispatch({ type: 'RESET_DEMO' });
-  }, []);
+  const advanceStage = useCallback(() => dispatch({ type: 'ADVANCE_STAGE' }), []);
+  const setOverviewMode = useCallback((mode) => dispatch({ type: 'SET_OVERVIEW_MODE', payload: mode }), []);
+  const toggleDocument = useCallback((key, wasChecked) => dispatch({ type: 'TOGGLE_DOCUMENT', payload: { key, wasChecked } }), []);
+  const openForm = useCallback((code) => dispatch({ type: 'OPEN_FORM', payload: code }), []);
+  const closeForm = useCallback(() => dispatch({ type: 'CLOSE_FORM' }), []);
+  const resetDemo = useCallback(() => dispatch({ type: 'RESET_DEMO' }), []);
 
   const readinessScore = useMemo(() => computeReadiness(state.issues), [state.issues]);
   const caseHealth = useMemo(() => getCaseHealth(state.issues), [state.issues]);
-  const unresolvedCount = useMemo(
-    () => Object.values(state.issues).filter((v) => !v).length,
-    [state.issues]
-  );
+  const unresolvedCount = useMemo(() => Object.values(state.issues).filter((v) => !v).length, [state.issues]);
 
   const value = useMemo(
     () => ({
       ...state,
-      readinessScore,
-      caseHealth,
-      unresolvedCount,
-      navigate,
-      switchRole,
-      runValidation,
-      resolveIssue,
-      advanceStage,
-      setOverviewMode,
-      resetDemo,
+      readinessScore, caseHealth, unresolvedCount,
+      navigate, switchRole, runValidation, resolveIssue,
+      advanceStage, setOverviewMode, toggleDocument,
+      openForm, closeForm, resetDemo,
     }),
-    [state, readinessScore, caseHealth, unresolvedCount, navigate, switchRole, runValidation, resolveIssue, advanceStage, setOverviewMode, resetDemo]
+    [state, readinessScore, caseHealth, unresolvedCount,
+     navigate, switchRole, runValidation, resolveIssue,
+     advanceStage, setOverviewMode, toggleDocument,
+     openForm, closeForm, resetDemo]
   );
 
   return <DemoContext.Provider value={value}>{children}</DemoContext.Provider>;

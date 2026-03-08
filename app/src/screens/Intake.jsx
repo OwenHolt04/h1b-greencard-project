@@ -2,10 +2,12 @@ import { useState, useEffect } from 'react';
 import { useDemo } from '../context/DemoContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import ReadinessScore from '../components/ReadinessScore';
-import { intakeSections, formPackage, validationIssues } from '../data/mockData';
+import { intakeSections, formPackage, validationIssues, documentChecklist, caseAssessment, triageComparison } from '../data/mockData';
 import {
   Search, CheckCircle, AlertTriangle, AlertCircle, Info,
-  ArrowRight, RefreshCw, Loader2, Link2, ChevronRight, Zap
+  ArrowRight, RefreshCw, Loader2, Link2, ChevronRight, Zap,
+  FileCheck, Clock, Sparkles, CircleDot, Circle, Flag, Minus,
+  XCircle, Eye
 } from 'lucide-react';
 
 const severityConfig = {
@@ -18,7 +20,7 @@ export default function Intake() {
   const {
     validationRun, validationRunning, issues, syncing,
     employerNameFixed, readinessScore, runValidation,
-    resolveIssue, unresolvedCount
+    resolveIssue, unresolvedCount, documentChecks, toggleDocument, openForm
   } = useDemo();
 
   const [syncingFormIds, setSyncingFormIds] = useState(new Set());
@@ -157,12 +159,16 @@ export default function Intake() {
                 return (
                   <div
                     key={form.formCode}
-                    className={`border rounded-lg p-3 transition-all duration-300 ${
+                    onClick={() => openForm(form.formCode)}
+                    className={`border rounded-lg p-3 transition-all duration-300 cursor-pointer hover:border-navy-900/40 hover:shadow-sm group ${
                       isSyncing ? 'animate-form-sync border-accent' : 'border-slate-200'
                     }`}
                   >
                     <div className="flex items-center justify-between mb-1.5">
-                      <span className="text-[13px] font-bold text-slate-900">{form.formCode}</span>
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-[13px] font-bold text-slate-900">{form.formCode}</span>
+                        <Eye className="w-3 h-3 text-slate-300 group-hover:text-navy-900 transition-colors" />
+                      </div>
                       {issueCount > 0 && (
                         <span className="text-[10px] font-bold text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded-full">
                           {issueCount}
@@ -339,8 +345,202 @@ export default function Intake() {
               </motion.div>
             )}
           </AnimatePresence>
+
+          {/* AI Triage — visual before/after comparison */}
+          <AnimatePresence>
+            {validationRun && (
+              <motion.div
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5, duration: 0.3 }}
+                className="bg-white rounded-xl border border-slate-200/80 shadow-sm overflow-hidden"
+              >
+                <div className="px-4 py-3 border-b border-slate-100 flex items-center gap-2">
+                  <Sparkles className="w-4 h-4 text-navy-900" />
+                  <h3 className="text-sm font-semibold text-slate-900">AI Triage</h3>
+                  <span className="ml-auto text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-700">
+                    {caseAssessment.timeSensitivity} Priority
+                  </span>
+                </div>
+
+                {/* Risk items: without vs with */}
+                <div className="px-4 py-3 space-y-2">
+                  {triageComparison.riskItems.map((item, i) => (
+                    <div key={i} className="flex items-center gap-2 text-[11px]">
+                      <XCircle className="w-3.5 h-3.5 text-red-400 flex-shrink-0" />
+                      <span className="flex-1 text-slate-600 truncate">{item.label}</span>
+                      <ArrowRight className="w-3 h-3 text-slate-300 flex-shrink-0" />
+                      <CheckCircle className="w-3.5 h-3.5 text-green-500 flex-shrink-0" />
+                      <span className="text-green-700 font-medium whitespace-nowrap">{item.with}</span>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Timeline comparison */}
+                <div className="px-4 py-3 border-t border-slate-100 grid grid-cols-2 gap-3">
+                  <div>
+                    <p className="text-[9px] font-bold uppercase tracking-wider text-red-400 mb-1.5">Without CaseBridge</p>
+                    <div className="space-y-1">
+                      {triageComparison.without.slice(0, 4).map((step, i) => (
+                        <div key={i} className="flex items-center gap-1.5 text-[10px]">
+                          <div className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${
+                            step.status === 'error' ? 'bg-red-400' : step.status === 'warning' ? 'bg-amber-400' : 'bg-slate-300'
+                          }`} />
+                          <span className="text-slate-500"><span className="font-semibold">{step.time}</span> {step.event}</span>
+                        </div>
+                      ))}
+                      <p className="text-[10px] font-semibold text-red-500 mt-1">→ Decision at month 14</p>
+                    </div>
+                  </div>
+                  <div>
+                    <p className="text-[9px] font-bold uppercase tracking-wider text-green-600 mb-1.5">With CaseBridge</p>
+                    <div className="space-y-1">
+                      {triageComparison.with.slice(0, 4).map((step, i) => (
+                        <div key={i} className="flex items-center gap-1.5 text-[10px]">
+                          <div className="w-1.5 h-1.5 rounded-full bg-green-500 flex-shrink-0" />
+                          <span className="text-slate-500"><span className="font-semibold">{step.time}</span> {step.event}</span>
+                        </div>
+                      ))}
+                      <p className="text-[10px] font-semibold text-green-600 mt-1">→ Decision at month 8</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Priority actions */}
+                <div className="px-4 py-3 border-t border-slate-100 bg-slate-50/50">
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">Priority Resolution Order</p>
+                  <div className="space-y-1.5">
+                    {caseAssessment.recommendations.map((rec) => (
+                      <div key={rec.priority} className="flex items-center gap-2 text-[11px]">
+                        <span className="w-4 h-4 rounded-full bg-navy-900 text-white flex items-center justify-center flex-shrink-0 text-[9px] font-bold">
+                          {rec.priority}
+                        </span>
+                        <span className="font-medium text-slate-700">{rec.action}</span>
+                        <span className="text-slate-400 ml-auto text-[10px]">{rec.timeEstimate}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
+
+      {/* Document Checklist — full width below panels, always visible */}
+      <AnimatePresence>
+        {validationRun && (
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.6, duration: 0.4 }}
+            className="mt-6"
+          >
+            <div className="flex items-center gap-2 mb-4">
+              <FileCheck className="w-5 h-5 text-navy-900" />
+              <h2 className="text-base font-semibold text-slate-900">Document Checklist & Filing Validation</h2>
+              <span className="text-[12px] text-slate-400 ml-2">Pre-flight checklist for each handoff stage — validated submissions only advance to the next phase</span>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              {documentChecklist.map((stage) => {
+                // Compute checked state: use override from context, else fall back to original status
+                const resolvedDocs = stage.documents.map((doc, i) => {
+                  const key = `${stage.stageNumber}-${i}`;
+                  const override = documentChecks[key];
+                  const isChecked = override !== undefined ? override : (doc.status === 'done');
+                  return { ...doc, isChecked, key };
+                });
+                const checkedCount = resolvedDocs.filter((d) => d.isChecked && d.required).length;
+                const totalRequired = resolvedDocs.filter((d) => d.required).length;
+                const hasFlags = resolvedDocs.some((d) => !d.isChecked && (d.status === 'flagged' || d.status === 'missing'));
+
+                return (
+                  <div
+                    key={stage.stageNumber}
+                    className={`bg-white rounded-xl border shadow-sm overflow-hidden ${
+                      checkedCount === totalRequired ? 'border-green-200/80' : stage.complete ? 'border-slate-200/80' : 'border-amber-200/80'
+                    }`}
+                  >
+                    {/* Stage header */}
+                    <div className="bg-navy-900 text-white px-4 py-3">
+                      <div className="flex items-center gap-2">
+                        <span className={`w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-bold ${
+                          checkedCount === totalRequired ? 'bg-green-500' : 'bg-accent text-navy-900'
+                        }`}>
+                          {stage.stageNumber}
+                        </span>
+                        <div className="flex-1">
+                          <p className="text-[13px] font-semibold">{stage.stage}</p>
+                          <p className="text-[10px] text-white/60">{stage.agency}</p>
+                        </div>
+                        <span className="text-[10px] font-bold text-white/80">{checkedCount}/{totalRequired}</span>
+                      </div>
+                    </div>
+
+                    {/* Document list — interactive checkboxes */}
+                    <div className="px-3 py-2 space-y-1">
+                      {resolvedDocs.map((doc) => {
+                        const isNa = doc.status === 'na';
+                        return (
+                          <button
+                            key={doc.key}
+                            onClick={() => !isNa && toggleDocument(doc.key, doc.isChecked)}
+                            disabled={isNa}
+                            className={`w-full flex items-start gap-2 py-1.5 px-2 rounded text-[11px] text-left transition-colors ${
+                              !doc.isChecked && doc.status === 'flagged' ? 'bg-amber-50 hover:bg-amber-100/60' :
+                              !doc.isChecked && doc.status === 'missing' ? 'bg-red-50 hover:bg-red-100/60' :
+                              isNa ? '' :
+                              'hover:bg-slate-50'
+                            } ${isNa ? '' : 'cursor-pointer'}`}
+                          >
+                            {doc.isChecked ? (
+                              <CheckCircle className="w-3.5 h-3.5 text-green-500 mt-0.5 flex-shrink-0" />
+                            ) : doc.status === 'flagged' ? (
+                              <AlertTriangle className="w-3.5 h-3.5 text-amber-500 mt-0.5 flex-shrink-0" />
+                            ) : doc.status === 'missing' ? (
+                              <Circle className="w-3.5 h-3.5 text-red-400 mt-0.5 flex-shrink-0" />
+                            ) : isNa ? (
+                              <Minus className="w-3.5 h-3.5 text-slate-300 mt-0.5 flex-shrink-0" />
+                            ) : (
+                              <Circle className="w-3.5 h-3.5 text-slate-300 mt-0.5 flex-shrink-0" />
+                            )}
+                            <span className={`flex-1 leading-tight transition-all ${
+                              doc.isChecked ? 'text-slate-400 line-through' :
+                              doc.status === 'flagged' ? 'text-amber-700' :
+                              doc.status === 'missing' ? 'text-red-700' :
+                              isNa ? 'text-slate-400' :
+                              'text-slate-700'
+                            }`}>
+                              {!doc.isChecked && doc.status === 'flagged' && '⚠ '}{doc.name}
+                            </span>
+                            <span className={`text-[9px] font-bold flex-shrink-0 ${
+                              !doc.required ? 'text-slate-400' :
+                              !doc.isChecked && doc.status === 'missing' ? 'text-red-600' :
+                              'text-slate-400'
+                            }`}>
+                              {doc.required ? 'REQ' : 'OPT'}
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
+
+                    {/* Stage footer */}
+                    {hasFlags && (
+                      <div className="px-3 py-2 border-t border-slate-100 bg-slate-50">
+                        <p className="text-[10px] text-amber-600 font-medium">
+                          {resolvedDocs.filter(d => d.flag && !d.isChecked).map(d => d.flag).join(' · ')}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 }

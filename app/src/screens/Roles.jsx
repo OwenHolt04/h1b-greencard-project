@@ -2,10 +2,10 @@ import { useDemo } from '../context/DemoContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import ReadinessScore from '../components/ReadinessScore';
 import StageTimeline from '../components/StageTimeline';
-import { roleContent, applicant, employer, attorney, caseRecord } from '../data/mockData';
+import { roleContent, applicant, employer, attorney, caseRecord, eligibilityChecks } from '../data/mockData';
 import {
   User, Building2, Scale, AlertTriangle, CheckCircle, Info,
-  Clock, ArrowRight, Shield, FileText, Calendar
+  Clock, ArrowRight, Shield, FileText, Calendar, Sparkles, XCircle
 } from 'lucide-react';
 
 const roles = [
@@ -135,6 +135,37 @@ export default function Roles() {
                   ))}
                 </div>
               </div>
+
+              {/* Applicant: Plain-Language Eligibility Wizard */}
+              {currentRole === 'applicant' && (
+                <div className="bg-white rounded-xl border border-slate-200/80 shadow-sm overflow-hidden mt-5">
+                  <div className="px-5 py-3 border-b border-slate-100 flex items-center gap-2">
+                    <Sparkles className="w-4 h-4 text-navy-900" />
+                    <h3 className="text-sm font-semibold text-slate-900">Your Eligibility Check</h3>
+                    <span className="ml-auto text-[11px] font-semibold text-green-700 bg-green-50 px-2 py-0.5 rounded-full">
+                      {eligibilityChecks.filter(c => c.answer).length} of {eligibilityChecks.length} confirmed
+                    </span>
+                  </div>
+                  <div className="divide-y divide-slate-100">
+                    {eligibilityChecks.map((check) => (
+                      <div key={check.id} className={`px-5 py-3 flex items-start gap-3 ${!check.answer ? 'bg-amber-50/50' : ''}`}>
+                        {check.answer ? (
+                          <CheckCircle className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
+                        ) : (
+                          <XCircle className="w-5 h-5 text-amber-500 mt-0.5 flex-shrink-0" />
+                        )}
+                        <div className="flex-1 min-w-0">
+                          <p className="text-[13px] font-medium text-slate-900">{check.question}</p>
+                          <p className="text-[12px] text-slate-500 mt-0.5">{check.plain}</p>
+                        </div>
+                        <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider flex-shrink-0 mt-1">
+                          {check.category}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               {/* Employer: Sponsorship Cost Breakdown */}
               {currentRole === 'employer' && (

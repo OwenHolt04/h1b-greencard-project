@@ -1,6 +1,7 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { DemoProvider, useDemo } from './context/DemoContext';
 import Layout from './components/Layout';
+import FormExplorer from './components/FormExplorer';
 import Overview from './screens/Overview';
 import Dashboard from './screens/Dashboard';
 import Intake from './screens/Intake';
@@ -40,6 +41,7 @@ export default function App() {
       <Layout>
         <ScreenRouter />
       </Layout>
+      <FormExplorer />
     </DemoProvider>
   );
 }
