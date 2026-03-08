@@ -1,0 +1,52 @@
+### OS / Editor junk
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*.log
+.vscode/
+.idea/
+
+### Node / JS
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+
+### Build artifacts
+dist/
+build/
+out/
+.next/
+.turbo/
+.cache/
+
+### Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+
+### Environment / secrets
+.env
+.env.*
+*.local
+
+### Logs / coverage
+logs/
+coverage/
+.nyc_output/
+
+### IDE / tooling
+.pytest_cache/
+.DS_Store?
+
+### Project-specific large artifacts
+video/out/
+docs/Pain_Points_Capabilities.xlsx
+

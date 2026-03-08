@@ -1,0 +1,154 @@
+import { createContext, useContext, useReducer, useCallback, useMemo } from 'react';
+
+const DemoContext = createContext(null);
+
+const defaultState = {
+  currentScreen: 'overview',
+  currentRole: 'applicant',
+  validationRun: false,
+  validationRunning: false,
+  issues: {
+    'employer-name': false,
+    'soc-wage': false,
+    'travel-history': false,
+  },
+  syncing: false,
+  employerNameFixed: false,
+};
+
+// Parse URL params for Remotion deep-linking: ?screen=intake&role=attorney&validated=true&fixed=employer-name
+function getInitialState() {
+  if (typeof window === 'undefined') return defaultState;
+  const params = new URLSearchParams(window.location.search);
+  const state = { ...defaultState };
+
+  const screen = params.get('screen');
+  if (screen && ['overview', 'dashboard', 'intake', 'roles', 'impact'].includes(screen)) {
+    state.currentScreen = screen;
+  }
+
+  const role = params.get('role');
+  if (role && ['applicant', 'employer', 'attorney'].includes(role)) {
+    state.currentRole = role;
+  }
+
+  if (params.get('validated') === 'true') {
+    state.validationRun = true;
+  }
+
+  const fixed = params.get('fixed');
+  if (fixed) {
+    fixed.split(',').forEach((id) => {
+      if (state.issues.hasOwnProperty(id)) {
+        state.issues[id] = true;
+        if (id === 'employer-name') state.employerNameFixed = true;
+      }
+    });
+  }
+
+  return state;
+}
+
+const initialState = getInitialState();
+
+function demoReducer(state, action) {
+  switch (action.type) {
+    case 'NAVIGATE':
+      return { ...state, currentScreen: action.payload };
+    case 'SWITCH_ROLE':
+      return { ...state, currentRole: action.payload };
+    case 'START_VALIDATION':
+      return { ...state, validationRunning: true };
+    case 'COMPLETE_VALIDATION':
+      return { ...state, validationRunning: false, validationRun: true };
+    case 'RESOLVE_ISSUE':
+      return {
+        ...state,
+        issues: { ...state.issues, [action.payload]: true },
+        syncing: true,
+        ...(action.payload === 'employer-name' ? { employerNameFixed: true } : {}),
+      };
+    case 'SYNC_COMPLETE':
+      return { ...state, syncing: false };
+    case 'RESET_DEMO':
+      return { ...defaultState };
+    default:
+      return state;
+  }
+}
+
+export function computeReadiness(issues) {
+  let score = 95; // 95 max because attorney review still pending (-5 inherent)
+  if (!issues['employer-name']) score -= 8;
+  if (!issues['soc-wage']) score -= 10;
+  if (!issues['travel-history']) score -= 5;
+  return score;
+}
+
+export function getCaseHealth(issues) {
+  const unresolvedHigh = !issues['soc-wage'];
+  const unresolvedCount = Object.values(issues).filter((v) => !v).length;
+  if (unresolvedHigh) return 'Needs Review';
+  if (unresolvedCount > 0) return 'On Track';
+  return 'On Track';
+}
+
+export function DemoProvider({ children }) {
+  const [state, dispatch] = useReducer(demoReducer, initialState);
+
+  const navigate = useCallback((screen) => {
+    dispatch({ type: 'NAVIGATE', payload: screen });
+  }, []);
+
+  const switchRole = useCallback((role) => {
+    dispatch({ type: 'SWITCH_ROLE', payload: role });
+  }, []);
+
+  const runValidation = useCallback(() => {
+    dispatch({ type: 'START_VALIDATION' });
+    setTimeout(() => {
+      dispatch({ type: 'COMPLETE_VALIDATION' });
+    }, 1200);
+  }, []);
+
+  const resolveIssue = useCallback((issueId) => {
+    dispatch({ type: 'RESOLVE_ISSUE', payload: issueId });
+    setTimeout(() => {
+      dispatch({ type: 'SYNC_COMPLETE' });
+    }, 800);
+  }, []);
+
+  const resetDemo = useCallback(() => {
+    dispatch({ type: 'RESET_DEMO' });
+  }, []);
+
+  const readinessScore = useMemo(() => computeReadiness(state.issues), [state.issues]);
+  const caseHealth = useMemo(() => getCaseHealth(state.issues), [state.issues]);
+  const unresolvedCount = useMemo(
+    () => Object.values(state.issues).filter((v) => !v).length,
+    [state.issues]
+  );
+
+  const value = useMemo(
+    () => ({
+      ...state,
+      readinessScore,
+      caseHealth,
+      unresolvedCount,
+      navigate,
+      switchRole,
+      runValidation,
+      resolveIssue,
+      resetDemo,
+    }),
+    [state, readinessScore, caseHealth, unresolvedCount, navigate, switchRole, runValidation, resolveIssue, resetDemo]
+  );
+
+  return <DemoContext.Provider value={value}>{children}</DemoContext.Provider>;
+}
+
+export function useDemo() {
+  const context = useContext(DemoContext);
+  if (!context) throw new Error('useDemo must be used within DemoProvider');
+  return context;
+}
