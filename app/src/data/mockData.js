@@ -264,49 +264,68 @@ export const intakeSections = [
     id: 'identity',
     label: 'Identity',
     fields: [
-      { key: 'fullName', label: 'Full Legal Name', value: 'Prajwal Kulkarni', syncTargets: ['I-485', 'I-765', 'I-131', 'G-28'] },
-      { key: 'dateOfBirth', label: 'Date of Birth', value: 'August 22, 1997', syncTargets: ['I-485', 'I-765'] },
-      { key: 'countryOfBirth', label: 'Country of Birth', value: 'India', syncTargets: ['I-485', 'I-140'] },
-      { key: 'aNumber', label: 'A-Number', value: 'A-XXX-XXX-847', syncTargets: ['I-485', 'I-765', 'I-131'] },
+      { key: 'fullName', label: 'Full Legal Name', value: 'Prajwal Kulkarni', syncTargets: ['I-129', 'I-140', 'I-485', 'I-765', 'I-131', 'G-28'] },
+      { key: 'dateOfBirth', label: 'Date of Birth', value: 'August 22, 1997', syncTargets: ['I-129', 'I-485', 'I-765'] },
+      { key: 'countryOfBirth', label: 'Country of Birth', value: 'India', syncTargets: ['I-129', 'I-140', 'I-485', 'I-765'] },
+    ],
+  },
+  {
+    id: 'identifiers',
+    label: 'Identifiers',
+    fields: [
+      { key: 'aNumber', label: 'A-Number', value: 'A-XXX-XXX-847', syncTargets: ['I-129', 'I-140', 'I-485', 'I-765', 'I-131'] },
+      { key: 'passportNumber', label: 'Passport Number', value: 'P XXXXXXX · India · Exp 04/2031', syncTargets: ['I-129', 'I-140', 'I-485', 'I-131', 'I-765'] },
+      { key: 'i94Number', label: 'I-94 Record', value: 'I-94 #XXXXXXXXXXX · H-1B · 01/2025', syncTargets: ['I-129', 'I-140', 'I-485', 'I-131', 'I-765'] },
+    ],
+  },
+  {
+    id: 'immigration',
+    label: 'Immigration History',
+    fields: [
+      { key: 'currentStatus', label: 'Current Status', value: 'H-1B', syncTargets: ['I-129', 'I-485', 'I-765'] },
+      { key: 'statusExpiry', label: 'Status Expiration', value: 'June 15, 2026', syncTargets: ['I-129', 'I-485', 'I-765'] },
+      { key: 'lastArrival', label: 'Last U.S. Arrival', value: 'SFO · Jan 12, 2025 · H-1B', syncTargets: ['I-485', 'I-131'] },
+      { key: 'priorityDate', label: 'Priority Date', value: 'March 15, 2022', syncTargets: ['I-140', 'I-485'] },
+      { key: 'classification', label: 'Classification', value: 'EB-2', syncTargets: ['I-140', 'I-485'] },
     ],
   },
   {
     id: 'employer',
     label: 'Employer',
     fields: [
-      { key: 'employerLegalName', label: 'Employer Legal Name', value: 'Hewlett-Packard Enterprise', syncTargets: ['I-140', 'I-485', 'ETA-9089'], hasMismatch: true },
-      { key: 'fein', label: 'FEIN', value: 'XX-XXXXXXX', syncTargets: ['I-140', 'ETA-9089'] },
-      { key: 'workLocation', label: 'Work Location', value: 'San Jose, CA', syncTargets: ['I-140', 'ETA-9089'] },
+      { key: 'employerLegalName', label: 'Employer Legal Name', value: 'Hewlett-Packard Enterprise', syncTargets: ['I-129', 'I-140', 'I-485', 'ETA-9089'], hasMismatch: true },
+      { key: 'fein', label: 'FEIN', value: 'XX-XXXXXXX', syncTargets: ['I-129', 'I-140', 'ETA-9089'] },
+      { key: 'workLocation', label: 'Work Location', value: 'San Jose, CA', syncTargets: ['I-129', 'I-140', 'ETA-9089'] },
     ],
   },
   {
-    id: 'role',
-    label: 'Role / Job',
+    id: 'job',
+    label: 'Job / Worksite',
     fields: [
-      { key: 'jobTitle', label: 'Job Title', value: 'Senior Product Manager', syncTargets: ['I-140', 'I-485', 'ETA-9089'] },
-      { key: 'socCode', label: 'SOC Code', value: '15-1299.08', syncTargets: ['ETA-9089', 'I-140'] },
-      { key: 'salary', label: 'Annual Salary', value: '$155,000', syncTargets: ['I-140', 'ETA-9089'] },
+      { key: 'jobTitle', label: 'Job Title', value: 'Senior Product Manager', syncTargets: ['I-129', 'I-140', 'I-485', 'ETA-9089'] },
+      { key: 'socCode', label: 'SOC Code', value: '15-1299.08', syncTargets: ['I-129', 'ETA-9089', 'I-140'] },
+      { key: 'salary', label: 'Annual Salary', value: '$155,000', syncTargets: ['I-129', 'I-140', 'ETA-9089'] },
       { key: 'wageLevel', label: 'Wage Level', value: 'Level 3', syncTargets: ['ETA-9089'] },
     ],
   },
   {
-    id: 'immigration',
-    label: 'Immigration',
-    fields: [
-      { key: 'currentStatus', label: 'Current Status', value: 'H-1B', syncTargets: ['I-485'] },
-      { key: 'statusExpiry', label: 'Status Expiration', value: 'June 15, 2026', syncTargets: ['I-485', 'I-765'] },
-      { key: 'priorityDate', label: 'Priority Date', value: 'March 15, 2022', syncTargets: ['I-485'] },
-      { key: 'classification', label: 'Classification', value: 'EB-2', syncTargets: ['I-140', 'I-485'] },
-    ],
-  },
-  {
-    id: 'travel',
+    id: 'address',
     label: 'Address / Travel',
     fields: [
-      { key: 'currentAddress', label: 'Current Address', value: '2180 The Alameda, San Jose, CA 95126', syncTargets: ['I-485', 'I-765', 'I-131'] },
+      { key: 'currentAddress', label: 'Current Address', value: '2180 The Alameda, San Jose, CA 95126', syncTargets: ['I-129', 'I-485', 'I-765', 'I-131'] },
       { key: 'travelHistory', label: 'Travel History (5 yr)', value: '12 trips recorded — 1 gap identified', syncTargets: ['I-485'], hasGap: true },
     ],
   },
+];
+
+// Evidence objects — one source document satisfying multiple form requirements
+export const evidenceObjects = [
+  { name: 'Passport (bio page + visa stamps)', reusedIn: ['I-129', 'I-140', 'I-485', 'I-131', 'I-765', 'I-9'], status: 'collected' },
+  { name: 'I-94 Arrival/Departure Record', reusedIn: ['I-129', 'I-140', 'I-485', 'I-131', 'I-765'], status: 'collected' },
+  { name: 'I-797 Approval Notices (H-1B)', reusedIn: ['I-485', 'I-765', 'I-131'], status: 'collected' },
+  { name: 'Employment Verification Letter', reusedIn: ['I-140', 'I-485'], status: 'missing', flag: 'Request from HPE HR' },
+  { name: 'Wage / PERM Package (LCA + ETA-9089)', reusedIn: ['I-129', 'I-140', 'ETA-9089'], status: 'flagged', flag: 'Survey period mismatch' },
+  { name: 'Degree + Credential Evaluation', reusedIn: ['I-140', 'I-485'], status: 'collected' },
 ];
 
 export const roleContent = {

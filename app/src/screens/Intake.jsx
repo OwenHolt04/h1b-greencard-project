@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useDemo } from '../context/DemoContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import ReadinessScore from '../components/ReadinessScore';
-import { intakeSections, formPackage, validationIssues, documentChecklist, caseAssessment, triageComparison } from '../data/mockData';
+import { intakeSections, formPackage, validationIssues, documentChecklist, caseAssessment, triageComparison, evidenceObjects } from '../data/mockData';
 import {
   Search, CheckCircle, AlertTriangle, AlertCircle, Info,
   ArrowRight, RefreshCw, Loader2, Link2, ChevronRight, Zap,
@@ -129,6 +129,49 @@ export default function Intake() {
               ))}
             </div>
           </div>
+
+          {/* Evidence Vault — shows one-source-many-forms reuse */}
+          <div className="bg-white rounded-xl border border-slate-200/80 shadow-sm overflow-hidden">
+            <div className="px-4 py-3 border-b border-slate-100 flex items-center justify-between">
+              <h2 className="text-sm font-semibold text-slate-900">Evidence Vault</h2>
+              <span className="text-[10px] text-slate-400 uppercase tracking-wider font-medium">Reused across forms</span>
+            </div>
+            <div className="px-4 py-2 space-y-1.5">
+              {evidenceObjects.map((ev, i) => (
+                <div
+                  key={i}
+                  className={`flex items-start gap-2 py-1.5 px-2 rounded text-[11px] ${
+                    ev.status === 'missing' ? 'bg-red-50' :
+                    ev.status === 'flagged' ? 'bg-amber-50' : ''
+                  }`}
+                >
+                  {ev.status === 'collected' ? (
+                    <CheckCircle className="w-3.5 h-3.5 text-green-500 mt-0.5 flex-shrink-0" />
+                  ) : ev.status === 'flagged' ? (
+                    <AlertTriangle className="w-3.5 h-3.5 text-amber-500 mt-0.5 flex-shrink-0" />
+                  ) : (
+                    <Circle className="w-3.5 h-3.5 text-red-400 mt-0.5 flex-shrink-0" />
+                  )}
+                  <div className="flex-1 min-w-0">
+                    <p className={`leading-tight ${
+                      ev.status === 'collected' ? 'text-slate-600' :
+                      ev.status === 'missing' ? 'text-red-700' : 'text-amber-700'
+                    }`}>
+                      {ev.name}
+                    </p>
+                    <div className="flex items-center gap-1 mt-0.5 flex-wrap">
+                      <span className="text-[9px] text-slate-400">→</span>
+                      {ev.reusedIn.map((form) => (
+                        <span key={form} className="text-[8px] text-slate-400 bg-slate-100 px-1 py-0.5 rounded font-medium">
+                          {form}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
 
         {/* Center panel: Form Package */}
@@ -157,10 +200,10 @@ export default function Intake() {
                   : 0;
 
                 return (
-                  <div
+                  <button
                     key={form.formCode}
                     onClick={() => openForm(form.formCode)}
-                    className={`border rounded-lg p-3 transition-all duration-300 cursor-pointer hover:border-navy-900/40 hover:shadow-sm group ${
+                    className={`border rounded-lg p-3 transition-all duration-300 cursor-pointer hover:border-navy-900/40 hover:shadow-sm group text-left ${
                       isSyncing ? 'animate-form-sync border-accent' : 'border-slate-200'
                     }`}
                   >
@@ -199,7 +242,7 @@ export default function Intake() {
                       <Link2 className={`w-2.5 h-2.5 ${isSyncing ? 'text-navy-900' : 'text-slate-300'}`} />
                       <span className="text-[11px] text-slate-400">{form.syncedFields} fields synced</span>
                     </div>
-                  </div>
+                  </button>
                 );
               })}
             </div>
