@@ -24,14 +24,17 @@ export default function Intake() {
   } = useDemo();
 
   const [syncingFormIds, setSyncingFormIds] = useState(new Set());
+  const [syncFlashFormIds, setSyncFlashFormIds] = useState(new Set());
 
-  // Trigger sync animation on form cards when employer name is fixed
+  // Trigger sync animation + "updated" flash on form cards when employer name is fixed
   useEffect(() => {
     if (syncing) {
       const affectedForms = new Set(['I-140', 'I-485', 'ETA-9089']);
       setSyncingFormIds(affectedForms);
-      const timer = setTimeout(() => setSyncingFormIds(new Set()), 1200);
-      return () => clearTimeout(timer);
+      setSyncFlashFormIds(affectedForms);
+      const syncTimer = setTimeout(() => setSyncingFormIds(new Set()), 1200);
+      const flashTimer = setTimeout(() => setSyncFlashFormIds(new Set()), 3000);
+      return () => { clearTimeout(syncTimer); clearTimeout(flashTimer); };
     }
   }, [syncing]);
 
@@ -114,11 +117,9 @@ export default function Intake() {
                             </p>
                           </div>
                           <div className="flex items-center gap-1 flex-shrink-0 mt-1">
-                            {field.syncTargets.map((form) => (
-                              <span key={form} className="text-[8px] text-slate-300 bg-slate-100 px-1 py-0.5 rounded font-medium">
-                                {form}
-                              </span>
-                            ))}
+                            <span className="text-[10px] text-slate-400 font-medium whitespace-nowrap">
+                              → {field.syncTargets.length} forms
+                            </span>
                             {wasFixed && <CheckCircle className="w-3.5 h-3.5 text-green-500 ml-1" />}
                           </div>
                         </div>
@@ -242,6 +243,20 @@ export default function Intake() {
                       <Link2 className={`w-2.5 h-2.5 ${isSyncing ? 'text-navy-900' : 'text-slate-300'}`} />
                       <span className="text-[11px] text-slate-400">{form.syncedFields} fields synced</span>
                     </div>
+
+                    {/* "Updated" flash after employer name fix */}
+                    {syncFlashFormIds.has(form.formCode) && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 4 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.3 }}
+                        className="mt-1.5 flex items-center gap-1 text-[10px] font-semibold text-green-600 bg-green-50 px-2 py-0.5 rounded"
+                      >
+                        <CheckCircle className="w-3 h-3" />
+                        Employer name updated
+                      </motion.div>
+                    )}
                   </button>
                 );
               })}

@@ -1,0 +1,2867 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VisaPath — H-1B to Green Card Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Sans+3:wght@300;400;500;600&family=Source+Code+Pro:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0d1b2a;
+    --navy-mid: #1a2e44;
+    --navy-light: #234567;
+    --gold: #b8952a;
+    --gold-light: #d4a93a;
+    --gold-pale: #f5ecd0;
+    --cream: #faf8f4;
+    --white: #ffffff;
+    --gray-100: #f4f4f2;
+    --gray-200: #e8e6e1;
+    --gray-400: #9a9488;
+    --gray-600: #5a5650;
+    --gray-800: #2d2b28;
+    --green: #1a6b45;
+    --green-light: #d4edde;
+    --amber: #b45309;
+    --amber-light: #fef3c7;
+    --red: #991b1b;
+    --red-light: #fee2e2;
+    --blue-accent: #1e4d8c;
+    --shadow-sm: 0 1px 3px rgba(13,27,42,0.08);
+    --shadow-md: 0 4px 12px rgba(13,27,42,0.12);
+    --shadow-lg: 0 8px 32px rgba(13,27,42,0.16);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Source Sans 3', sans-serif;
+    background: var(--cream);
+    color: var(--gray-800);
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  /* ── TOP BANNER ── */
+  .top-banner {
+    background: var(--navy);
+    color: rgba(255,255,255,0.7);
+    text-align: center;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    padding: 7px 20px;
+    border-bottom: 1px solid var(--navy-light);
+  }
+  .top-banner span { color: var(--gold-light); font-weight: 600; }
+
+  /* ── HEADER ── */
+  header {
+    background: var(--white);
+    border-bottom: 2px solid var(--navy);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: var(--shadow-md);
+  }
+  .header-inner {
+    max-width: 1280px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 32px;
+    height: 64px;
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+  }
+  .logo-mark {
+    width: 36px; height: 36px;
+    background: var(--navy);
+    border-radius: 4px;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--gold-light);
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: -1px;
+  }
+  .logo-text {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--navy);
+    letter-spacing: -0.3px;
+  }
+  .logo-sub {
+    font-size: 11px;
+    color: var(--gray-400);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-top: -2px;
+  }
+
+  nav { display: flex; align-items: center; gap: 4px; }
+  .nav-btn {
+    padding: 7px 14px;
+    border-radius: 4px;
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--gray-600);
+    cursor: pointer;
+    border: none;
+    background: none;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .nav-btn:hover { background: var(--gray-100); color: var(--navy); }
+  .nav-btn.active { background: var(--navy); color: var(--white); }
+
+  .header-actions { display: flex; align-items: center; gap: 10px; }
+  .btn-outline {
+    padding: 8px 18px;
+    border: 1.5px solid var(--navy);
+    border-radius: 4px;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--navy);
+    background: none;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn-outline:hover { background: var(--navy); color: var(--white); }
+  .btn-primary {
+    padding: 8px 18px;
+    border: none;
+    border-radius: 4px;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--white);
+    background: var(--gold);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn-primary:hover { background: var(--gold-light); }
+
+  /* ── PAGE SECTIONS ── */
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* ── HERO ── */
+  .hero {
+    background: var(--navy);
+    color: var(--white);
+    padding: 72px 32px 64px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: 0; right: 0; bottom: 0; left: 0;
+    background: repeating-linear-gradient(
+      90deg,
+      rgba(255,255,255,0.015) 0px,
+      rgba(255,255,255,0.015) 1px,
+      transparent 1px,
+      transparent 80px
+    );
+  }
+  .hero-inner { max-width: 1280px; margin: 0 auto; position: relative; }
+  .hero-tag {
+    display: inline-block;
+    background: rgba(184,149,42,0.2);
+    border: 1px solid var(--gold);
+    color: var(--gold-light);
+    font-size: 11.5px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 2px;
+    margin-bottom: 20px;
+  }
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 48px;
+    font-weight: 700;
+    line-height: 1.15;
+    max-width: 680px;
+    margin-bottom: 20px;
+    letter-spacing: -0.5px;
+  }
+  .hero h1 em { color: var(--gold-light); font-style: normal; }
+  .hero p {
+    font-size: 17px;
+    color: rgba(255,255,255,0.72);
+    max-width: 560px;
+    margin-bottom: 36px;
+    line-height: 1.7;
+  }
+  .hero-ctas { display: flex; gap: 12px; flex-wrap: wrap; }
+  .btn-hero-primary {
+    padding: 13px 28px;
+    background: var(--gold);
+    color: var(--white);
+    border: none;
+    border-radius: 4px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn-hero-primary:hover { background: var(--gold-light); transform: translateY(-1px); }
+  .btn-hero-secondary {
+    padding: 13px 28px;
+    background: rgba(255,255,255,0.1);
+    color: var(--white);
+    border: 1.5px solid rgba(255,255,255,0.3);
+    border-radius: 4px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn-hero-secondary:hover { background: rgba(255,255,255,0.18); }
+
+  .hero-stats {
+    display: flex;
+    gap: 48px;
+    margin-top: 56px;
+    padding-top: 40px;
+    border-top: 1px solid rgba(255,255,255,0.12);
+    flex-wrap: wrap;
+  }
+  .hero-stat-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--gold-light);
+  }
+  .hero-stat-label {
+    font-size: 13px;
+    color: rgba(255,255,255,0.55);
+    margin-top: 2px;
+    letter-spacing: 0.03em;
+  }
+
+  /* ── CARDS GRID ── */
+  .section { padding: 56px 32px; max-width: 1280px; margin: 0 auto; }
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 6px;
+  }
+  .section-sub {
+    color: var(--gray-400);
+    font-size: 14.5px;
+    margin-bottom: 32px;
+  }
+  .section-divider {
+    width: 40px; height: 3px;
+    background: var(--gold);
+    margin-bottom: 12px;
+    border-radius: 2px;
+  }
+
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+  }
+  .card {
+    background: var(--white);
+    border: 1px solid var(--gray-200);
+    border-radius: 6px;
+    padding: 28px;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.2s;
+    cursor: pointer;
+  }
+  .card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); border-color: var(--navy-light); }
+  .card-icon {
+    width: 44px; height: 44px;
+    background: var(--navy);
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 16px;
+    font-size: 20px;
+  }
+  .card h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--navy);
+    margin-bottom: 8px;
+  }
+  .card p { font-size: 13.5px; color: var(--gray-600); line-height: 1.65; }
+  .card-arrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    color: var(--gold);
+    font-size: 12.5px;
+    font-weight: 600;
+    margin-top: 16px;
+    letter-spacing: 0.04em;
+  }
+
+  /* ── PROCESS TIMELINE ── */
+  .timeline-wrap { padding: 56px 32px; background: var(--white); border-top: 1px solid var(--gray-200); border-bottom: 1px solid var(--gray-200); }
+  .timeline-inner { max-width: 1280px; margin: 0 auto; }
+  .timeline {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0;
+    position: relative;
+    margin-top: 40px;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    top: 28px;
+    left: 10%;
+    right: 10%;
+    height: 2px;
+    background: linear-gradient(90deg, var(--navy), var(--gold));
+    z-index: 0;
+  }
+  .timeline-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+    padding: 0 12px;
+  }
+  .step-circle {
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    border: 3px solid var(--white);
+    box-shadow: 0 0 0 2px var(--navy);
+  }
+  .step-circle.complete { background: var(--navy); color: var(--white); }
+  .step-circle.active { background: var(--gold); color: var(--white); box-shadow: 0 0 0 2px var(--gold), 0 0 0 5px rgba(184,149,42,0.2); }
+  .step-circle.pending { background: var(--gray-200); color: var(--gray-400); box-shadow: 0 0 0 2px var(--gray-200); }
+  .step-label {
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--navy);
+    margin-bottom: 4px;
+  }
+  .step-sublabel {
+    font-size: 11.5px;
+    color: var(--gray-400);
+    line-height: 1.4;
+  }
+  .step-time {
+    font-family: 'Source Code Pro', monospace;
+    font-size: 11px;
+    color: var(--gold);
+    margin-top: 6px;
+    font-weight: 500;
+  }
+
+  /* ── DASHBOARD ── */
+  .dash-layout {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    gap: 0;
+    min-height: calc(100vh - 130px);
+  }
+  .dash-sidebar {
+    background: var(--navy);
+    padding: 28px 0;
+    position: relative;
+  }
+  .dash-sidebar::after {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    width: 1px; height: 100%;
+    background: rgba(255,255,255,0.08);
+  }
+  .sidebar-section-label {
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.35);
+    padding: 0 20px 8px;
+    margin-top: 16px;
+  }
+  .sidebar-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 20px;
+    font-size: 13.5px;
+    color: rgba(255,255,255,0.65);
+    cursor: pointer;
+    transition: all 0.15s;
+    border-left: 3px solid transparent;
+  }
+  .sidebar-item:hover { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.9); }
+  .sidebar-item.active { background: rgba(184,149,42,0.15); color: var(--gold-light); border-left-color: var(--gold); }
+  .sidebar-icon { font-size: 15px; width: 20px; text-align: center; }
+  .sidebar-badge {
+    margin-left: auto;
+    background: var(--red);
+    color: var(--white);
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 10px;
+  }
+
+  .dash-main { padding: 32px 36px; background: var(--gray-100); overflow-y: auto; }
+  .dash-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  .dash-greeting { font-family: 'Playfair Display', serif; font-size: 22px; color: var(--navy); }
+  .dash-date { font-size: 13px; color: var(--gray-400); margin-top: 3px; }
+
+  .kpi-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+  .kpi-card {
+    background: var(--white);
+    border: 1px solid var(--gray-200);
+    border-radius: 6px;
+    padding: 20px 22px;
+    box-shadow: var(--shadow-sm);
+  }
+  .kpi-label { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gray-400); margin-bottom: 8px; }
+  .kpi-num { font-family: 'Playfair Display', serif; font-size: 30px; font-weight: 700; color: var(--navy); }
+  .kpi-delta { font-size: 12px; margin-top: 4px; }
+  .kpi-delta.up { color: var(--green); }
+  .kpi-delta.warn { color: var(--amber); }
+
+  .dash-two-col { display: grid; grid-template-columns: 1fr 380px; gap: 20px; margin-bottom: 20px; }
+  .panel {
+    background: var(--white);
+    border: 1px solid var(--gray-200);
+    border-radius: 6px;
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+  }
+  .panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 22px;
+    border-bottom: 1px solid var(--gray-200);
+  }
+  .panel-title { font-weight: 700; font-size: 14px; color: var(--navy); letter-spacing: 0.02em; }
+  .panel-action { font-size: 12px; color: var(--gold); cursor: pointer; font-weight: 600; }
+  .panel-body { padding: 20px 22px; }
+
+  /* Case table */
+  .case-table { width: 100%; border-collapse: collapse; }
+  .case-table th {
+    text-align: left;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gray-400);
+    padding: 0 12px 12px 0;
+    border-bottom: 1px solid var(--gray-200);
+  }
+  .case-table td {
+    padding: 13px 12px 13px 0;
+    font-size: 13.5px;
+    border-bottom: 1px solid var(--gray-100);
+    vertical-align: middle;
+  }
+  .case-table tr:last-child td { border-bottom: none; }
+  .employee-name { font-weight: 600; color: var(--navy); }
+  .employee-role { font-size: 12px; color: var(--gray-400); }
+
+  .badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 11.5px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .badge-green { background: var(--green-light); color: var(--green); }
+  .badge-amber { background: var(--amber-light); color: var(--amber); }
+  .badge-red { background: var(--red-light); color: var(--red); }
+  .badge-blue { background: #dbeafe; color: var(--blue-accent); }
+  .badge-gray { background: var(--gray-200); color: var(--gray-600); }
+
+  /* Alerts panel */
+  .alert-item {
+    display: flex;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--gray-100);
+  }
+  .alert-item:last-child { border-bottom: none; }
+  .alert-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    margin-top: 5px;
+    flex-shrink: 0;
+  }
+  .alert-dot.red { background: var(--red); }
+  .alert-dot.amber { background: var(--amber); }
+  .alert-dot.blue { background: var(--blue-accent); }
+  .alert-dot.green { background: var(--green); }
+  .alert-text { font-size: 13px; color: var(--gray-600); line-height: 1.5; }
+  .alert-text strong { color: var(--navy); font-weight: 600; }
+  .alert-time { font-size: 11px; color: var(--gray-400); margin-top: 3px; }
+
+  /* ── CHECKLIST ── */
+  .checklist-page { padding: 48px 32px; max-width: 1280px; margin: 0 auto; }
+  .checklist-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .checklist-card {
+    background: var(--white);
+    border: 1px solid var(--gray-200);
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+  }
+  .checklist-card-header {
+    padding: 18px 22px;
+    background: var(--navy);
+    color: var(--white);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .checklist-card-header h3 { font-size: 14.5px; font-weight: 700; letter-spacing: 0.02em; }
+  .checklist-card-header .phase-num {
+    width: 26px; height: 26px;
+    background: var(--gold);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .checklist-items { padding: 16px 22px; }
+  .checklist-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 9px 0;
+    border-bottom: 1px solid var(--gray-100);
+    font-size: 13.5px;
+  }
+  .checklist-item:last-child { border-bottom: none; }
+  .check-box {
+    width: 16px; height: 16px;
+    border-radius: 3px;
+    border: 1.5px solid var(--gray-400);
+    flex-shrink: 0;
+    margin-top: 2px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .check-box.checked { background: var(--green); border-color: var(--green); color: var(--white); }
+  .check-box.na { background: var(--gray-200); border-color: var(--gray-200); color: var(--gray-400); }
+  .check-item-label { color: var(--gray-700); line-height: 1.4; flex: 1; }
+  .check-item-label.done { text-decoration: line-through; color: var(--gray-400); }
+  .check-item-req {
+    font-size: 10.5px;
+    font-weight: 600;
+    color: var(--red);
+    letter-spacing: 0.06em;
+    flex-shrink: 0;
+  }
+  .check-item-opt {
+    font-size: 10.5px;
+    font-weight: 600;
+    color: var(--gray-400);
+    letter-spacing: 0.06em;
+    flex-shrink: 0;
+  }
+
+  /* ── EMPLOYER PORTAL ── */
+  .portal-page { padding: 48px 32px; max-width: 1280px; margin: 0 auto; }
+  .portal-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-bottom: 24px; }
+  .tool-card {
+    background: var(--white);
+    border: 1px solid var(--gray-200);
+    border-radius: 6px;
+    padding: 28px;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.2s;
+  }
+  .tool-card:hover { box-shadow: var(--shadow-md); }
+  .tool-card-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 16px; }
+  .tool-tag {
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 2px;
+  }
+  .tool-tag-new { background: var(--green-light); color: var(--green); }
+  .tool-tag-beta { background: var(--amber-light); color: var(--amber); }
+  .tool-card h3 { font-family: 'Playfair Display', serif; font-size: 18px; color: var(--navy); margin-bottom: 8px; }
+  .tool-card p { font-size: 13.5px; color: var(--gray-600); line-height: 1.65; margin-bottom: 20px; }
+  .tool-metric {
+    display: flex;
+    gap: 24px;
+    padding-top: 16px;
+    border-top: 1px solid var(--gray-200);
+  }
+  .metric-item { }
+  .metric-val { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; color: var(--navy); }
+  .metric-label { font-size: 11.5px; color: var(--gray-400); margin-top: 1px; }
+
+  /* Cost Calculator */
+  .calculator {
+    background: var(--white);
+    border: 1px solid var(--gray-200);
+    border-radius: 6px;
+    padding: 32px;
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 24px;
+  }
+  .calc-grid { display: grid; grid-template-columns: 1fr 280px; gap: 32px; align-items: start; }
+  .calc-input-group { margin-bottom: 18px; }
+  .calc-label { font-size: 12.5px; font-weight: 600; color: var(--gray-600); margin-bottom: 6px; display: block; letter-spacing: 0.04em; }
+  .calc-input {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1.5px solid var(--gray-200);
+    border-radius: 4px;
+    font-size: 14px;
+    color: var(--navy);
+    font-family: 'Source Sans 3', sans-serif;
+    transition: border-color 0.15s;
+  }
+  .calc-input:focus { outline: none; border-color: var(--navy); }
+  .calc-result {
+    background: var(--navy);
+    border-radius: 6px;
+    padding: 24px;
+    color: var(--white);
+  }
+  .calc-result-label { font-size: 12px; color: rgba(255,255,255,0.55); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 4px; }
+  .calc-result-total { font-family: 'Playfair Display', serif; font-size: 36px; font-weight: 700; color: var(--gold-light); margin-bottom: 20px; }
+  .calc-breakdown-item { display: flex; justify-content: space-between; font-size: 13px; padding: 7px 0; border-bottom: 1px solid rgba(255,255,255,0.08); }
+  .calc-breakdown-item:last-child { border-bottom: none; }
+  .calc-breakdown-label { color: rgba(255,255,255,0.6); }
+  .calc-breakdown-val { color: rgba(255,255,255,0.9); font-weight: 600; font-family: 'Source Code Pro', monospace; font-size: 12.5px; }
+
+  /* ── APPLICANT PORTAL ── */
+  .applicant-hero {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+    padding: 48px 32px;
+    color: var(--white);
+  }
+  .applicant-hero-inner { max-width: 1280px; margin: 0 auto; }
+  .applicant-hero h2 { font-family: 'Playfair Display', serif; font-size: 30px; margin-bottom: 6px; }
+  .applicant-hero p { color: rgba(255,255,255,0.65); font-size: 15px; margin-bottom: 24px; }
+
+  .progress-track {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    background: rgba(255,255,255,0.08);
+    border-radius: 6px;
+    padding: 16px 24px;
+    max-width: 800px;
+  }
+  .progress-step {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+    position: relative;
+  }
+  .progress-step::after {
+    content: '→';
+    position: absolute;
+    right: -4px;
+    color: rgba(255,255,255,0.3);
+    font-size: 16px;
+  }
+  .progress-step:last-child::after { display: none; }
+  .p-dot {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .p-dot.done { background: var(--gold); color: var(--white); }
+  .p-dot.now { background: var(--white); color: var(--navy); box-shadow: 0 0 0 3px rgba(255,255,255,0.3); }
+  .p-dot.future { background: rgba(255,255,255,0.15); color: rgba(255,255,255,0.5); }
+  .p-text { font-size: 12px; line-height: 1.3; }
+  .p-text-label { font-weight: 600; color: var(--white); }
+  .p-text-status { color: rgba(255,255,255,0.5); font-size: 11px; }
+
+  .applicant-content { max-width: 1280px; margin: 0 auto; padding: 36px 32px; }
+  .applicant-grid { display: grid; grid-template-columns: 1fr 340px; gap: 24px; }
+  .info-row { display: flex; justify-content: space-between; padding: 11px 0; border-bottom: 1px solid var(--gray-100); font-size: 14px; }
+  .info-label { color: var(--gray-400); font-size: 13px; }
+  .info-value { color: var(--navy); font-weight: 600; }
+  .timeline-list { }
+  .tl-item { display: flex; gap: 14px; padding-bottom: 20px; position: relative; }
+  .tl-item::before {
+    content: '';
+    position: absolute;
+    left: 11px;
+    top: 24px;
+    bottom: 0;
+    width: 1px;
+    background: var(--gray-200);
+  }
+  .tl-item:last-child::before { display: none; }
+  .tl-dot {
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+  }
+  .tl-dot.done { background: var(--navy); color: var(--white); }
+  .tl-dot.active { background: var(--gold); color: var(--white); }
+  .tl-dot.pending { background: var(--gray-200); color: var(--gray-400); }
+  .tl-content { flex: 1; padding-top: 2px; }
+  .tl-title { font-weight: 600; font-size: 14px; color: var(--navy); }
+  .tl-desc { font-size: 12.5px; color: var(--gray-400); margin-top: 2px; }
+  .tl-date { font-size: 11.5px; color: var(--gold); font-weight: 600; font-family: 'Source Code Pro', monospace; margin-top: 4px; }
+
+  /* ── POLICY PAGE ── */
+  .policy-page { padding: 48px 32px; max-width: 1280px; margin: 0 auto; }
+  .policy-hero-band {
+    background: var(--navy);
+    color: var(--white);
+    border-radius: 6px;
+    padding: 40px 44px;
+    margin-bottom: 32px;
+    position: relative;
+    overflow: hidden;
+  }
+  .policy-hero-band::before {
+    content: '"';
+    position: absolute;
+    top: -20px; right: 40px;
+    font-family: 'Playfair Display', serif;
+    font-size: 180px;
+    color: rgba(255,255,255,0.04);
+    line-height: 1;
+  }
+  .policy-hero-band h2 { font-family: 'Playfair Display', serif; font-size: 28px; margin-bottom: 10px; }
+  .policy-hero-band p { color: rgba(255,255,255,0.65); font-size: 15px; max-width: 640px; line-height: 1.7; }
+
+  .reform-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .reform-card {
+    background: var(--white);
+    border: 1px solid var(--gray-200);
+    border-radius: 6px;
+    padding: 0;
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.2s;
+  }
+  .reform-card:hover { box-shadow: var(--shadow-md); }
+  .reform-card-top { padding: 24px 24px 16px; }
+  .reform-area {
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 8px;
+  }
+  .reform-card h3 { font-family: 'Playfair Display', serif; font-size: 16px; color: var(--navy); margin-bottom: 10px; line-height: 1.35; }
+  .reform-card p { font-size: 13px; color: var(--gray-600); line-height: 1.65; }
+  .reform-card-footer {
+    padding: 12px 24px;
+    background: var(--gray-100);
+    border-top: 1px solid var(--gray-200);
+    display: flex;
+    gap: 16px;
+    align-items: center;
+  }
+  .impact-pill {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 12px;
+  }
+  .impact-high { background: var(--green-light); color: var(--green); }
+  .impact-med { background: var(--amber-light); color: var(--amber); }
+  .reform-benefit { font-size: 12px; color: var(--gray-400); }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--navy);
+    color: rgba(255,255,255,0.45);
+    text-align: center;
+    padding: 24px 32px;
+    font-size: 12.5px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+  }
+  footer strong { color: rgba(255,255,255,0.7); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    .timeline { grid-template-columns: 1fr; }
+    .timeline::before { display: none; }
+    .kpi-row { grid-template-columns: repeat(2, 1fr); }
+    .dash-layout { grid-template-columns: 1fr; }
+    .dash-two-col { grid-template-columns: 1fr; }
+    .reform-grid { grid-template-columns: 1fr; }
+    .checklist-grid { grid-template-columns: 1fr; }
+    .calc-grid { grid-template-columns: 1fr; }
+    .applicant-grid { grid-template-columns: 1fr; }
+    .portal-grid { grid-template-columns: 1fr; }
+    .hero h1 { font-size: 32px; }
+  }
+
+  /* Wizard overlay */
+  .wizard-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(13,27,42,0.6);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+  }
+  .wizard-overlay.open { display: flex; }
+  .wizard-modal {
+    background: var(--white);
+    border-radius: 8px;
+    padding: 40px;
+    max-width: 520px;
+    width: 90%;
+    box-shadow: var(--shadow-lg);
+  }
+  .wizard-modal h3 { font-family: 'Playfair Display', serif; font-size: 22px; color: var(--navy); margin-bottom: 6px; }
+  .wizard-modal p { font-size: 14px; color: var(--gray-600); margin-bottom: 24px; line-height: 1.6; }
+  .wizard-q { font-size: 15px; font-weight: 600; color: var(--navy); margin-bottom: 16px; }
+  .wizard-option {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border: 1.5px solid var(--gray-200);
+    border-radius: 5px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    font-size: 14px;
+    color: var(--gray-700);
+    transition: all 0.15s;
+  }
+  .wizard-option:hover { border-color: var(--navy); color: var(--navy); background: var(--gray-100); }
+  .wizard-close {
+    float: right;
+    background: none;
+    border: none;
+    font-size: 20px;
+    color: var(--gray-400);
+    cursor: pointer;
+    margin-top: -8px;
+  }
+
+  .notification-bar {
+    background: var(--green-light);
+    border-bottom: 1px solid var(--green);
+    padding: 10px 32px;
+    font-size: 13.5px;
+    color: var(--green);
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  select.calc-input { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235a5650' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; }
+</style>
+</head>
+<body>
+
+<!-- Wizard Modal -->
+<div class="wizard-overlay" id="wizardOverlay">
+  <div class="wizard-modal">
+    <button class="wizard-close" onclick="document.getElementById('wizardOverlay').classList.remove('open')">✕</button>
+    <h3>Eligibility Wizard</h3>
+    <p>Answer a few questions to confirm your employee qualifies for employer-sponsored immigration.</p>
+    <div class="wizard-q">Does the position require a minimum of a bachelor's degree in a specialized field?</div>
+    <div class="wizard-option" onclick="wizardNext(this)">✅ &nbsp; Yes — the role requires a specialized degree</div>
+    <div class="wizard-option" onclick="wizardNext(this)">❌ &nbsp; No — the role is generalist or does not require a specific degree</div>
+    <div class="wizard-option" onclick="wizardNext(this)">🔍 &nbsp; Unsure — I'd like to review the DOL SOC criteria</div>
+  </div>
+</div>
+
+<div class="top-banner">
+  🔔 Visa Bulletin for <span>March 2026</span> has been published — EB-2 India PD moved to <span>Jan 1, 2013</span>. <span style="cursor:pointer;text-decoration:underline;">View tracking →</span>
+</div>
+
+<header>
+  <div class="header-inner">
+    <a class="logo" href="#" onclick="showPage('home')">
+      <div class="logo-mark">VP</div>
+      <div>
+        <div class="logo-text">VisaPath</div>
+        <div class="logo-sub">Employer Immigration Platform</div>
+      </div>
+    </a>
+    <nav>
+      <button class="nav-btn active" id="nav-home" onclick="showPage('home')">Home</button>
+      <button class="nav-btn" id="nav-process" onclick="showPage('process')">Process Overview</button>
+      <button class="nav-btn" id="nav-dashboard" onclick="showPage('dashboard')">Case Dashboard</button>
+      <button class="nav-btn" id="nav-checklist" onclick="showPage('checklist')">Filing Tools</button>
+      <button class="nav-btn" id="nav-smartform" onclick="showPage('smartform')" style="background:var(--gold);color:var(--white);">⚡ Smart Form</button>
+      <button class="nav-btn" id="nav-employer" onclick="showPage('employer')">Employer Portal</button>
+      <button class="nav-btn" id="nav-applicant" onclick="showPage('applicant')">Applicant Portal</button>
+      <button class="nav-btn" id="nav-attorney" onclick="showPage('attorney')" style="color:var(--blue-accent);font-weight:700;">⚖ Attorney</button>
+      <button class="nav-btn" id="nav-policy" onclick="showPage('policy')">Policy & Reform</button>
+    </nav>
+    <div class="header-actions">
+      <button class="btn-outline">Sign In</button>
+      <button class="btn-primary">Request Demo</button>
+    </div>
+  </div>
+</header>
+
+<!-- ════════════ HOME ════════════ -->
+<div class="page active" id="page-home">
+  <div class="hero">
+    <div class="hero-inner">
+      <div class="hero-tag">Employer Immigration Platform — H-1B → Green Card</div>
+      <h1>The <em>complete platform</em> for employer-sponsored immigration</h1>
+      <p>From H-1B petition to permanent residency — VisaPath unifies every filing stage, deadline, and stakeholder into one intelligent workflow platform.</p>
+      <div class="hero-ctas">
+        <button class="btn-hero-primary" onclick="showPage('dashboard')">View Case Dashboard</button>
+        <button class="btn-hero-secondary" onclick="document.getElementById('wizardOverlay').classList.add('open')">Run Eligibility Check</button>
+      </div>
+      <div class="hero-stats">
+        <div>
+          <div class="hero-stat-num">90%+</div>
+          <div class="hero-stat-label">RFE reduction via pre-submission validation</div>
+        </div>
+        <div>
+          <div class="hero-stat-num">&lt;5%</div>
+          <div class="hero-stat-label">Target RFE rate (down from ~25%)</div>
+        </div>
+        <div>
+          <div class="hero-stat-num">40%</div>
+          <div class="hero-stat-label">Reduction in attorney billable hours</div>
+        </div>
+        <div>
+          <div class="hero-stat-num">70%</div>
+          <div class="hero-stat-label">Fewer status inquiry calls</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-divider"></div>
+    <div class="section-title">Platform Capabilities</div>
+    <div class="section-sub">End-to-end tools for HR teams, immigration attorneys, and applicants</div>
+    <div class="cards-grid">
+      <div class="card" onclick="showPage('dashboard')">
+        <div class="card-icon">📊</div>
+        <h3>Unified Case Dashboard</h3>
+        <p>Track all active H-1B and Green Card cases across DOL, USCIS, and DOS in one real-time view with automated milestone alerts.</p>
+        <div class="card-arrow">Open Dashboard →</div>
+      </div>
+      <div class="card" onclick="showPage('checklist')">
+        <div class="card-icon">✅</div>
+        <h3>Pre-Flight Validation Engine</h3>
+        <p>Run automated cross-form consistency checks against the top 20 RFE triggers before every submission — catch errors at filing, not 6 months later.</p>
+        <div class="card-arrow">View Filing Tools →</div>
+      </div>
+      <div class="card" onclick="showPage('employer')">
+        <div class="card-icon">🏢</div>
+        <h3>Employer HR Tools</h3>
+        <p>Auto-populate shared fields across 6+ forms, trigger H-1B extensions 90 days early, and estimate total sponsorship cost before any offer is extended.</p>
+        <div class="card-arrow">Employer Portal →</div>
+      </div>
+      <div class="card" onclick="showPage('applicant')">
+        <div class="card-icon">👤</div>
+        <h3>Applicant Self-Service</h3>
+        <p>Applicants complete biographical and employment history sections through a guided wizard — attorneys focus on legal judgment, not data entry.</p>
+        <div class="card-arrow">Applicant Portal →</div>
+      </div>
+      <div class="card" onclick="showPage('process')">
+        <div class="card-icon">🗺️</div>
+        <h3>Process Map</h3>
+        <p>A plain-language, step-by-step guide to the full PWD → PERM → I-140 → I-485 pipeline with estimated timelines and required actions at each stage.</p>
+        <div class="card-arrow">View Process →</div>
+      </div>
+      <div class="card" onclick="showPage('policy')">
+        <div class="card-icon">📋</div>
+        <h3>Policy & Reform Proposals</h3>
+        <p>Explore evidence-based system improvements addressing adjudication backlogs, OPT alignment, and domestic STEM pipeline development.</p>
+        <div class="card-arrow">View Proposals →</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════ PROCESS OVERVIEW ════════════ -->
+<div class="page" id="page-process">
+  <div class="timeline-wrap">
+    <div class="timeline-inner">
+      <div class="section-divider"></div>
+      <div class="section-title">H-1B → Green Card: Full Process Map</div>
+      <div class="section-sub">Five stages from initial sponsorship to permanent residency — average total timeline: 3–15+ years depending on country of birth</div>
+      <div class="timeline">
+        <div class="timeline-step">
+          <div class="step-circle complete">1</div>
+          <div class="step-label">H-1B Petition</div>
+          <div class="step-sublabel">LCA Filing &<br>USCIS I-129</div>
+          <div class="step-time">3–6 months</div>
+        </div>
+        <div class="timeline-step">
+          <div class="step-circle complete">2</div>
+          <div class="step-label">PWD & PERM</div>
+          <div class="step-sublabel">DOL Wage<br>Determination</div>
+          <div class="step-time">12–20 months</div>
+        </div>
+        <div class="timeline-step">
+          <div class="step-circle active">3</div>
+          <div class="step-label">I-140 Petition</div>
+          <div class="step-sublabel">Immigrant Visa<br>Petition (USCIS)</div>
+          <div class="step-time">6–12 months</div>
+        </div>
+        <div class="timeline-step">
+          <div class="step-circle pending">4</div>
+          <div class="step-label">Priority Date</div>
+          <div class="step-sublabel">Visa Bulletin<br>Wait Period</div>
+          <div class="step-time">1–10+ years</div>
+        </div>
+        <div class="timeline-step">
+          <div class="step-circle pending">5</div>
+          <div class="step-label">I-485 Adjustment</div>
+          <div class="step-sublabel">Adjustment of<br>Status (USCIS)</div>
+          <div class="step-time">12–24 months</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-divider"></div>
+    <div class="section-title">Stage-by-Stage Breakdown</div>
+    <div class="section-sub">Key actions, documents, and common pitfalls at each phase</div>
+    <div class="cards-grid">
+      <div class="card">
+        <div class="card-icon">📄</div>
+        <h3>Stage 1: H-1B Petition</h3>
+        <p>Employer files LCA with DOL, then I-129 with USCIS. Annual lottery cap: 85,000 visas. Premium processing available for 15-business-day adjudication. Key risk: SOC code misclassification triggers RFE.</p>
+        <div style="margin-top:14px;">
+          <span class="badge badge-amber">Lottery Risk</span>&nbsp;
+          <span class="badge badge-blue">LCA Required</span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-icon">💼</div>
+        <h3>Stage 2: PERM Labor Certification</h3>
+        <p>Employer demonstrates no qualified U.S. worker is available. Requires supervised recruitment, wage compliance, and DOL filing via iCERT. Audit rate ~15%; VisaPath flags audit triggers pre-filing.</p>
+        <div style="margin-top:14px;">
+          <span class="badge badge-red">High Complexity</span>&nbsp;
+          <span class="badge badge-amber">Audit Risk</span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-icon">🏛️</div>
+        <h3>Stage 3: I-140 Immigrant Petition</h3>
+        <p>Employer petitions USCIS to classify employee as employment-based immigrant. EB-2 or EB-3 category determines priority date. Approval locks in priority date even if employer changes.</p>
+        <div style="margin-top:14px;">
+          <span class="badge badge-green">Date-Critical</span>&nbsp;
+          <span class="badge badge-blue">EB-2 / EB-3</span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-icon">🗓️</div>
+        <h3>Stage 4: Visa Bulletin Wait</h3>
+        <p>Priority date must be current before I-485 can be filed. India and China EB backlogs exceed 50+ years. VisaPath sends automated monthly visa bulletin alerts with personalized PD tracking.</p>
+        <div style="margin-top:14px;">
+          <span class="badge badge-red">India EB-2: 50+ yr wait</span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-icon">🟢</div>
+        <h3>Stage 5: I-485 Adjustment of Status</h3>
+        <p>Final application for lawful permanent residency. Filed with USCIS when priority date is current. Includes biometrics, medical exam, and interview. Work authorization (EAD) issued during adjudication.</p>
+        <div style="margin-top:14px;">
+          <span class="badge badge-green">EAD Included</span>&nbsp;
+          <span class="badge badge-blue">Biometrics Req.</span>
+        </div>
+      </div>
+      <div class="card" onclick="showPage('employer')">
+        <div class="card-icon">⚡</div>
+        <h3>H-1B Extension Management</h3>
+        <p>While awaiting Green Card, H-1B must be renewed in 3-year increments. VisaPath auto-triggers extension filings 90 days before expiration, eliminating missed-deadline risk entirely.</p>
+        <div style="margin-top:14px;"><span class="badge badge-green">Auto-Triggered</span></div>
+        <div class="card-arrow">View Extension Tools →</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════ DASHBOARD ════════════ -->
+<div class="page" id="page-dashboard">
+  <div class="notification-bar">
+    ✅ &nbsp; <strong>Pre-flight validation complete:</strong> 3 new filings passed all checks and entered the submission queue — 0 RFE triggers detected.
+  </div>
+  <div class="dash-layout">
+    <div class="dash-sidebar">
+      <div style="padding:0 20px 20px;border-bottom:1px solid rgba(255,255,255,0.08);">
+        <div style="font-size:11px;color:rgba(255,255,255,0.35);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:8px;">Active Workspace</div>
+        <div style="font-size:14px;color:var(--white);font-weight:600;">Acme Technologies Inc.</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.45);">EIN: 12-3456789 · 24 active cases</div>
+      </div>
+      <div class="sidebar-section-label">Overview</div>
+      <div class="sidebar-item active"><span class="sidebar-icon">📊</span> Case Dashboard</div>
+      <div class="sidebar-item"><span class="sidebar-icon">🔔</span> Alerts & Deadlines <span class="sidebar-badge">5</span></div>
+      <div class="sidebar-item"><span class="sidebar-icon">📅</span> Filing Calendar</div>
+
+      <div class="sidebar-section-label">Pipeline Stages</div>
+      <div class="sidebar-item"><span class="sidebar-icon">📝</span> H-1B / LCA</div>
+      <div class="sidebar-item"><span class="sidebar-icon">⚙️</span> PWD & PERM</div>
+      <div class="sidebar-item"><span class="sidebar-icon">🏛️</span> I-140 Petitions</div>
+      <div class="sidebar-item"><span class="sidebar-icon">⏳</span> Priority Date Queue</div>
+      <div class="sidebar-item"><span class="sidebar-icon">✅</span> I-485 Adjustment</div>
+
+      <div class="sidebar-section-label">Tools</div>
+      <div class="sidebar-item"><span class="sidebar-icon">🔍</span> Pre-Flight Validator</div>
+      <div class="sidebar-item"><span class="sidebar-icon">📋</span> Document Checklist</div>
+      <div class="sidebar-item"><span class="sidebar-icon">💰</span> Cost Calculator</div>
+      <div class="sidebar-item"><span class="sidebar-icon">📊</span> Reports & Analytics</div>
+    </div>
+
+    <div class="dash-main">
+      <div class="dash-header">
+        <div>
+          <div class="dash-greeting">Good morning, Sarah Chen</div>
+          <div class="dash-date">Tuesday, March 3, 2026 · Acme Technologies Inc.</div>
+        </div>
+        <div style="display:flex;gap:10px;">
+          <button class="btn-outline" style="font-size:12.5px;padding:7px 14px;">Export Report</button>
+          <button class="btn-primary" style="font-size:12.5px;padding:7px 14px;" onclick="showPage('checklist')">+ New Filing</button>
+        </div>
+      </div>
+
+      <div class="kpi-row">
+        <div class="kpi-card">
+          <div class="kpi-label">Active Cases</div>
+          <div class="kpi-num">24</div>
+          <div class="kpi-delta up">↑ 3 this quarter</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Pending Deadlines</div>
+          <div class="kpi-num">7</div>
+          <div class="kpi-delta warn">⚠ 2 within 30 days</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">RFE Rate (YTD)</div>
+          <div class="kpi-num">3.8%</div>
+          <div class="kpi-delta up">↓ from 24% last year</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">I-140s Approved</div>
+          <div class="kpi-num">11</div>
+          <div class="kpi-delta up">↑ 4 this year</div>
+        </div>
+      </div>
+
+      <div class="dash-two-col">
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">Active Case Pipeline</div>
+            <div class="panel-action">View All →</div>
+          </div>
+          <div class="panel-body" style="padding:0;">
+            <table class="case-table" style="padding:0 22px;">
+              <thead>
+                <tr style="padding:0 22px;">
+                  <th style="padding-left:22px;">Employee</th>
+                  <th>Current Stage</th>
+                  <th>Status</th>
+                  <th>Next Deadline</th>
+                  <th>Priority Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="padding-left:22px;">
+                    <div class="employee-name">Arjun Mehta</div>
+                    <div class="employee-role">Staff Engineer · EB-2 India</div>
+                  </td>
+                  <td><span class="badge badge-amber">I-140 Pending</span></td>
+                  <td><span class="badge badge-blue">In Review</span></td>
+                  <td style="font-family:'Source Code Pro',monospace;font-size:12.5px;">Apr 15, 2026</td>
+                  <td style="font-family:'Source Code Pro',monospace;font-size:12.5px;">Jan 1, 2013</td>
+                </tr>
+                <tr>
+                  <td style="padding-left:22px;">
+                    <div class="employee-name">Wei Zhang</div>
+                    <div class="employee-role">Principal Scientist · EB-2 China</div>
+                  </td>
+                  <td><span class="badge badge-green">I-485 Filed</span></td>
+                  <td><span class="badge badge-green">On Track</span></td>
+                  <td style="font-family:'Source Code Pro',monospace;font-size:12.5px;">Aug 30, 2026</td>
+                  <td style="font-family:'Source Code Pro',monospace;font-size:12.5px;">Mar 8, 2010</td>
+                </tr>
+                <tr>
+                  <td style="padding-left:22px;">
+                    <div class="employee-name">Priya Nair</div>
+                    <div class="employee-role">Product Manager · EB-3 India</div>
+                  </td>
+                  <td><span class="badge badge-red">PERM Audit</span></td>
+                  <td><span class="badge badge-red">Action Req.</span></td>
+                  <td style="font-family:'Source Code Pro',monospace;font-size:12.5px;">Mar 18, 2026</td>
+                  <td style="font-family:'Source Code Pro',monospace;font-size:12.5px;">—</td>
+                </tr>
+                <tr>
+                  <td style="padding-left:22px;">
+                    <div class="employee-name">Carlos Rivera</div>
+                    <div class="employee-role">ML Engineer · EB-2 Mexico</div>
+                  </td>
+                  <td><span class="badge badge-blue">PWD Filed</span></td>
+                  <td><span class="badge badge-green">On Track</span></td>
+                  <td style="font-family:'Source Code Pro',monospace;font-size:12.5px;">May 1, 2026</td>
+                  <td style="font-family:'Source Code Pro',monospace;font-size:12.5px;">—</td>
+                </tr>
+                <tr>
+                  <td style="padding-left:22px;">
+                    <div class="employee-name">Aisha Okonkwo</div>
+                    <div class="employee-role">Data Engineer · H-1B Nigeria</div>
+                  </td>
+                  <td><span class="badge badge-amber">H-1B Expiring</span></td>
+                  <td><span class="badge badge-amber">Ext. Triggered</span></td>
+                  <td style="font-family:'Source Code Pro',monospace;font-size:12.5px;">Jun 12, 2026</td>
+                  <td style="font-family:'Source Code Pro',monospace;font-size:12.5px;">—</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">Alerts & Action Items</div>
+            <div class="panel-action">Mark All Read</div>
+          </div>
+          <div class="panel-body">
+            <div class="alert-item">
+              <div class="alert-dot red"></div>
+              <div>
+                <div class="alert-text"><strong>Priya Nair</strong> — DOL audit response due in 15 days. Upload recruitment documentation.</div>
+                <div class="alert-time">Action required · Mar 18, 2026</div>
+              </div>
+            </div>
+            <div class="alert-item">
+              <div class="alert-dot amber"></div>
+              <div>
+                <div class="alert-text"><strong>Aisha Okonkwo</strong> — H-1B expires Jun 12. Extension filing auto-triggered. Attorney review pending.</div>
+                <div class="alert-time">Review required · Mar 5, 2026</div>
+              </div>
+            </div>
+            <div class="alert-item">
+              <div class="alert-dot blue"></div>
+              <div>
+                <div class="alert-text"><strong>Arjun Mehta</strong> — I-140 premium processing response window opens Apr 1.</div>
+                <div class="alert-time">Upcoming · Apr 1, 2026</div>
+              </div>
+            </div>
+            <div class="alert-item">
+              <div class="alert-dot green"></div>
+              <div>
+                <div class="alert-text"><strong>Wei Zhang</strong> — I-485 biometrics appointment scheduled for Mar 20 at San Jose ASC.</div>
+                <div class="alert-time">Confirmed · Mar 20, 2026</div>
+              </div>
+            </div>
+            <div class="alert-item">
+              <div class="alert-dot blue"></div>
+              <div>
+                <div class="alert-text"><strong>Visa Bulletin Mar 2026</strong> — EB-2 India advanced 2 months to Jan 1, 2013.</div>
+                <div class="alert-time">Published today · Mar 3, 2026</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════ FILING TOOLS ════════════ -->
+<div class="page" id="page-checklist">
+  <div class="checklist-page">
+    <div class="section-divider"></div>
+    <div class="section-title">Document Checklist & Filing Validation</div>
+    <div class="section-sub">Pre-flight checklist for each handoff stage — validated submissions only advance to the next phase</div>
+
+    <div style="background:var(--amber-light);border:1px solid var(--amber);border-radius:5px;padding:14px 20px;margin-bottom:28px;font-size:13.5px;color:var(--amber);display:flex;gap:10px;align-items:center;">
+      <span style="font-size:18px;">⚠️</span>
+      <span><strong>Pre-Flight Validation Active:</strong> System is checking all pending submissions against 20 RFE trigger rules. 1 inconsistency flagged in the PERM queue — review before submission.</span>
+    </div>
+
+    <div class="checklist-grid">
+      <!-- PWD -->
+      <div class="checklist-card">
+        <div class="checklist-card-header">
+          <div class="phase-num">1</div>
+          <div><h3>PWD — Prevailing Wage</h3><div style="font-size:11.5px;color:rgba(255,255,255,0.55);margin-top:2px;">DOL iCERT Submission</div></div>
+        </div>
+        <div class="checklist-items">
+          <div class="checklist-item"><div class="check-box checked" onclick="toggleCheck(this)">✓</div><div class="check-item-label done">ETA-9141 Form — complete all fields</div><div class="check-item-req">REQ</div></div>
+          <div class="checklist-item"><div class="check-box checked" onclick="toggleCheck(this)">✓</div><div class="check-item-label done">SOC code selection with job duties narrative</div><div class="check-item-req">REQ</div></div>
+          <div class="checklist-item"><div class="check-box checked" onclick="toggleCheck(this)">✓</div><div class="check-item-label done">Employer wage rate documentation</div><div class="check-item-req">REQ</div></div>
+          <div class="checklist-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-item-label">OFLC wage survey data (if applicable)</div><div class="check-item-opt">OPT</div></div>
+          <div class="checklist-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-item-label">iCERT account access verified</div><div class="check-item-req">REQ</div></div>
+        </div>
+      </div>
+
+      <!-- PERM -->
+      <div class="checklist-card">
+        <div class="checklist-card-header">
+          <div class="phase-num">2</div>
+          <div><h3>PERM — Labor Certification</h3><div style="font-size:11.5px;color:rgba(255,255,255,0.55);margin-top:2px;">DOL ETA-9089</div></div>
+        </div>
+        <div class="checklist-items">
+          <div class="checklist-item"><div class="check-box checked" onclick="toggleCheck(this)">✓</div><div class="check-item-label done">Prevailing Wage Determination (valid)</div><div class="check-item-req">REQ</div></div>
+          <div class="checklist-item"><div class="check-box checked" onclick="toggleCheck(this)">✓</div><div class="check-item-label done">Supervised recruitment record (30 days)</div><div class="check-item-req">REQ</div></div>
+          <div class="checklist-item"><div class="check-box" onclick="toggleCheck(this)" style="border-color:var(--red);"></div><div class="check-item-label" style="color:var(--red);">⚠ Job description consistency check — FLAG</div><div class="check-item-req">REQ</div></div>
+          <div class="checklist-item"><div class="check-box checked" onclick="toggleCheck(this)">✓</div><div class="check-item-label done">Sunday newspaper ad (2 separate Sundays)</div><div class="check-item-req">REQ</div></div>
+          <div class="checklist-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-item-label">Notice of Filing (posted 30 days)</div><div class="check-item-req">REQ</div></div>
+          <div class="checklist-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-item-label">U.S. worker rejection documentation</div><div class="check-item-req">REQ</div></div>
+        </div>
+      </div>
+
+      <!-- I-140 -->
+      <div class="checklist-card">
+        <div class="checklist-card-header">
+          <div class="phase-num">3</div>
+          <div><h3>I-140 — Immigrant Petition</h3><div style="font-size:11.5px;color:rgba(255,255,255,0.55);margin-top:2px;">USCIS Filing</div></div>
+        </div>
+        <div class="checklist-items">
+          <div class="checklist-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-item-label">Approved PERM certification (ETA-9089)</div><div class="check-item-req">REQ</div></div>
+          <div class="checklist-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-item-label">Evidence of ability to pay (tax returns / audited financials)</div><div class="check-item-req">REQ</div></div>
+          <div class="checklist-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-item-label">Beneficiary degree credential (NACES eval if foreign)</div><div class="check-item-req">REQ</div></div>
+          <div class="checklist-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-item-label">Expert opinion letter (if EB-2 NIW)</div><div class="check-item-opt">OPT</div></div>
+          <div class="checklist-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-item-label">Filing fee ($715 standard / $2,805 premium)</div><div class="check-item-req">REQ</div></div>
+        </div>
+      </div>
+
+      <!-- I-485 -->
+      <div class="checklist-card">
+        <div class="checklist-card-header">
+          <div class="phase-num">4</div>
+          <div><h3>I-485 — Adjustment of Status</h3><div style="font-size:11.5px;color:rgba(255,255,255,0.55);margin-top:2px;">USCIS (when PD current)</div></div>
+        </div>
+        <div class="checklist-items">
+          <div class="checklist-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-item-label">Approved I-140 (or concurrent filing)</div><div class="check-item-req">REQ</div></div>
+          <div class="checklist-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-item-label">Current priority date (visa bulletin check)</div><div class="check-item-req">REQ</div></div>
+          <div class="checklist-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-item-label">Medical exam (Form I-693, sealed)</div><div class="check-item-req">REQ</div></div>
+          <div class="checklist-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-item-label">Biographic forms (G-325A)</div><div class="check-item-req">REQ</div></div>
+          <div class="checklist-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-item-label">EAD/AP (I-765/I-131) concurrent</div><div class="check-item-opt">REC</div></div>
+          <div class="checklist-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-item-label">Affidavit of support (if applicable)</div><div class="check-item-opt">OPT</div></div>
+        </div>
+      </div>
+
+      <!-- H-1B Extension -->
+      <div class="checklist-card">
+        <div class="checklist-card-header">
+          <div class="phase-num">★</div>
+          <div><h3>H-1B Extension (I-129)</h3><div style="font-size:11.5px;color:rgba(255,255,255,0.55);margin-top:2px;">Auto-triggered 90 days before expiry</div></div>
+        </div>
+        <div class="checklist-items">
+          <div class="checklist-item"><div class="check-box checked" onclick="toggleCheck(this)">✓</div><div class="check-item-label done">Current H-1B approval notice (I-797)</div><div class="check-item-req">REQ</div></div>
+          <div class="checklist-item"><div class="check-box checked" onclick="toggleCheck(this)">✓</div><div class="check-item-label done">Updated LCA (new 3-year period)</div><div class="check-item-req">REQ</div></div>
+          <div class="checklist-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-item-label">Continued employment letter</div><div class="check-item-req">REQ</div></div>
+          <div class="checklist-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-item-label">Updated pay stubs (3 most recent)</div><div class="check-item-req">REQ</div></div>
+          <div class="checklist-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-item-label">Pending I-140 receipt notice (if 240-day rule applies)</div><div class="check-item-opt">OPT</div></div>
+        </div>
+      </div>
+
+      <!-- RFE Response -->
+      <div class="checklist-card">
+        <div class="checklist-card-header" style="background:var(--red);">
+          <div class="phase-num" style="background:rgba(255,255,255,0.2);">!</div>
+          <div><h3>RFE Response Kit</h3><div style="font-size:11.5px;color:rgba(255,255,255,0.55);margin-top:2px;">If Request for Evidence issued</div></div>
+        </div>
+        <div class="checklist-items">
+          <div class="checklist-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-item-label">Original RFE notice (note response deadline)</div><div class="check-item-req">REQ</div></div>
+          <div class="checklist-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-item-label">Point-by-point response letter (attorney drafted)</div><div class="check-item-req">REQ</div></div>
+          <div class="checklist-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-item-label">Supporting documentation (per RFE specifics)</div><div class="check-item-req">REQ</div></div>
+          <div class="checklist-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-item-label">Expert opinion letter (specialty occupation)</div><div class="check-item-opt">OPT</div></div>
+          <div class="checklist-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-item-label">Submit via certified mail or USCIS e-filing</div><div class="check-item-req">REQ</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════ EMPLOYER PORTAL ════════════ -->
+<div class="page" id="page-employer">
+  <div class="portal-page">
+    <div class="section-divider"></div>
+    <div class="section-title">Employer & HR Tools</div>
+    <div class="section-sub">Automation and decision-support tools for HR teams managing immigration sponsorship</div>
+
+    <div class="portal-grid">
+      <div class="tool-card">
+        <div class="tool-card-header">
+          <div>
+            <div class="tool-tag tool-tag-new">AUTOMATED</div>
+          </div>
+        </div>
+        <h3>H-1B Extension Auto-Trigger</h3>
+        <p>Integrated with your HRIS, this tool monitors all active H-1B employees and auto-initiates extension filings 90 days before visa expiration — sending layered alerts to HR, legal, and the employee at 180, 90, and 30-day marks.</p>
+        <div class="tool-metric">
+          <div class="metric-item"><div class="metric-val">0</div><div class="metric-label">Missed deadlines since launch</div></div>
+          <div class="metric-item"><div class="metric-val">50%</div><div class="metric-label">Faster per-extension processing</div></div>
+        </div>
+      </div>
+
+      <div class="tool-card">
+        <div class="tool-card-header">
+          <div><div class="tool-tag tool-tag-new">ACTIVE</div></div>
+        </div>
+        <h3>PERM Audit Risk Scorer</h3>
+        <p>Uses DOL historical data to generate a probabilistic forecast of your case timeline and flags the top audit risk triggers specific to your job description, recruitment record, and wage level before you file.</p>
+        <div class="tool-metric">
+          <div class="metric-item"><div class="metric-val">3%</div><div class="metric-label">Audit rate (platform avg.)</div></div>
+          <div class="metric-item"><div class="metric-val">15%</div><div class="metric-label">Industry baseline</div></div>
+        </div>
+      </div>
+
+      <div class="tool-card">
+        <div class="tool-card-header">
+          <div><div class="tool-tag tool-tag-beta">BETA</div></div>
+        </div>
+        <h3>STEM Talent Market Diagnostic</h3>
+        <p>Benchmarks local STEM talent supply against your compensation offers, helping you distinguish genuine talent scarcity from pricing or sourcing gaps before initiating the sponsorship process.</p>
+        <div class="tool-metric">
+          <div class="metric-item"><div class="metric-val">14</div><div class="metric-label">Metro markets covered</div></div>
+          <div class="metric-item"><div class="metric-val">200+</div><div class="metric-label">SOC codes benchmarked</div></div>
+        </div>
+      </div>
+
+      <div class="tool-card">
+        <div class="tool-card-header">
+          <div><div class="tool-tag tool-tag-new">ACTIVE</div></div>
+        </div>
+        <h3>Sponsorship Commitment Manager</h3>
+        <p>A structured internal policy template and standardized offer letter addendum that defines what sponsorship means, what it doesn't guarantee, and the full timeline — setting honest expectations from day one and reducing employee trust issues.</p>
+        <div class="tool-metric">
+          <div class="metric-item"><div class="metric-val">80%</div><div class="metric-label">Reduction in dropped handoffs</div></div>
+          <div class="metric-item"><div class="metric-val">↑ NPS</div><div class="metric-label">Sponsored employee satisfaction</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cost Calculator -->
+    <div class="calculator">
+      <div class="section-divider"></div>
+      <div style="font-family:'Playfair Display',serif;font-size:20px;color:var(--navy);margin-bottom:4px;">Sponsorship Cost Calculator</div>
+      <div style="font-size:13.5px;color:var(--gray-400);margin-bottom:28px;">Estimate total cost of employer sponsorship before extending an offer</div>
+      <div class="calc-grid">
+        <div>
+          <div class="calc-input-group">
+            <label class="calc-label">Visa Category</label>
+            <select class="calc-input" onchange="calcUpdate()">
+              <option>H-1B (Initial)</option>
+              <option>H-1B (Extension)</option>
+              <option>H-1B + PERM + I-140</option>
+              <option>Full EB-2 Sponsorship</option>
+              <option selected>Full EB-3 Sponsorship</option>
+            </select>
+          </div>
+          <div class="calc-input-group">
+            <label class="calc-label">Company Size</label>
+            <select class="calc-input" onchange="calcUpdate()">
+              <option>Small (1–25 employees) — SMB rate</option>
+              <option selected>Mid-size (26–500 employees)</option>
+              <option>Enterprise (500+ employees)</option>
+            </select>
+          </div>
+          <div class="calc-input-group">
+            <label class="calc-label">Premium Processing?</label>
+            <select class="calc-input" onchange="calcUpdate()">
+              <option>No — standard processing</option>
+              <option selected>Yes — I-140 premium ($2,805)</option>
+              <option>Yes — I-129 + I-140 premium</option>
+            </select>
+          </div>
+          <div class="calc-input-group">
+            <label class="calc-label">Extensions Projected (3-yr cycles)</label>
+            <select class="calc-input" onchange="calcUpdate()">
+              <option>1 extension</option>
+              <option selected>2 extensions</option>
+              <option>3+ extensions</option>
+            </select>
+          </div>
+        </div>
+        <div class="calc-result" id="calcResult">
+          <div class="calc-result-label">Estimated Total Cost</div>
+          <div class="calc-result-total">$28,400–$36,200</div>
+          <div class="calc-breakdown-item"><span class="calc-breakdown-label">USCIS Filing Fees</span><span class="calc-breakdown-val">$5,460</span></div>
+          <div class="calc-breakdown-item"><span class="calc-breakdown-label">Premium Processing</span><span class="calc-breakdown-val">$2,805</span></div>
+          <div class="calc-breakdown-item"><span class="calc-breakdown-label">Attorney Fees (PERM)</span><span class="calc-breakdown-val">$4,500–$6,000</span></div>
+          <div class="calc-breakdown-item"><span class="calc-breakdown-label">Attorney Fees (I-140/I-485)</span><span class="calc-breakdown-val">$5,000–$8,000</span></div>
+          <div class="calc-breakdown-item"><span class="calc-breakdown-label">HR Staff Time (est.)</span><span class="calc-breakdown-val">$2,400–$3,600</span></div>
+          <div class="calc-breakdown-item"><span class="calc-breakdown-label">Extensions (×2)</span><span class="calc-breakdown-val">$8,200–$10,400</span></div>
+          <div style="margin-top:12px;font-size:11px;color:rgba(255,255,255,0.35);line-height:1.5;">Estimates based on current USCIS fee schedule and market attorney rates. Does not include translation, medical exam, or applicant personal costs.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════ APPLICANT PORTAL ════════════ -->
+<div class="page" id="page-applicant">
+  <div class="applicant-hero">
+    <div class="applicant-hero-inner">
+      <div style="font-size:12px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.45);margin-bottom:8px;">Applicant Portal</div>
+      <h2>Welcome back, Arjun Mehta</h2>
+      <p>Your I-140 petition is currently under USCIS review. Your next required action is to confirm your current address and prepare biometric readiness documents.</p>
+      <div class="progress-track">
+        <div class="progress-step">
+          <div class="p-dot done">✓</div>
+          <div class="p-text"><div class="p-text-label">H-1B</div><div class="p-text-status">Approved</div></div>
+        </div>
+        <div class="progress-step">
+          <div class="p-dot done">✓</div>
+          <div class="p-text"><div class="p-text-label">PERM</div><div class="p-text-status">Certified</div></div>
+        </div>
+        <div class="progress-step">
+          <div class="p-dot now">3</div>
+          <div class="p-text"><div class="p-text-label">I-140</div><div class="p-text-status">In Review</div></div>
+        </div>
+        <div class="progress-step">
+          <div class="p-dot future">4</div>
+          <div class="p-text"><div class="p-text-label">PD Wait</div><div class="p-text-status">Pending</div></div>
+        </div>
+        <div class="progress-step">
+          <div class="p-dot future">5</div>
+          <div class="p-text"><div class="p-text-label">I-485</div><div class="p-text-status">Not started</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="applicant-content">
+    <div class="applicant-grid">
+      <div>
+        <!-- Case Summary -->
+        <div class="panel" style="margin-bottom:20px;">
+          <div class="panel-header"><div class="panel-title">Case Summary</div><div class="panel-action">Download PDF</div></div>
+          <div class="panel-body">
+            <div class="info-row"><span class="info-label">Case Type</span><span class="info-value">EB-2 Employment-Based Green Card</span></div>
+            <div class="info-row"><span class="info-label">Sponsor</span><span class="info-value">Acme Technologies Inc.</span></div>
+            <div class="info-row"><span class="info-label">Country of Birth</span><span class="info-value">India — EB-2 backlog applies</span></div>
+            <div class="info-row"><span class="info-label">Priority Date</span><span class="info-value" style="font-family:'Source Code Pro',monospace;">January 1, 2013</span></div>
+            <div class="info-row"><span class="info-label">Current Bulletin Date (EB-2 India)</span><span class="info-value" style="font-family:'Source Code Pro',monospace;">January 1, 2013 ✅ Current</span></div>
+            <div class="info-row"><span class="info-label">I-140 Receipt #</span><span class="info-value" style="font-family:'Source Code Pro',monospace;">WAC-26-012-XXXXX</span></div>
+            <div class="info-row"><span class="info-label">Attorney of Record</span><span class="info-value">Martinez & Lim LLP</span></div>
+            <div class="info-row"><span class="info-label">Next Action Required</span><span class="info-value" style="color:var(--amber);">Confirm address by Apr 1, 2026</span></div>
+          </div>
+        </div>
+
+        <!-- Self-service sections -->
+        <div class="panel">
+          <div class="panel-header"><div class="panel-title">Self-Service Sections</div><div class="panel-action">Resume Wizard</div></div>
+          <div class="panel-body">
+            <div style="font-size:13px;color:var(--gray-600);margin-bottom:16px;">Complete these sections independently — your attorney will review before submission.</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+              <div style="border:1px solid var(--gray-200);border-radius:5px;padding:14px;">
+                <div style="font-size:12px;font-weight:700;color:var(--green);margin-bottom:4px;">✓ COMPLETE</div>
+                <div style="font-weight:600;font-size:13.5px;color:var(--navy);">Biographical Data</div>
+                <div style="font-size:12px;color:var(--gray-400);margin-top:3px;">Name, DOB, address history</div>
+              </div>
+              <div style="border:1px solid var(--gray-200);border-radius:5px;padding:14px;">
+                <div style="font-size:12px;font-weight:700;color:var(--green);margin-bottom:4px;">✓ COMPLETE</div>
+                <div style="font-weight:600;font-size:13.5px;color:var(--navy);">Employment History</div>
+                <div style="font-size:12px;color:var(--gray-400);margin-top:3px;">10-year employment record</div>
+              </div>
+              <div style="border:1px solid var(--gray-200);border-radius:5px;padding:14px;">
+                <div style="font-size:12px;font-weight:700;color:var(--amber);margin-bottom:4px;">⚠ NEEDS UPDATE</div>
+                <div style="font-weight:600;font-size:13.5px;color:var(--navy);">Address History</div>
+                <div style="font-size:12px;color:var(--gray-400);margin-top:3px;">Current address needs confirmation</div>
+              </div>
+              <div style="border:1px solid var(--gray-200);border-radius:5px;padding:14px;">
+                <div style="font-size:12px;font-weight:700;color:var(--gray-400);margin-bottom:4px;">— NOT STARTED</div>
+                <div style="font-weight:600;font-size:13.5px;color:var(--navy);">Travel History</div>
+                <div style="font-size:12px;color:var(--gray-400);margin-top:3px;">International travel since I-94</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Timeline -->
+      <div>
+        <div class="panel">
+          <div class="panel-header"><div class="panel-title">Case Timeline</div></div>
+          <div class="panel-body">
+            <div class="timeline-list">
+              <div class="tl-item">
+                <div class="tl-dot done">✓</div>
+                <div class="tl-content">
+                  <div class="tl-title">H-1B Approved</div>
+                  <div class="tl-desc">USCIS approved I-129 petition. 3-year validity.</div>
+                  <div class="tl-date">Oct 1, 2022</div>
+                </div>
+              </div>
+              <div class="tl-item">
+                <div class="tl-dot done">✓</div>
+                <div class="tl-content">
+                  <div class="tl-title">PWD Issued</div>
+                  <div class="tl-desc">DOL issued prevailing wage: $168,500/yr (Level III)</div>
+                  <div class="tl-date">Mar 15, 2023</div>
+                </div>
+              </div>
+              <div class="tl-item">
+                <div class="tl-dot done">✓</div>
+                <div class="tl-content">
+                  <div class="tl-title">PERM Filed</div>
+                  <div class="tl-desc">ETA-9089 submitted to DOL via iCERT.</div>
+                  <div class="tl-date">Aug 3, 2023</div>
+                </div>
+              </div>
+              <div class="tl-item">
+                <div class="tl-dot done">✓</div>
+                <div class="tl-content">
+                  <div class="tl-title">PERM Certified</div>
+                  <div class="tl-desc">DOL certified labor certification. Priority date established.</div>
+                  <div class="tl-date">Feb 20, 2024</div>
+                </div>
+              </div>
+              <div class="tl-item">
+                <div class="tl-dot done">✓</div>
+                <div class="tl-content">
+                  <div class="tl-title">I-140 Filed</div>
+                  <div class="tl-desc">Premium processing elected. USCIS receipt issued.</div>
+                  <div class="tl-date">Apr 1, 2024</div>
+                </div>
+              </div>
+              <div class="tl-item">
+                <div class="tl-dot active">→</div>
+                <div class="tl-content">
+                  <div class="tl-title">I-140 Pending Decision</div>
+                  <div class="tl-desc">Under USCIS review. Expected by Apr 15, 2026.</div>
+                  <div class="tl-date">Expected: Apr 15, 2026</div>
+                </div>
+              </div>
+              <div class="tl-item">
+                <div class="tl-dot pending">4</div>
+                <div class="tl-content">
+                  <div class="tl-title">Priority Date Becomes Current</div>
+                  <div class="tl-desc">Monitor monthly visa bulletin. EB-2 India: Jan 2013.</div>
+                  <div class="tl-date">Est. 2026–2027</div>
+                </div>
+              </div>
+              <div class="tl-item">
+                <div class="tl-dot pending">5</div>
+                <div class="tl-content">
+                  <div class="tl-title">I-485 Adjustment of Status</div>
+                  <div class="tl-desc">Filed when priority date is current. EAD/AP concurrent.</div>
+                  <div class="tl-date">TBD</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel" style="margin-top:20px;">
+          <div class="panel-header"><div class="panel-title">Visa Bulletin Tracker</div></div>
+          <div class="panel-body">
+            <div style="background:var(--green-light);border-radius:5px;padding:14px 16px;margin-bottom:14px;">
+              <div style="font-size:12px;font-weight:700;color:var(--green);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:4px;">✅ Priority Date Is Current</div>
+              <div style="font-size:13px;color:var(--green);">EB-2 India bulletin date (Jan 1, 2013) has reached your priority date. File I-485 upon I-140 approval.</div>
+            </div>
+            <div class="info-row"><span class="info-label">Your Priority Date</span><span class="info-value" style="font-family:'Source Code Pro',monospace;">Jan 1, 2013</span></div>
+            <div class="info-row"><span class="info-label">Current Bulletin Date</span><span class="info-value" style="font-family:'Source Code Pro',monospace;">Jan 1, 2013</span></div>
+            <div class="info-row"><span class="info-label">Last Month Movement</span><span class="info-value" style="color:var(--green);">+2 months</span></div>
+            <div class="info-row"><span class="info-label">Alert Subscription</span><span class="info-value" style="color:var(--green);">✓ Email + SMS active</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════ POLICY & REFORM ════════════ -->
+<div class="page" id="page-policy">
+  <div class="policy-page">
+    <div class="policy-hero-band">
+      <div style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold-light);margin-bottom:12px;">Policy & System Reform</div>
+      <h2>Reforming the H-1B → Green Card System</h2>
+      <p>The current immigration system creates unnecessary delays, backlogs, and administrative burden for employers and applicants alike. These proposals — spanning technology, policy, and domestic pipeline investment — represent evidence-based paths to a more functional system.</p>
+    </div>
+
+    <div class="section-divider"></div>
+    <div style="font-family:'Playfair Display',serif;font-size:24px;color:var(--navy);margin-bottom:6px;">Technology & Process Reforms</div>
+    <div style="font-size:14px;color:var(--gray-400);margin-bottom:24px;">Platform capabilities that reduce RFEs, backlogs, and administrative friction</div>
+    <div class="reform-grid" style="margin-bottom:40px;">
+      <div class="reform-card">
+        <div class="reform-card-top">
+          <div class="reform-area">Filing Automation</div>
+          <h3>Automated Cross-Form Consistency Validation</h3>
+          <p>Run ML-based checks on all concurrent forms to flag terminology mismatches and data contradictions before submission — targeting 90%+ of RFE-triggering errors at filing time rather than 3–6 months into adjudication.</p>
+        </div>
+        <div class="reform-card-footer">
+          <span class="impact-pill impact-high">High Impact</span>
+          <span class="reform-benefit">RFE rate: 25% → &lt;5%</span>
+        </div>
+      </div>
+      <div class="reform-card">
+        <div class="reform-card-top">
+          <div class="reform-area">USCIS Operations</div>
+          <h3>Predictive Workload Modeling for H-1B Season</h3>
+          <p>Apply predictive analytics to anticipate high-volume filing periods (particularly April H-1B cap season) and pre-position staff and adjudicator resources, increasing USCIS productivity by an estimated 45%.</p>
+        </div>
+        <div class="reform-card-footer">
+          <span class="impact-pill impact-high">High Impact</span>
+          <span class="reform-benefit">+45% productivity est.</span>
+        </div>
+      </div>
+      <div class="reform-card">
+        <div class="reform-card-top">
+          <div class="reform-area">Case Management</div>
+          <h3>Unified Cross-Agency Case Record System</h3>
+          <p>A centralized, end-to-end system of record per applicant that stores and syncs all documents across OPT, H-1B, and Green Card stages — eliminating duplicate submissions and creating a single source of truth across DOL, USCIS, and DOS.</p>
+        </div>
+        <div class="reform-card-footer">
+          <span class="impact-pill impact-high">High Impact</span>
+          <span class="reform-benefit">Eliminates redundant re-filing</span>
+        </div>
+      </div>
+      <div class="reform-card">
+        <div class="reform-card-top">
+          <div class="reform-area">Digital Infrastructure</div>
+          <h3>Fully Digital Document Management</h3>
+          <p>Transition USCIS from hybrid paper/digital processing to a fully digital document management system — eliminating physical printing, scanning, and paper storage while enabling uniform processing of all submission types.</p>
+        </div>
+        <div class="reform-card-footer">
+          <span class="impact-pill impact-med">Medium Impact</span>
+          <span class="reform-benefit">30+ min saved per application</span>
+        </div>
+      </div>
+      <div class="reform-card">
+        <div class="reform-card-top">
+          <div class="reform-area">Adjudicator Training</div>
+          <h3>Simulation-Based Adjudicator Training</h3>
+          <p>Introduce digital case simulations and real-world scenario exercises allowing USCIS trainees to practice adjudicating complex cases safely before independent work, reducing inconsistent outcomes.</p>
+        </div>
+        <div class="reform-card-footer">
+          <span class="impact-pill impact-med">Medium Impact</span>
+          <span class="reform-benefit">Reduces inconsistent outcomes</span>
+        </div>
+      </div>
+      <div class="reform-card">
+        <div class="reform-card-top">
+          <div class="reform-area">Funding Stability</div>
+          <h3>Supplemental USCIS Funding Mechanisms</h3>
+          <p>Explore government appropriations and reserve accounts to stabilize USCIS operations during fee-revenue fluctuations — targeting a 20% increase in sustainable operational funding and reducing processing time variance.</p>
+        </div>
+        <div class="reform-card-footer">
+          <span class="impact-pill impact-med">Medium Impact</span>
+          <span class="reform-benefit">+20% funding stability est.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-divider"></div>
+    <div style="font-family:'Playfair Display',serif;font-size:24px;color:var(--navy);margin-bottom:6px;">OPT & Pipeline Oversight</div>
+    <div style="font-size:14px;color:var(--gray-400);margin-bottom:24px;">Structural reforms to align international student pipelines with domestic labor market realities</div>
+    <div class="reform-grid" style="margin-bottom:40px;">
+      <div class="reform-card">
+        <div class="reform-card-top">
+          <div class="reform-area">OPT / H-1B Alignment</div>
+          <h3>Align OPT Intake with H-1B Capacity</h3>
+          <p>Implement regulatory controls that pace the annual entry of 100,000+ OPT workers into the system relative to the 85,000 H-1B cap — reducing structural oversupply mismatches and improving transition rates.</p>
+        </div>
+        <div class="reform-card-footer">
+          <span class="impact-pill impact-high">Policy Priority</span>
+          <span class="reform-benefit">Systemic rebalancing</span>
+        </div>
+      </div>
+      <div class="reform-card">
+        <div class="reform-card-top">
+          <div class="reform-area">Federal Oversight</div>
+          <h3>Expand ICE SEVP Field Representation</h3>
+          <p>Scale federal oversight capacity across ~9,000 SEVP-certified universities by increasing ICE SEVP field representatives beyond the current ~60 and establishing structured audit cycles for consistent monitoring.</p>
+        </div>
+        <div class="reform-card-footer">
+          <span class="impact-pill impact-high">Policy Priority</span>
+          <span class="reform-benefit">9,000 universities at risk</span>
+        </div>
+      </div>
+      <div class="reform-card">
+        <div class="reform-card-top">
+          <div class="reform-area">Compliance</div>
+          <h3>Standardize DSO Training & Certification</h3>
+          <p>Address the 37.1% DSO turnover rate by implementing standardized national training and certification programs, ensuring consistent understanding and enforcement of OPT regulations across all institutions.</p>
+        </div>
+        <div class="reform-card-footer">
+          <span class="impact-pill impact-med">Operational</span>
+          <span class="reform-benefit">37.1% turnover problem</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-divider"></div>
+    <div style="font-family:'Playfair Display',serif;font-size:24px;color:var(--navy);margin-bottom:6px;">Domestic STEM Pipeline</div>
+    <div style="font-size:14px;color:var(--gray-400);margin-bottom:24px;">Long-term investments to grow domestic talent supply and reduce structural reliance on foreign labor</div>
+    <div class="reform-grid">
+      <div class="reform-card">
+        <div class="reform-card-top">
+          <div class="reform-area">Higher Education</div>
+          <h3>Reduce Graduate School Tuition Costs</h3>
+          <p>Lower the cost barrier to graduate STEM education to increase domestic enrollment. Include career fairs targeted at undergraduate students to build aspiration pipelines toward advanced degrees in high-demand fields.</p>
+        </div>
+        <div class="reform-card-footer">
+          <span class="impact-pill impact-high">Long-Term</span>
+          <span class="reform-benefit">Structural supply investment</span>
+        </div>
+      </div>
+      <div class="reform-card">
+        <div class="reform-card-top">
+          <div class="reform-area">Federal Funding</div>
+          <h3>Strengthen Federal Higher Education Support</h3>
+          <p>Expand student loan forgiveness and targeted federal funding for domestic students pursuing STEM graduate programs, creating direct financial incentives to close the talent supply gap without reliance on immigration.</p>
+        </div>
+        <div class="reform-card-footer">
+          <span class="impact-pill impact-high">Long-Term</span>
+          <span class="reform-benefit">Reduces sponsorship dependency</span>
+        </div>
+      </div>
+      <div class="reform-card">
+        <div class="reform-card-top">
+          <div class="reform-area">Workplace Integration</div>
+          <h3>Sponsored Experience for Domestic Students</h3>
+          <p>Enable universities and government agencies to formally certify field experience for domestic students, creating competitive practical experience pathways that position domestic graduates alongside internationally trained talent.</p>
+        </div>
+        <div class="reform-card-footer">
+          <span class="impact-pill impact-med">Medium-Term</span>
+          <span class="reform-benefit">Experience gap remedy</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <strong>VisaPath</strong> — Employer Immigration Platform · Mock concept site for academic/policy research · Not legal advice · 
+  All case data is fictional · Built for H-1B → Green Card process illustration
+</footer>
+
+<script>
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  const navEl = document.getElementById('nav-' + id);
+  if (navEl) navEl.classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function toggleCheck(el) {
+  if (el.classList.contains('checked')) {
+    el.classList.remove('checked');
+    el.textContent = '';
+    const label = el.nextElementSibling;
+    if (label) label.classList.remove('done');
+  } else {
+    el.classList.add('checked');
+    el.textContent = '✓';
+    const label = el.nextElementSibling;
+    if (label) label.classList.add('done');
+  }
+}
+
+function calcUpdate() {
+  // Simple static response for demo
+}
+
+function wizardNext(el) {
+  const modal = el.closest('.wizard-modal');
+  modal.innerHTML = `
+    <button class="wizard-close" onclick="document.getElementById('wizardOverlay').classList.remove('open')">✕</button>
+    <h3>Eligibility Result</h3>
+    <p style="margin-bottom:18px;">Based on your answers, this position <strong style="color:var(--green)">appears to qualify</strong> for H-1B specialty occupation sponsorship.</p>
+    <div style="background:var(--green-light);border-radius:5px;padding:16px;margin-bottom:20px;">
+      <div style="font-weight:700;color:var(--green);margin-bottom:6px;">✅ Recommend proceeding to PERM assessment</div>
+      <div style="font-size:13px;color:var(--green);">Next step: Confirm SOC code alignment and prevailing wage with your immigration attorney before filing LCA.</div>
+    </div>
+    <button class="btn-primary" style="width:100%;padding:13px;" onclick="document.getElementById('wizardOverlay').classList.remove('open');showPage('employer');">Open Sponsorship Cost Calculator →</button>
+  `;
+}
+</script>
+
+<!-- ════════════ SMART FORM — ONE SOURCE OF TRUTH ════════════ -->
+<div class="page" id="page-smartform">
+<style>
+.sf-wrap { max-width: 1100px; margin: 0 auto; padding: 48px 32px; }
+.sf-hero { background: linear-gradient(135deg, var(--navy) 0%, #1a3a6b 100%); border-radius: 8px; padding: 36px 40px; color: var(--white); margin-bottom: 36px; position: relative; overflow: hidden; }
+.sf-hero::before { content: '∞'; position: absolute; right: 40px; top: -20px; font-size: 160px; color: rgba(255,255,255,0.04); line-height: 1; }
+.sf-hero-tag { display: inline-block; background: rgba(184,149,42,0.25); border: 1px solid var(--gold); color: var(--gold-light); font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; padding: 4px 12px; border-radius: 2px; margin-bottom: 14px; }
+.sf-hero h2 { font-family: 'Playfair Display', serif; font-size: 28px; margin-bottom: 10px; }
+.sf-hero p { color: rgba(255,255,255,0.65); font-size: 15px; max-width: 620px; line-height: 1.7; }
+.forms-badge-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
+.form-badge { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: rgba(255,255,255,0.85); font-size: 11.5px; font-weight: 600; padding: 4px 12px; border-radius: 12px; }
+.form-badge.ready { background: rgba(26,107,69,0.3); border-color: var(--green); color: #6ee7b0; }
+
+.sf-progress-bar { background: var(--white); border: 1px solid var(--gray-200); border-radius: 6px; padding: 20px 28px; margin-bottom: 28px; display: flex; align-items: center; gap: 0; box-shadow: var(--shadow-sm); }
+.sf-step { display: flex; align-items: center; flex: 1; gap: 8px; }
+.sf-step-num { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; flex-shrink: 0; }
+.sf-step-num.done { background: var(--navy); color: var(--white); }
+.sf-step-num.active { background: var(--gold); color: var(--white); }
+.sf-step-num.pending { background: var(--gray-200); color: var(--gray-400); }
+.sf-step-label { font-size: 12.5px; font-weight: 600; color: var(--navy); }
+.sf-step-sub { font-size: 11px; color: var(--gray-400); }
+.sf-step-arrow { color: var(--gray-300); font-size: 14px; margin: 0 4px; flex-shrink: 0; }
+
+.sf-body { display: grid; grid-template-columns: 200px 1fr; gap: 24px; }
+.sf-nav { }
+.sf-nav-item { display: flex; align-items: center; gap: 8px; padding: 10px 14px; border-radius: 5px; font-size: 13px; font-weight: 500; color: var(--gray-600); cursor: pointer; margin-bottom: 4px; transition: all 0.15s; border: 1px solid transparent; }
+.sf-nav-item:hover { background: var(--gray-100); color: var(--navy); }
+.sf-nav-item.active { background: var(--navy); color: var(--white); border-color: var(--navy); }
+.sf-nav-item.complete { color: var(--green); border-color: var(--green-light); background: var(--green-light); }
+.sf-nav-dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
+
+.sf-panel { background: var(--white); border: 1px solid var(--gray-200); border-radius: 6px; box-shadow: var(--shadow-sm); overflow: hidden; }
+.sf-panel-header { padding: 20px 28px; border-bottom: 1px solid var(--gray-200); display: flex; align-items: center; justify-content: space-between; }
+.sf-panel-title { font-family: 'Playfair Display', serif; font-size: 18px; color: var(--navy); }
+.sf-panel-meta { font-size: 12px; color: var(--gray-400); }
+.sf-propagates { display: flex; flex-wrap: wrap; gap: 6px; }
+.sf-prop-tag { font-size: 10.5px; font-weight: 600; background: #dbeafe; color: var(--blue-accent); padding: 2px 9px; border-radius: 10px; }
+
+.sf-form { padding: 28px; }
+.sf-row { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 18px; }
+.sf-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 18px; }
+.sf-row-full { margin-bottom: 18px; }
+.sf-field { }
+.sf-label { font-size: 12px; font-weight: 700; color: var(--gray-600); letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 5px; display: flex; align-items: center; gap: 6px; }
+.sf-label .propagates-to { font-size: 10px; font-weight: 600; background: #dbeafe; color: var(--blue-accent); padding: 1px 7px; border-radius: 8px; letter-spacing: 0; text-transform: none; }
+.sf-input { width: 100%; padding: 10px 13px; border: 1.5px solid var(--gray-200); border-radius: 4px; font-size: 14px; color: var(--navy); font-family: 'Source Sans 3', sans-serif; transition: border-color 0.15s; }
+.sf-input:focus { outline: none; border-color: var(--navy); background: #fafbff; }
+.sf-input.auto-filled { background: #f0f9ff; border-color: #93c5fd; color: var(--blue-accent); }
+.sf-select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235a5650' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 13px center; padding-right: 34px; }
+.sf-section-divider { border: none; border-top: 1.5px solid var(--gray-100); margin: 24px 0 20px; }
+.sf-section-heading { font-size: 11.5px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gray-400); margin-bottom: 16px; }
+
+.sf-footer { padding: 20px 28px; border-top: 1px solid var(--gray-200); background: var(--gray-100); display: flex; align-items: center; justify-content: space-between; }
+.sf-save-status { font-size: 12.5px; color: var(--green); font-weight: 600; }
+.sf-btn-row { display: flex; gap: 10px; }
+
+.output-panel { background: var(--white); border: 1px solid var(--gray-200); border-radius: 6px; padding: 0; box-shadow: var(--shadow-sm); overflow: hidden; margin-top: 24px; }
+.output-panel-header { padding: 16px 24px; border-bottom: 1px solid var(--gray-200); background: var(--navy); color: var(--white); display: flex; align-items: center; justify-content: space-between; }
+.output-panel-title { font-weight: 700; font-size: 14px; }
+.output-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; }
+.output-form-card { padding: 18px 20px; border-right: 1px solid var(--gray-200); border-bottom: 1px solid var(--gray-200); }
+.output-form-card:nth-child(4n) { border-right: none; }
+.output-form-name { font-size: 13px; font-weight: 700; color: var(--navy); margin-bottom: 4px; }
+.output-form-desc { font-size: 11.5px; color: var(--gray-400); margin-bottom: 12px; line-height: 1.4; }
+.output-fill-bar { height: 5px; background: var(--gray-200); border-radius: 3px; margin-bottom: 6px; }
+.output-fill-progress { height: 100%; border-radius: 3px; background: var(--green); transition: width 0.4s; }
+.output-fill-label { font-size: 11px; color: var(--gray-400); display: flex; justify-content: space-between; }
+.output-form-btn { margin-top: 12px; display: inline-block; font-size: 11.5px; font-weight: 600; color: var(--gold); cursor: pointer; }
+</style>
+<div class="sf-wrap">
+  <div class="sf-hero">
+    <div class="sf-hero-tag">⚡ Universal Smart Form — One Source of Truth</div>
+    <h2>Enter once. Populate everywhere.</h2>
+    <p>Complete a single master intake form and watch all seven immigration documents auto-populate in real time. Shared fields like employer name, FEIN, beneficiary details, and wage data sync instantly across every form — eliminating re-entry errors and inconsistencies.</p>
+    <div class="forms-badge-row">
+      <span class="form-badge ready">I-129 ✓</span>
+      <span class="form-badge ready">I-140 ✓</span>
+      <span class="form-badge ready">I-765 ✓</span>
+      <span class="form-badge ready">I-907 ✓</span>
+      <span class="form-badge ready">ETA-9089 ✓</span>
+      <span class="form-badge ready">I-865 ✓</span>
+      <span class="form-badge ready">ETA-9142A ✓</span>
+    </div>
+  </div>
+
+  <div class="sf-progress-bar">
+    <div class="sf-step">
+      <div class="sf-step-num done">✓</div>
+      <div><div class="sf-step-label">Employer Info</div><div class="sf-step-sub">Completed</div></div>
+    </div>
+    <div class="sf-step-arrow">→</div>
+    <div class="sf-step">
+      <div class="sf-step-num active">2</div>
+      <div><div class="sf-step-label">Beneficiary Info</div><div class="sf-step-sub">In progress</div></div>
+    </div>
+    <div class="sf-step-arrow">→</div>
+    <div class="sf-step">
+      <div class="sf-step-num pending">3</div>
+      <div><div class="sf-step-label">Position Details</div><div class="sf-step-sub">Pending</div></div>
+    </div>
+    <div class="sf-step-arrow">→</div>
+    <div class="sf-step">
+      <div class="sf-step-num pending">4</div>
+      <div><div class="sf-step-label">Wage & LCA</div><div class="sf-step-sub">Pending</div></div>
+    </div>
+    <div class="sf-step-arrow">→</div>
+    <div class="sf-step">
+      <div class="sf-step-num pending">5</div>
+      <div><div class="sf-step-label">Review & Generate</div><div class="sf-step-sub">Pending</div></div>
+    </div>
+  </div>
+
+  <div class="sf-body">
+    <div class="sf-nav">
+      <div class="sf-nav-item complete" onclick="switchSFSection('employer')"><div class="sf-nav-dot"></div> Employer Info</div>
+      <div class="sf-nav-item active" onclick="switchSFSection('beneficiary')"><div class="sf-nav-dot"></div> Beneficiary Info</div>
+      <div class="sf-nav-item" onclick="switchSFSection('position')"><div class="sf-nav-dot"></div> Position Details</div>
+      <div class="sf-nav-item" onclick="switchSFSection('wage')"><div class="sf-nav-dot"></div> Wage & LCA</div>
+      <div class="sf-nav-item" onclick="switchSFSection('recruitment')"><div class="sf-nav-dot"></div> Recruitment</div>
+      <div class="sf-nav-item" onclick="switchSFSection('workhistory')"><div class="sf-nav-dot"></div> Work History</div>
+      <div class="sf-nav-item" onclick="switchSFSection('generate')"><div class="sf-nav-dot"></div> Generate Docs</div>
+      <div style="margin-top:20px;padding:12px 14px;background:var(--green-light);border-radius:5px;border:1px solid var(--green);">
+        <div style="font-size:11px;font-weight:700;color:var(--green);letter-spacing:0.06em;margin-bottom:4px;">AUTO-SYNC ACTIVE</div>
+        <div style="font-size:11.5px;color:var(--green);line-height:1.5;">Changes propagate to all 7 forms instantly</div>
+      </div>
+    </div>
+
+    <div>
+      <!-- EMPLOYER SECTION -->
+      <div class="sf-panel" id="sf-employer" style="display:none;">
+        <div class="sf-panel-header">
+          <div>
+            <div class="sf-panel-title">Employer Information</div>
+            <div class="sf-panel-meta">Shared across: I-129 Part 1, I-140 Part 1, ETA-9089 Sec C, ETA-9142A Sec B</div>
+          </div>
+          <div class="sf-propagates">
+            <span class="sf-prop-tag">I-129</span><span class="sf-prop-tag">I-140</span><span class="sf-prop-tag">ETA-9089</span><span class="sf-prop-tag">ETA-9142A</span>
+          </div>
+        </div>
+        <div class="sf-form">
+          <div class="sf-section-heading">Company Identity</div>
+          <div class="sf-row-full"><div class="sf-field"><div class="sf-label">Company / Organization Name <span class="propagates-to">→ 4 forms</span></div><input class="sf-input auto-filled" value="Acme Technologies Inc." oninput="syncField('employer_name', this.value)"></div></div>
+          <div class="sf-row">
+            <div class="sf-field"><div class="sf-label">Federal Employer ID (FEIN) <span class="propagates-to">→ 5 forms</span></div><input class="sf-input auto-filled" value="12-3456789" oninput="syncField('fein', this.value)"></div>
+            <div class="sf-field"><div class="sf-label">NAICS Code <span class="propagates-to">→ 3 forms</span></div><input class="sf-input auto-filled" value="541512" oninput="syncField('naics', this.value)"></div>
+          </div>
+          <div class="sf-row">
+            <div class="sf-field"><div class="sf-label">Year Established</div><input class="sf-input auto-filled" value="2009"></div>
+            <div class="sf-field"><div class="sf-label">Total U.S. Employees</div><input class="sf-input auto-filled" value="340"></div>
+          </div>
+          <hr class="sf-section-divider">
+          <div class="sf-section-heading">Mailing Address <span style="font-weight:400;font-size:10.5px;color:var(--gray-400);letter-spacing:0;text-transform:none;">→ propagates to all forms</span></div>
+          <div class="sf-row-full"><div class="sf-field"><div class="sf-label">Street Address</div><input class="sf-input auto-filled" value="1200 Market Street, Suite 400"></div></div>
+          <div class="sf-row-3">
+            <div class="sf-field"><div class="sf-label">City</div><input class="sf-input auto-filled" value="San Jose"></div>
+            <div class="sf-field"><div class="sf-label">State</div><input class="sf-input auto-filled" value="CA"></div>
+            <div class="sf-field"><div class="sf-label">ZIP Code</div><input class="sf-input auto-filled" value="95101"></div>
+          </div>
+          <hr class="sf-section-divider">
+          <div class="sf-section-heading">Primary Contact (HR/Legal)</div>
+          <div class="sf-row">
+            <div class="sf-field"><div class="sf-label">Contact Last Name</div><input class="sf-input auto-filled" value="Chen"></div>
+            <div class="sf-field"><div class="sf-label">Contact First Name</div><input class="sf-input auto-filled" value="Sarah"></div>
+          </div>
+          <div class="sf-row">
+            <div class="sf-field"><div class="sf-label">Title</div><input class="sf-input auto-filled" value="Director, Global Mobility"></div>
+            <div class="sf-field"><div class="sf-label">Phone</div><input class="sf-input auto-filled" value="(408) 555-0192"></div>
+          </div>
+          <div class="sf-row-full"><div class="sf-field"><div class="sf-label">Email</div><input class="sf-input auto-filled" value="s.chen@acmetech.com"></div></div>
+          <hr class="sf-section-divider">
+          <div class="sf-section-heading">Financial Information (I-140 ability-to-pay)</div>
+          <div class="sf-row">
+            <div class="sf-field"><div class="sf-label">Gross Annual Income</div><input class="sf-input auto-filled" value="$142,000,000"></div>
+            <div class="sf-field"><div class="sf-label">Net Annual Income</div><input class="sf-input auto-filled" value="$18,700,000"></div>
+          </div>
+        </div>
+        <div class="sf-footer">
+          <div class="sf-save-status">✓ Auto-saved · Synced to 4 forms</div>
+          <div class="sf-btn-row"><button class="btn-primary" onclick="switchSFSection('beneficiary')">Next: Beneficiary Info →</button></div>
+        </div>
+      </div>
+
+      <!-- BENEFICIARY SECTION (default visible) -->
+      <div class="sf-panel" id="sf-beneficiary">
+        <div class="sf-panel-header">
+          <div>
+            <div class="sf-panel-title">Beneficiary Information</div>
+            <div class="sf-panel-meta">Shared across: I-129 Part 3, I-140 Part 3, I-765 Part 2, I-907 Part 2, ETA-9089 Sec J</div>
+          </div>
+          <div class="sf-propagates">
+            <span class="sf-prop-tag">I-129</span><span class="sf-prop-tag">I-140</span><span class="sf-prop-tag">I-765</span><span class="sf-prop-tag">I-907</span><span class="sf-prop-tag">ETA-9089</span>
+          </div>
+        </div>
+        <div class="sf-form">
+          <div class="sf-section-heading">Legal Name <span style="font-weight:400;font-size:10.5px;color:var(--blue-accent);letter-spacing:0;text-transform:none;">→ auto-populates all 5 forms</span></div>
+          <div class="sf-row-3">
+            <div class="sf-field"><div class="sf-label">Family Name (Last)</div><input class="sf-input" placeholder="e.g. Mehta" id="ben_last" oninput="livePropagate()"></div>
+            <div class="sf-field"><div class="sf-label">Given Name (First)</div><input class="sf-input" placeholder="e.g. Arjun" id="ben_first" oninput="livePropagate()"></div>
+            <div class="sf-field"><div class="sf-label">Middle Name</div><input class="sf-input" placeholder="Optional"></div>
+          </div>
+          <div class="sf-row"><div class="sf-field"><div class="sf-label">Other Names / Aliases <span class="propagates-to">→ I-765, I-129</span></div><input class="sf-input" placeholder="Maiden name, nicknames, etc."></div><div class="sf-field"><div class="sf-label">Date of Birth</div><input class="sf-input" type="date" id="ben_dob"></div></div>
+          <hr class="sf-section-divider">
+          <div class="sf-section-heading">Citizenship & Immigration Status</div>
+          <div class="sf-row">
+            <div class="sf-field"><div class="sf-label">Country of Birth <span class="propagates-to">→ 5 forms</span></div><input class="sf-input" placeholder="e.g. India" id="ben_cob"></div>
+            <div class="sf-field"><div class="sf-label">Country of Citizenship</div><input class="sf-input" placeholder="e.g. India"></div>
+          </div>
+          <div class="sf-row">
+            <div class="sf-field"><div class="sf-label">Alien Registration (A-Number) <span class="propagates-to">→ 5 forms</span></div><input class="sf-input" placeholder="A-XXXXXXXXX" id="ben_anum"></div>
+            <div class="sf-field"><div class="sf-label">U.S. Social Security Number</div><input class="sf-input" placeholder="XXX-XX-XXXX" type="password"></div>
+          </div>
+          <div class="sf-row">
+            <div class="sf-field"><div class="sf-label">Current Nonimmigrant Status</div>
+              <select class="sf-input sf-select"><option>H-1B</option><option>F-1 OPT</option><option>L-1</option><option>O-1</option><option>TN</option><option>Other</option></select>
+            </div>
+            <div class="sf-field"><div class="sf-label">Status Expiration Date</div><input class="sf-input" type="date"></div>
+          </div>
+          <hr class="sf-section-divider">
+          <div class="sf-section-heading">Passport & Travel Document <span style="font-weight:400;font-size:10.5px;color:var(--blue-accent);letter-spacing:0;text-transform:none;">→ I-129 Part 3, I-907</span></div>
+          <div class="sf-row">
+            <div class="sf-field"><div class="sf-label">Passport Number</div><input class="sf-input" placeholder="Passport #"></div>
+            <div class="sf-field"><div class="sf-label">Country of Issuance</div><input class="sf-input" placeholder="e.g. India"></div>
+          </div>
+          <div class="sf-row">
+            <div class="sf-label" style="margin-left:0">Passport Issue Date</div>
+            <div class="sf-label">Passport Expiration Date</div>
+          </div>
+          <div class="sf-row" style="margin-top:-12px;">
+            <input class="sf-input" type="date">
+            <input class="sf-input" type="date">
+          </div>
+          <hr class="sf-section-divider">
+          <div class="sf-section-heading">U.S. Address & I-94</div>
+          <div class="sf-row-full"><div class="sf-field"><div class="sf-label">Current U.S. Residential Address</div><input class="sf-input" placeholder="Street address"></div></div>
+          <div class="sf-row-3">
+            <div class="sf-field"><div class="sf-label">City</div><input class="sf-input" placeholder="City"></div>
+            <div class="sf-field"><div class="sf-label">State</div><input class="sf-input" placeholder="CA"></div>
+            <div class="sf-field"><div class="sf-label">ZIP</div><input class="sf-input" placeholder="00000"></div>
+          </div>
+          <div class="sf-row">
+            <div class="sf-field"><div class="sf-label">I-94 Arrival-Departure Number <span class="propagates-to">→ I-129, I-140, I-765</span></div><input class="sf-input" placeholder="11-digit number"></div>
+            <div class="sf-field"><div class="sf-label">Date of Last U.S. Arrival</div><input class="sf-input" type="date"></div>
+          </div>
+          <hr class="sf-section-divider">
+          <div class="sf-section-heading">Education (for I-140, ETA-9089)</div>
+          <div class="sf-row">
+            <div class="sf-field"><div class="sf-label">Highest Degree Earned <span class="propagates-to">→ I-140, ETA-9089</span></div>
+              <select class="sf-input sf-select"><option>Bachelor's Degree</option><option selected>Master's Degree</option><option>Doctorate (PhD)</option><option>Professional Degree (JD/MD)</option></select>
+            </div>
+            <div class="sf-field"><div class="sf-label">Major Field of Study</div><input class="sf-input" placeholder="e.g. Computer Science"></div>
+          </div>
+          <div class="sf-row">
+            <div class="sf-field"><div class="sf-label">Conferring Institution</div><input class="sf-input" placeholder="University name"></div>
+            <div class="sf-field"><div class="sf-label">Year Degree Completed</div><input class="sf-input" placeholder="e.g. 2018"></div>
+          </div>
+        </div>
+        <div class="sf-footer">
+          <div class="sf-save-status" id="sf-save-status">✓ Auto-saved · Syncing to 5 forms</div>
+          <div class="sf-btn-row">
+            <button class="btn-outline" onclick="switchSFSection('employer')">← Employer</button>
+            <button class="btn-primary" onclick="switchSFSection('position')">Next: Position Details →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- POSITION SECTION -->
+      <div class="sf-panel" id="sf-position" style="display:none;">
+        <div class="sf-panel-header">
+          <div>
+            <div class="sf-panel-title">Position & Employment Details</div>
+            <div class="sf-panel-meta">Shared across: I-129 Part 5, I-140 Part 6, ETA-9089 Sec H, I-907 Part 2</div>
+          </div>
+          <div class="sf-propagates">
+            <span class="sf-prop-tag">I-129</span><span class="sf-prop-tag">I-140</span><span class="sf-prop-tag">ETA-9089</span><span class="sf-prop-tag">I-907</span>
+          </div>
+        </div>
+        <div class="sf-form">
+          <div class="sf-section-heading">Position Classification</div>
+          <div class="sf-row-full"><div class="sf-field"><div class="sf-label">Job Title <span class="propagates-to">→ 4 forms</span></div><input class="sf-input" placeholder="e.g. Staff Software Engineer"></div></div>
+          <div class="sf-row">
+            <div class="sf-field"><div class="sf-label">SOC Code <span class="propagates-to">→ I-129, I-140, ETA-9089</span></div><input class="sf-input" placeholder="e.g. 15-1252" id="soc_code"></div>
+            <div class="sf-field"><div class="sf-label">SOC Occupation Title</div><input class="sf-input" placeholder="e.g. Software Developers" id="soc_title"></div>
+          </div>
+          <div class="sf-row">
+            <div class="sf-field"><div class="sf-label">Visa Classification Sought</div>
+              <select class="sf-input sf-select"><option>H-1B Specialty Occupation</option><option>H-1B Extension</option><option>EB-2 (Advanced Degree)</option><option>EB-3 (Professional)</option></select>
+            </div>
+            <div class="sf-field"><div class="sf-label">Full-Time?</div>
+              <select class="sf-input sf-select"><option>Yes — Full-Time</option><option>No — Part-Time</option></select>
+            </div>
+          </div>
+          <div class="sf-row">
+            <div class="sf-field"><div class="sf-label">Employment Start Date <span class="propagates-to">→ I-129, ETA-9089</span></div><input class="sf-input" type="date"></div>
+            <div class="sf-field"><div class="sf-label">Employment End Date (if applicable)</div><input class="sf-input" type="date"></div>
+          </div>
+          <hr class="sf-section-divider">
+          <div class="sf-section-heading">Job Requirements (ETA-9089 Section H + I-140 Part 6)</div>
+          <div class="sf-row">
+            <div class="sf-field"><div class="sf-label">Minimum Education Required</div>
+              <select class="sf-input sf-select"><option>Bachelor's Degree</option><option selected>Master's Degree</option><option>Doctorate</option></select>
+            </div>
+            <div class="sf-field"><div class="sf-label">Major Field of Study Required</div><input class="sf-input" placeholder="e.g. Computer Science, Engineering"></div>
+          </div>
+          <div class="sf-row">
+            <div class="sf-field"><div class="sf-label">Years of Experience Required</div><input class="sf-input" placeholder="e.g. 5" type="number" min="0" max="20"></div>
+            <div class="sf-field"><div class="sf-label">Foreign Educational Equivalent Acceptable?</div>
+              <select class="sf-input sf-select"><option>Yes</option><option>No</option></select>
+            </div>
+          </div>
+          <div class="sf-row-full"><div class="sf-field"><div class="sf-label">Job Duties Description <span class="propagates-to">→ ETA-9089 H.11, I-129 H-Classification Supplement</span></div><textarea class="sf-input" rows="5" placeholder="Describe the duties and responsibilities for this position in detail. This text will auto-populate the job duties fields in ETA-9089 and the H-1B Classification Supplement..."></textarea></div></div>
+          <div class="sf-row-full"><div class="sf-field"><div class="sf-label">Specific Skills & Other Requirements <span class="propagates-to">→ ETA-9089 H.14</span></div><textarea class="sf-input" rows="3" placeholder="List specific technical skills, tools, certifications, or other requirements..."></textarea></div></div>
+          <hr class="sf-section-divider">
+          <div class="sf-section-heading">Worksite Location</div>
+          <div class="sf-row-full"><div class="sf-field"><div class="sf-label">Primary Worksite Address <span class="propagates-to">→ I-129, I-140, ETA-9089</span></div><input class="sf-input" placeholder="Street address where employee will work"></div></div>
+          <div class="sf-row-3">
+            <div class="sf-field"><div class="sf-label">City</div><input class="sf-input" placeholder="City"></div>
+            <div class="sf-field"><div class="sf-label">State</div><input class="sf-input" placeholder="CA"></div>
+            <div class="sf-field"><div class="sf-label">ZIP</div><input class="sf-input" placeholder="00000"></div>
+          </div>
+          <div class="sf-row">
+            <div class="sf-field"><div class="sf-label">Is this a third-party worksite?</div><select class="sf-input sf-select"><option>No</option><option>Yes — provide details below</option></select></div>
+            <div class="sf-field"><div class="sf-label">Third-Party Organization Name (if applicable)</div><input class="sf-input" placeholder="Client/vendor site name"></div>
+          </div>
+        </div>
+        <div class="sf-footer">
+          <div class="sf-save-status">✓ Auto-saved · Syncing to 4 forms</div>
+          <div class="sf-btn-row">
+            <button class="btn-outline" onclick="switchSFSection('beneficiary')">← Beneficiary</button>
+            <button class="btn-primary" onclick="switchSFSection('wage')">Next: Wage & LCA →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- WAGE SECTION -->
+      <div class="sf-panel" id="sf-wage" style="display:none;">
+        <div class="sf-panel-header">
+          <div>
+            <div class="sf-panel-title">Wage & Labor Condition Application</div>
+            <div class="sf-panel-meta">Shared across: I-129 Part 5, I-140 Part 6, ETA-9089 Sec F/G, H-1B Data Supplement</div>
+          </div>
+          <div class="sf-propagates">
+            <span class="sf-prop-tag">I-129</span><span class="sf-prop-tag">I-140</span><span class="sf-prop-tag">ETA-9089</span><span class="sf-prop-tag">H-1B Supp.</span>
+          </div>
+        </div>
+        <div class="sf-form">
+          <div class="sf-section-heading">Offered Wage</div>
+          <div class="sf-row">
+            <div class="sf-field"><div class="sf-label">Annual Salary Offered <span class="propagates-to">→ I-129, I-140, ETA-9089</span></div><input class="sf-input" placeholder="e.g. $168,500" type="number"></div>
+            <div class="sf-field"><div class="sf-label">Pay Period</div><select class="sf-input sf-select"><option selected>Year</option><option>Month</option><option>Hour</option><option>Week</option></select></div>
+          </div>
+          <div class="sf-row">
+            <div class="sf-field"><div class="sf-label">Wage Level (H-1B) <span class="propagates-to">→ H-1B Supplement</span></div><select class="sf-input sf-select"><option>Level I</option><option>Level II</option><option selected>Level III</option><option>Level IV</option></select></div>
+            <div class="sf-field"><div class="sf-label">Rate of Pay per Year (H-1B Supplement)</div><input class="sf-input" placeholder="e.g. $168,500"></div>
+          </div>
+          <hr class="sf-section-divider">
+          <div class="sf-section-heading">Prevailing Wage (DOL / ETA-9089)</div>
+          <div class="sf-row">
+            <div class="sf-field"><div class="sf-label">Prevailing Wage <span class="propagates-to">→ ETA-9089 Sec F</span></div><input class="sf-input" placeholder="DOL-determined wage"></div>
+            <div class="sf-field"><div class="sf-label">Prevailing Wage Source</div><select class="sf-input sf-select"><option selected>OES (Occupational Employment Statistics)</option><option>CBA</option><option>Employer Conducted Survey</option><option>SCA</option><option>DBA</option><option>Other</option></select></div>
+          </div>
+          <div class="sf-row">
+            <div class="sf-field"><div class="sf-label">PWD Tracking Number</div><input class="sf-input" placeholder="DOL tracking number"></div>
+            <div class="sf-field"><div class="sf-label">PWD Skill Level</div><select class="sf-input sf-select"><option>Level I</option><option>Level II</option><option selected>Level III</option><option>Level IV</option></select></div>
+          </div>
+          <div class="sf-row">
+            <div class="sf-field"><div class="sf-label">PWD Determination Date</div><input class="sf-input" type="date"></div>
+            <div class="sf-field"><div class="sf-label">PWD Expiration Date</div><input class="sf-input" type="date"></div>
+          </div>
+          <hr class="sf-section-divider">
+          <div class="sf-section-heading">LCA Reference (I-129)</div>
+          <div class="sf-row">
+            <div class="sf-field"><div class="sf-label">LCA Case Number <span class="propagates-to">→ I-129 Part 5</span></div><input class="sf-input" placeholder="DOL LCA case number"></div>
+            <div class="sf-field"><div class="sf-label">LCA Validity Period From</div><input class="sf-input" type="date"></div>
+          </div>
+          <hr class="sf-section-divider">
+          <div class="sf-section-heading">Premium Processing (I-907)</div>
+          <div class="sf-row">
+            <div class="sf-field"><div class="sf-label">Request Premium Processing?</div><select class="sf-input sf-select" id="pp_select" onchange="document.getElementById('pp_detail').style.display=this.value==='Yes'?'grid':'none'"><option>No</option><option selected>Yes — I-140 ($2,805)</option><option>Yes — I-129 ($2,805)</option><option>Yes — Both forms</option></select></div>
+            <div class="sf-field"><div class="sf-label">Related Petition Receipt #</div><input class="sf-input" placeholder="WAC-XX-XXX-XXXXX"></div>
+          </div>
+          <div id="pp_detail" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:4px;">
+            <div class="sf-field"><div class="sf-label">I-907 Form Number of Related Petition</div><select class="sf-input sf-select"><option selected>I-140</option><option>I-129</option></select></div>
+            <div class="sf-field"><div class="sf-label">Classification / Eligibility</div><input class="sf-input" placeholder="e.g. EB-2, H-1B Specialty Occupation"></div>
+          </div>
+        </div>
+        <div class="sf-footer">
+          <div class="sf-save-status">✓ Auto-saved · Syncing wage data to 4 forms</div>
+          <div class="sf-btn-row">
+            <button class="btn-outline" onclick="switchSFSection('position')">← Position</button>
+            <button class="btn-primary" onclick="switchSFSection('recruitment')">Next: Recruitment →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- RECRUITMENT SECTION -->
+      <div class="sf-panel" id="sf-recruitment" style="display:none;">
+        <div class="sf-panel-header">
+          <div><div class="sf-panel-title">PERM Recruitment Record</div><div class="sf-panel-meta">Populates: ETA-9089 Section I — Required for PERM Labor Certification</div></div>
+          <div class="sf-propagates"><span class="sf-prop-tag">ETA-9089</span></div>
+        </div>
+        <div class="sf-form">
+          <div style="background:var(--amber-light);border:1px solid var(--amber);border-radius:5px;padding:13px 16px;margin-bottom:20px;font-size:13px;color:var(--amber);">
+            <strong>PERM Requirement:</strong> Employers must conduct supervised recruitment for at least 30 days and document at least 3 recruitment activities for professional positions. All fields here auto-populate ETA-9089 Section I.
+          </div>
+          <div class="sf-section-heading">Occupation Type & SWA Job Order</div>
+          <div class="sf-row">
+            <div class="sf-field"><div class="sf-label">Professional Occupation?</div><select class="sf-input sf-select"><option selected>Yes — Bachelor's or equivalent required</option><option>No</option><option>College/University Teacher</option></select></div>
+            <div class="sf-field"><div class="sf-label">Is there a Sunday newspaper edition?</div><select class="sf-input sf-select"><option selected>Yes</option><option>No</option></select></div>
+          </div>
+          <div class="sf-row">
+            <div class="sf-field"><div class="sf-label">SWA Job Order Start Date</div><input class="sf-input" type="date"></div>
+            <div class="sf-field"><div class="sf-label">SWA Job Order End Date</div><input class="sf-input" type="date"></div>
+          </div>
+          <hr class="sf-section-divider">
+          <div class="sf-section-heading">Newspaper Advertisements (Required)</div>
+          <div class="sf-row">
+            <div class="sf-field"><div class="sf-label">1st Newspaper Name</div><input class="sf-input" placeholder="e.g. San Jose Mercury News"></div>
+            <div class="sf-field"><div class="sf-label">1st Ad Date (Sunday)</div><input class="sf-input" type="date"></div>
+          </div>
+          <div class="sf-row">
+            <div class="sf-field"><div class="sf-label">2nd Newspaper / Journal Name</div><input class="sf-input" placeholder="e.g. San Jose Mercury News"></div>
+            <div class="sf-field"><div class="sf-label">2nd Ad Date (Second Sunday)</div><input class="sf-input" type="date"></div>
+          </div>
+          <hr class="sf-section-divider">
+          <div class="sf-section-heading">Additional Professional Recruitment (Complete ≥ 3)</div>
+          <div class="sf-row">
+            <div class="sf-field"><div class="sf-label">Job Fair Dates (From)</div><input class="sf-input" type="date"></div>
+            <div class="sf-field"><div class="sf-label">Job Fair Dates (To)</div><input class="sf-input" type="date"></div>
+          </div>
+          <div class="sf-row">
+            <div class="sf-field"><div class="sf-label">Employer Website Posted From</div><input class="sf-input" type="date"></div>
+            <div class="sf-field"><div class="sf-label">Employer Website Posted To</div><input class="sf-input" type="date"></div>
+          </div>
+          <div class="sf-row">
+            <div class="sf-field"><div class="sf-label">Job Search Website (e.g. LinkedIn) From</div><input class="sf-input" type="date"></div>
+            <div class="sf-field"><div class="sf-label">Job Search Website To</div><input class="sf-input" type="date"></div>
+          </div>
+          <div class="sf-row">
+            <div class="sf-field"><div class="sf-label">Trade/Professional Org Ad From</div><input class="sf-input" type="date"></div>
+            <div class="sf-field"><div class="sf-label">Trade/Professional Org Ad To</div><input class="sf-input" type="date"></div>
+          </div>
+          <hr class="sf-section-divider">
+          <div class="sf-section-heading">Notice of Filing</div>
+          <div class="sf-row">
+            <div class="sf-field"><div class="sf-label">Notice Posted Date (start)</div><input class="sf-input" type="date"></div>
+            <div class="sf-field"><div class="sf-label">Notice Removed Date (end — min 10 days)</div><input class="sf-input" type="date"></div>
+          </div>
+          <div class="sf-row">
+            <div class="sf-field"><div class="sf-label">Bargaining Representative Notified?</div><select class="sf-input sf-select"><option>Yes</option><option>No — No bargaining rep</option><option>N/A</option></select></div>
+            <div class="sf-field"><div class="sf-label">Layoff in related occupation (6 months)?</div><select class="sf-input sf-select"><option selected>No</option><option>Yes — U.S. workers were notified and considered</option></select></div>
+          </div>
+        </div>
+        <div class="sf-footer">
+          <div class="sf-save-status">✓ Auto-saved · Syncing to ETA-9089 Sec I</div>
+          <div class="sf-btn-row">
+            <button class="btn-outline" onclick="switchSFSection('wage')">← Wage & LCA</button>
+            <button class="btn-primary" onclick="switchSFSection('workhistory')">Next: Work History →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- WORK HISTORY -->
+      <div class="sf-panel" id="sf-workhistory" style="display:none;">
+        <div class="sf-panel-header">
+          <div><div class="sf-panel-title">Alien Work Experience (ETA-9089 Section K)</div><div class="sf-panel-meta">Beneficiary's employment history — last 3 years minimum</div></div>
+          <div class="sf-propagates"><span class="sf-prop-tag">ETA-9089</span><span class="sf-prop-tag">I-129 Supp.</span></div>
+        </div>
+        <div class="sf-form">
+          <div class="sf-section-heading">Job 1 (Most Recent)</div>
+          <div class="sf-row"><div class="sf-field"><div class="sf-label">Employer Name</div><input class="sf-input" placeholder="Company name"></div><div class="sf-field"><div class="sf-label">Job Title</div><input class="sf-input" placeholder="Position held"></div></div>
+          <div class="sf-row-3"><div class="sf-field"><div class="sf-label">Start Date</div><input class="sf-input" type="date"></div><div class="sf-field"><div class="sf-label">End Date</div><input class="sf-input" type="date"></div><div class="sf-field"><div class="sf-label">Hours/Week</div><input class="sf-input" type="number" placeholder="40"></div></div>
+          <div class="sf-row-full"><div class="sf-field"><div class="sf-label">Job Duties & Responsibilities</div><textarea class="sf-input" rows="3" placeholder="Describe duties, tools, technologies used..."></textarea></div></div>
+          <hr class="sf-section-divider">
+          <div class="sf-section-heading">Job 2</div>
+          <div class="sf-row"><div class="sf-field"><div class="sf-label">Employer Name</div><input class="sf-input" placeholder="Company name"></div><div class="sf-field"><div class="sf-label">Job Title</div><input class="sf-input" placeholder="Position held"></div></div>
+          <div class="sf-row-3"><div class="sf-field"><div class="sf-label">Start Date</div><input class="sf-input" type="date"></div><div class="sf-field"><div class="sf-label">End Date</div><input class="sf-input" type="date"></div><div class="sf-field"><div class="sf-label">Hours/Week</div><input class="sf-input" type="number" placeholder="40"></div></div>
+          <div class="sf-row-full"><div class="sf-field"><div class="sf-label">Job Duties</div><textarea class="sf-input" rows="3" placeholder="Describe duties..."></textarea></div></div>
+          <div style="text-align:center;padding:12px 0;">
+            <button class="btn-outline" style="font-size:12.5px;padding:8px 20px;">+ Add Another Job</button>
+          </div>
+        </div>
+        <div class="sf-footer">
+          <div class="sf-save-status">✓ Auto-saved</div>
+          <div class="sf-btn-row">
+            <button class="btn-outline" onclick="switchSFSection('recruitment')">← Recruitment</button>
+            <button class="btn-primary" onclick="switchSFSection('generate')">Next: Generate Documents →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- GENERATE SECTION -->
+      <div class="sf-panel" id="sf-generate" style="display:none;">
+        <div class="sf-panel-header">
+          <div><div class="sf-panel-title">Review & Generate All Documents</div><div class="sf-panel-meta">All 7 forms are ready to generate with shared data pre-populated</div></div>
+          <button class="btn-primary" onclick="animateFill()">⚡ Generate All 7 Forms</button>
+        </div>
+        <div style="padding:24px 28px;">
+          <div id="gen-alert" style="background:var(--amber-light);border:1px solid var(--amber);border-radius:5px;padding:13px 16px;font-size:13px;color:var(--amber);margin-bottom:20px;display:none;">
+            ⚠ <strong>Pre-flight validation complete:</strong> 1 inconsistency detected — job description in ETA-9089 H.11 is shorter than 200 words. Expand before filing.
+          </div>
+        </div>
+        <div class="output-panel" style="margin:0;border-radius:0;box-shadow:none;">
+          <div class="output-panel-header">
+            <div class="output-panel-title">📄 Generated Documents — Shared Data Applied</div>
+            <div style="font-size:12px;color:rgba(255,255,255,0.55);" id="gen-timestamp">Click "Generate" to populate</div>
+          </div>
+          <div class="output-grid">
+            <div class="output-form-card">
+              <div class="output-form-name">Form I-129</div>
+              <div class="output-form-desc">Petition for Nonimmigrant Worker (H-1B)</div>
+              <div class="output-fill-bar"><div class="output-fill-progress" id="fill-i129" style="width:0%"></div></div>
+              <div class="output-fill-label"><span>Auto-filled</span><span id="pct-i129">0%</span></div>
+              <div class="output-form-btn">↓ Download I-129</div>
+            </div>
+            <div class="output-form-card">
+              <div class="output-form-name">Form I-140</div>
+              <div class="output-form-desc">Immigrant Petition for Alien Workers</div>
+              <div class="output-fill-bar"><div class="output-fill-progress" id="fill-i140" style="width:0%"></div></div>
+              <div class="output-fill-label"><span>Auto-filled</span><span id="pct-i140">0%</span></div>
+              <div class="output-form-btn">↓ Download I-140</div>
+            </div>
+            <div class="output-form-card">
+              <div class="output-form-name">Form I-765</div>
+              <div class="output-form-desc">Application for Employment Authorization</div>
+              <div class="output-fill-bar"><div class="output-fill-progress" id="fill-i765" style="width:0%"></div></div>
+              <div class="output-fill-label"><span>Auto-filled</span><span id="pct-i765">0%</span></div>
+              <div class="output-form-btn">↓ Download I-765</div>
+            </div>
+            <div class="output-form-card">
+              <div class="output-form-name">Form I-907</div>
+              <div class="output-form-desc">Request for Premium Processing</div>
+              <div class="output-fill-bar"><div class="output-fill-progress" id="fill-i907" style="width:0%"></div></div>
+              <div class="output-fill-label"><span>Auto-filled</span><span id="pct-i907">0%</span></div>
+              <div class="output-form-btn">↓ Download I-907</div>
+            </div>
+            <div class="output-form-card">
+              <div class="output-form-name">ETA Form 9089</div>
+              <div class="output-form-desc">Application for Permanent Employment Certification (PERM)</div>
+              <div class="output-fill-bar"><div class="output-fill-progress" id="fill-9089" style="width:0%"></div></div>
+              <div class="output-fill-label"><span>Auto-filled</span><span id="pct-9089">0%</span></div>
+              <div class="output-form-btn">↓ Download ETA-9089</div>
+            </div>
+            <div class="output-form-card">
+              <div class="output-form-name">Form I-865</div>
+              <div class="output-form-desc">Sponsor's Notice of Change of Address</div>
+              <div class="output-fill-bar"><div class="output-fill-progress" id="fill-i865" style="width:0%"></div></div>
+              <div class="output-fill-label"><span>Auto-filled</span><span id="pct-i865">0%</span></div>
+              <div class="output-form-btn">↓ Download I-865</div>
+            </div>
+            <div class="output-form-card">
+              <div class="output-form-name">ETA-9142A</div>
+              <div class="output-form-desc">H-2A Application for Temporary Employment Certification</div>
+              <div class="output-fill-bar"><div class="output-fill-progress" id="fill-9142" style="width:0%"></div></div>
+              <div class="output-fill-label"><span>Auto-filled</span><span id="pct-9142">0%</span></div>
+              <div class="output-form-btn">↓ Download ETA-9142A</div>
+            </div>
+            <div class="output-form-card" style="background:var(--gray-100);">
+              <div class="output-form-name" style="color:var(--gray-400);">Package Bundle</div>
+              <div class="output-form-desc" style="color:var(--gray-400);">All 7 forms + cover sheet + checklist in one ZIP</div>
+              <div style="margin-top:28px;">
+                <button class="btn-primary" style="width:100%;font-size:13px;padding:10px;" onclick="animateFill()">⚡ Generate Full Bundle</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="sf-footer">
+          <div class="sf-save-status">All data saved · Attorney review recommended before submission</div>
+          <div class="sf-btn-row">
+            <button class="btn-outline" onclick="switchSFSection('workhistory')">← Work History</button>
+            <button class="btn-primary" onclick="showPage('attorney')">Send to Attorney for Review →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ════════════ ATTORNEY PORTAL ════════════ -->
+<div class="page" id="page-attorney">
+<style>
+.atty-wrap { max-width: 1280px; margin: 0 auto; padding: 0; }
+.atty-hero { background: linear-gradient(135deg, #0d1b2a 0%, #1e3a6b 100%); color: var(--white); padding: 40px 40px 32px; border-bottom: 3px solid var(--gold); }
+.atty-hero-inner { display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 20px; }
+.atty-hero h2 { font-family: 'Playfair Display', serif; font-size: 26px; margin-bottom: 6px; }
+.atty-hero p { color: rgba(255,255,255,0.6); font-size: 14px; }
+.atty-access-badge { background: rgba(184,149,42,0.2); border: 1.5px solid var(--gold); color: var(--gold-light); font-size: 12px; font-weight: 700; padding: 8px 18px; border-radius: 4px; letter-spacing: 0.06em; white-space: nowrap; }
+
+.atty-layout { display: grid; grid-template-columns: 280px 1fr; min-height: calc(100vh - 180px); }
+.atty-sidebar { background: #f8f7f4; border-right: 1px solid var(--gray-200); padding: 24px 0; }
+.atty-sidebar-section { font-size: 10.5px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gray-400); padding: 0 20px 8px; margin-top: 16px; }
+.atty-sidebar-item { display: flex; align-items: center; justify-content: space-between; padding: 9px 20px; font-size: 13.5px; color: var(--gray-600); cursor: pointer; transition: background 0.15s; }
+.atty-sidebar-item:hover { background: var(--gray-200); color: var(--navy); }
+.atty-sidebar-item.active { background: var(--white); border-left: 3px solid var(--gold); color: var(--navy); font-weight: 600; padding-left: 17px; }
+.atty-badge { background: var(--red); color: var(--white); font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 10px; }
+.atty-badge-amber { background: var(--amber); }
+.atty-badge-blue { background: var(--blue-accent); }
+.atty-badge-green { background: var(--green); }
+
+.atty-main { padding: 32px 36px; background: var(--gray-100); }
+.atty-search-bar { display: flex; gap: 10px; margin-bottom: 28px; }
+.atty-search { flex: 1; padding: 11px 16px; border: 1.5px solid var(--gray-200); border-radius: 4px; font-size: 14px; background: var(--white); font-family: 'Source Sans 3', sans-serif; }
+.atty-search:focus { outline: none; border-color: var(--navy); }
+.atty-filter { padding: 11px 14px; border: 1.5px solid var(--gray-200); border-radius: 4px; background: var(--white); font-size: 13.5px; font-family: 'Source Sans 3', sans-serif; appearance: none; }
+
+.atty-client-card { background: var(--white); border: 1px solid var(--gray-200); border-radius: 6px; padding: 20px 24px; margin-bottom: 12px; box-shadow: var(--shadow-sm); cursor: pointer; transition: all 0.15s; display: grid; grid-template-columns: auto 1fr auto auto auto; gap: 20px; align-items: center; }
+.atty-client-card:hover { box-shadow: var(--shadow-md); border-color: var(--navy-light); }
+.client-avatar { width: 42px; height: 42px; border-radius: 50%; background: var(--navy); display: flex; align-items: center; justify-content: center; color: var(--white); font-weight: 700; font-size: 16px; flex-shrink: 0; }
+.client-name { font-weight: 700; color: var(--navy); font-size: 15px; }
+.client-meta { font-size: 12.5px; color: var(--gray-400); margin-top: 2px; }
+.client-stage { }
+.client-stage-label { font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--gray-400); margin-bottom: 4px; }
+.client-deadline { text-align: right; }
+.client-deadline-label { font-size: 11px; font-weight: 600; color: var(--gray-400); letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 4px; }
+.client-deadline-date { font-family: 'Source Code Pro', monospace; font-size: 13px; font-weight: 600; }
+.client-deadline-date.urgent { color: var(--red); }
+.client-deadline-date.warn { color: var(--amber); }
+.client-deadline-date.ok { color: var(--green); }
+.client-actions { display: flex; gap: 6px; }
+
+/* Detailed Case View */
+.case-detail { background: var(--white); border: 1px solid var(--gray-200); border-radius: 6px; box-shadow: var(--shadow-sm); overflow: hidden; margin-top: 24px; }
+.case-detail-header { background: var(--navy); color: var(--white); padding: 22px 28px; display: flex; align-items: center; justify-content: space-between; }
+.case-detail-header h3 { font-family: 'Playfair Display', serif; font-size: 20px; }
+.case-detail-header p { color: rgba(255,255,255,0.55); font-size: 13px; margin-top: 3px; }
+.case-detail-body { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0; }
+.case-detail-section { padding: 22px 26px; border-right: 1px solid var(--gray-200); }
+.case-detail-section:last-child { border-right: none; }
+.case-detail-section-title { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gray-400); margin-bottom: 14px; }
+.case-info-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--gray-100); font-size: 13px; }
+.case-info-row:last-child { border-bottom: none; }
+.ci-label { color: var(--gray-400); }
+.ci-value { color: var(--navy); font-weight: 600; font-size: 12.5px; }
+
+.atty-doc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; padding: 22px 26px; border-top: 1px solid var(--gray-200); }
+.atty-doc-item { border: 1px solid var(--gray-200); border-radius: 5px; padding: 14px; text-align: center; cursor: pointer; transition: all 0.15s; }
+.atty-doc-item:hover { border-color: var(--navy); background: var(--gray-100); }
+.atty-doc-icon { font-size: 24px; margin-bottom: 6px; }
+.atty-doc-name { font-size: 12px; font-weight: 700; color: var(--navy); }
+.atty-doc-status { font-size: 11px; margin-top: 3px; }
+
+.atty-notes { padding: 22px 26px; border-top: 1px solid var(--gray-200); }
+.atty-notes textarea { width: 100%; padding: 12px 14px; border: 1.5px solid var(--gray-200); border-radius: 4px; font-size: 13.5px; font-family: 'Source Sans 3', sans-serif; resize: vertical; color: var(--gray-700); min-height: 100px; }
+.atty-notes textarea:focus { outline: none; border-color: var(--navy); }
+
+.atty-action-bar { padding: 16px 26px; border-top: 1px solid var(--gray-200); background: var(--gray-100); display: flex; gap: 10px; justify-content: flex-end; }
+</style>
+<div class="atty-wrap">
+  <div class="atty-hero">
+    <div class="atty-hero-inner">
+      <div>
+        <div style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold-light);margin-bottom:8px;">⚖ ATTORNEY ACCESS — Secured Portal</div>
+        <h2>Attorney & Legal Counsel Dashboard</h2>
+        <p>Full read/write access to all client case files, documents, timelines, and smart form data. Secure sharing with HR teams and applicants.</p>
+      </div>
+      <div>
+        <div class="atty-access-badge">Martinez & Lim LLP · Verified Access</div>
+        <div style="font-size:11.5px;color:rgba(255,255,255,0.4);margin-top:8px;text-align:right;">Last login: Mar 3, 2026 · 9:14 AM</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="atty-layout">
+    <div class="atty-sidebar">
+      <div style="padding:16px 20px;border-bottom:1px solid var(--gray-200);">
+        <div style="font-size:11px;font-weight:700;color:var(--gray-400);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:6px;">Firm Docket</div>
+        <div style="font-size:14px;font-weight:700;color:var(--navy);">Martinez & Lim LLP</div>
+        <div style="font-size:12px;color:var(--gray-400);">24 active matters</div>
+      </div>
+      <div class="atty-sidebar-section">By Status</div>
+      <div class="atty-sidebar-item active">All Active Matters <span class="atty-badge atty-badge-blue">24</span></div>
+      <div class="atty-sidebar-item">Action Required <span class="atty-badge">3</span></div>
+      <div class="atty-sidebar-item">Deadline This Month <span class="atty-badge atty-badge-amber">5</span></div>
+      <div class="atty-sidebar-item">Pending USCIS <span class="atty-badge atty-badge-blue">11</span></div>
+      <div class="atty-sidebar-item">RFE Responses <span class="atty-badge">1</span></div>
+      <div class="atty-sidebar-section">By Stage</div>
+      <div class="atty-sidebar-item">H-1B / LCA <span style="font-size:12px;color:var(--gray-400);">6</span></div>
+      <div class="atty-sidebar-item">PERM (ETA-9089) <span style="font-size:12px;color:var(--gray-400);">5</span></div>
+      <div class="atty-sidebar-item">I-140 Petitions <span style="font-size:12px;color:var(--gray-400);">7</span></div>
+      <div class="atty-sidebar-item">I-485 Adjustment <span style="font-size:12px;color:var(--gray-400);">4</span></div>
+      <div class="atty-sidebar-item">Extensions <span style="font-size:12px;color:var(--gray-400);">2</span></div>
+      <div class="atty-sidebar-section">Tools</div>
+      <div class="atty-sidebar-item">Smart Form Review</div>
+      <div class="atty-sidebar-item">Document Vault</div>
+      <div class="atty-sidebar-item">Deadline Calendar</div>
+      <div class="atty-sidebar-item">Billing & Hours</div>
+      <div class="atty-sidebar-item">Visa Bulletin Tracker</div>
+    </div>
+
+    <div class="atty-main">
+      <div class="atty-search-bar">
+        <input class="atty-search" placeholder="🔍  Search clients, case numbers, employers, receipt numbers..." />
+        <select class="atty-filter"><option>All Employers</option><option>Acme Technologies</option><option>NovaBridge Corp</option><option>DataStream Inc.</option></select>
+        <select class="atty-filter"><option>All Stages</option><option>H-1B</option><option>PERM</option><option>I-140</option><option>I-485</option></select>
+        <button class="btn-primary" style="font-size:13px;padding:8px 18px;white-space:nowrap;">+ New Matter</button>
+      </div>
+
+      <!-- Client Cards -->
+      <div class="atty-client-card">
+        <div class="client-avatar" style="background:var(--red);">PM</div>
+        <div>
+          <div class="client-name">Priya Nair</div>
+          <div class="client-meta">Acme Technologies · EB-3 India · Matter #2024-0041</div>
+        </div>
+        <div class="client-stage">
+          <div class="client-stage-label">Current Stage</div>
+          <span class="badge badge-red">PERM Audit</span>
+        </div>
+        <div class="client-deadline">
+          <div class="client-deadline-label">Response Due</div>
+          <div class="client-deadline-date urgent">Mar 18, 2026</div>
+        </div>
+        <div class="client-actions">
+          <button class="btn-outline" style="font-size:12px;padding:6px 12px;" onclick="showCaseDetail('priya')">Open Case</button>
+        </div>
+      </div>
+
+      <div class="atty-client-card">
+        <div class="client-avatar">AO</div>
+        <div>
+          <div class="client-name">Aisha Okonkwo</div>
+          <div class="client-meta">Acme Technologies · H-1B Nigeria · Matter #2024-0038</div>
+        </div>
+        <div class="client-stage">
+          <div class="client-stage-label">Current Stage</div>
+          <span class="badge badge-amber">H-1B Extension</span>
+        </div>
+        <div class="client-deadline">
+          <div class="client-deadline-label">H-1B Expires</div>
+          <div class="client-deadline-date warn">Jun 12, 2026</div>
+        </div>
+        <div class="client-actions">
+          <button class="btn-outline" style="font-size:12px;padding:6px 12px;">Open Case</button>
+        </div>
+      </div>
+
+      <div class="atty-client-card">
+        <div class="client-avatar" style="background:var(--blue-accent);">AM</div>
+        <div>
+          <div class="client-name">Arjun Mehta</div>
+          <div class="client-meta">Acme Technologies · EB-2 India · Matter #2023-0019</div>
+        </div>
+        <div class="client-stage">
+          <div class="client-stage-label">Current Stage</div>
+          <span class="badge badge-amber">I-140 Pending</span>
+        </div>
+        <div class="client-deadline">
+          <div class="client-deadline-label">PP Response</div>
+          <div class="client-deadline-date warn">Apr 15, 2026</div>
+        </div>
+        <div class="client-actions">
+          <button class="btn-outline" style="font-size:12px;padding:6px 12px;">Open Case</button>
+        </div>
+      </div>
+
+      <div class="atty-client-card">
+        <div class="client-avatar" style="background:var(--green);">WZ</div>
+        <div>
+          <div class="client-name">Wei Zhang</div>
+          <div class="client-meta">Acme Technologies · EB-2 China · Matter #2022-0007</div>
+        </div>
+        <div class="client-stage">
+          <div class="client-stage-label">Current Stage</div>
+          <span class="badge badge-green">I-485 Filed</span>
+        </div>
+        <div class="client-deadline">
+          <div class="client-deadline-label">Biometrics Appt</div>
+          <div class="client-deadline-date ok">Mar 20, 2026</div>
+        </div>
+        <div class="client-actions">
+          <button class="btn-outline" style="font-size:12px;padding:6px 12px;">Open Case</button>
+        </div>
+      </div>
+
+      <div class="atty-client-card">
+        <div class="client-avatar" style="background:#6b46c1;">CR</div>
+        <div>
+          <div class="client-name">Carlos Rivera</div>
+          <div class="client-meta">Acme Technologies · EB-2 Mexico · Matter #2025-0003</div>
+        </div>
+        <div class="client-stage">
+          <div class="client-stage-label">Current Stage</div>
+          <span class="badge badge-blue">PWD Filed</span>
+        </div>
+        <div class="client-deadline">
+          <div class="client-deadline-label">PERM Target</div>
+          <div class="client-deadline-date ok">May 1, 2026</div>
+        </div>
+        <div class="client-actions">
+          <button class="btn-outline" style="font-size:12px;padding:6px 12px;">Open Case</button>
+        </div>
+      </div>
+
+      <!-- Detailed Case View — Priya Nair (shown when clicking Open) -->
+      <div class="case-detail" id="case-detail-priya" style="display:none;">
+        <div class="case-detail-header">
+          <div>
+            <h3>Priya Nair — Matter #2024-0041</h3>
+            <p>Acme Technologies Inc. · EB-3 India · Opened Jan 14, 2024 · Lead: Martinez, Elena</p>
+          </div>
+          <div style="display:flex;gap:8px;">
+            <button class="btn-outline" style="border-color:rgba(255,255,255,0.3);color:var(--white);font-size:12px;" onclick="showPage('smartform')">View Smart Form →</button>
+            <span class="badge badge-red" style="padding:8px 14px;font-size:12px;">PERM AUDIT — Action Req.</span>
+          </div>
+        </div>
+        <div class="case-detail-body">
+          <div class="case-detail-section">
+            <div class="case-detail-section-title">Case Summary</div>
+            <div class="case-info-row"><span class="ci-label">A-Number</span><span class="ci-value" style="font-family:monospace;">A-213 456 789</span></div>
+            <div class="case-info-row"><span class="ci-label">Employer</span><span class="ci-value">Acme Technologies</span></div>
+            <div class="case-info-row"><span class="ci-label">Position</span><span class="ci-value">Product Manager</span></div>
+            <div class="case-info-row"><span class="ci-label">SOC Code</span><span class="ci-value" style="font-family:monospace;">11-2021</span></div>
+            <div class="case-info-row"><span class="ci-label">Visa Category</span><span class="ci-value">EB-3 Professional</span></div>
+            <div class="case-info-row"><span class="ci-label">PERM Filed</span><span class="ci-value" style="font-family:monospace;">Sep 3, 2024</span></div>
+            <div class="case-info-row"><span class="ci-label">Priority Date</span><span class="ci-value">TBD (post-cert)</span></div>
+          </div>
+          <div class="case-detail-section">
+            <div class="case-detail-section-title">Active Issue — PERM Audit</div>
+            <div style="background:var(--red-light);border:1px solid var(--red);border-radius:5px;padding:14px;margin-bottom:12px;">
+              <div style="font-size:12px;font-weight:700;color:var(--red);margin-bottom:5px;">DOL AUDIT NOTICE — Response Due Mar 18, 2026</div>
+              <div style="font-size:12.5px;color:var(--red);line-height:1.5;">DOL has requested documentation for recruitment steps 3 & 5 (job fair and trade organization postings). Upload evidence of recruitment within 15 days.</div>
+            </div>
+            <div style="font-size:12.5px;color:var(--gray-600);line-height:1.6;">
+              <strong>Required uploads:</strong> Job fair attendance proof, trade organization ad copy with publication dates, documentation of all U.S. worker rejections with lawful job-related reasons.
+            </div>
+          </div>
+          <div class="case-detail-section">
+            <div class="case-detail-section-title">Attorney Notes</div>
+            <textarea class="sf-input" rows="6" style="font-size:13px;width:100%;resize:vertical;">Audit trigger likely: job description narrowly tailored. Recommend expanding to cover full PM scope including cross-functional leadership. Priya's qualifications well-documented — degree credential eval from WES is clean.
+
+Follow up with HR re: job fair attendance records from Sep 2023 PDX conference.</textarea>
+            <div style="font-size:11px;color:var(--gray-400);margin-top:4px;">Last edited: Mar 2, 2026 · Martinez, Elena</div>
+          </div>
+        </div>
+        <div style="padding:18px 26px;border-top:1px solid var(--gray-200);">
+          <div class="case-detail-section-title" style="margin-bottom:14px;">Case Documents — Smart Form Auto-Populated</div>
+          <div class="atty-doc-grid" style="padding:0;border-top:none;">
+            <div class="atty-doc-item">
+              <div class="atty-doc-icon">📋</div>
+              <div class="atty-doc-name">ETA-9089</div>
+              <div class="atty-doc-status"><span class="badge badge-amber">Under Audit</span></div>
+            </div>
+            <div class="atty-doc-item">
+              <div class="atty-doc-icon">📄</div>
+              <div class="atty-doc-name">Smart Form</div>
+              <div class="atty-doc-status"><span class="badge badge-green">Complete</span></div>
+            </div>
+            <div class="atty-doc-item">
+              <div class="atty-doc-icon">📁</div>
+              <div class="atty-doc-name">Recruitment Docs</div>
+              <div class="atty-doc-status"><span class="badge badge-red">Incomplete</span></div>
+            </div>
+            <div class="atty-doc-item">
+              <div class="atty-doc-icon">🎓</div>
+              <div class="atty-doc-name">WES Credential Eval</div>
+              <div class="atty-doc-status"><span class="badge badge-green">On File</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="atty-action-bar">
+          <button class="btn-outline" style="font-size:12.5px;padding:8px 16px;">📤 Upload Documents</button>
+          <button class="btn-outline" style="font-size:12.5px;padding:8px 16px;">📧 Message Client</button>
+          <button class="btn-outline" style="font-size:12.5px;padding:8px 16px;">📧 Message HR Team</button>
+          <button class="btn-primary" style="font-size:12.5px;padding:8px 16px;">Submit Audit Response →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<script>
+// ── Smart Form section switcher ──
+function switchSFSection(id) {
+  ['employer','beneficiary','position','wage','recruitment','workhistory','generate'].forEach(s => {
+    const el = document.getElementById('sf-' + s);
+    if (el) el.style.display = (s === id) ? 'block' : 'none';
+  });
+  document.querySelectorAll('.sf-nav-item').forEach((item, i) => {
+    const sections = ['employer','beneficiary','position','wage','recruitment','workhistory','generate'];
+    item.classList.toggle('active', sections[i] === id);
+    const idx = sections.indexOf(id);
+    if (i < idx) item.classList.add('complete');
+    else item.classList.remove('complete');
+  });
+}
+
+// ── Live propagation preview ──
+function livePropagate() {
+  const last = document.getElementById('ben_last')?.value || '';
+  const first = document.getElementById('ben_first')?.value || '';
+  if (last || first) {
+    const status = document.getElementById('sf-save-status');
+    if (status) { status.textContent = `✓ Syncing "${first} ${last}" → I-129 · I-140 · I-765 · I-907 · ETA-9089`; }
+  }
+}
+
+// ── Generate animation ──
+function animateFill() {
+  const forms = ['i129','i140','i765','i907','9089','i865','9142'];
+  const targets = [94, 91, 88, 96, 87, 72, 65];
+  document.getElementById('gen-alert').style.display = 'block';
+  document.getElementById('gen-timestamp').textContent = 'Generated: ' + new Date().toLocaleTimeString();
+  forms.forEach((f, i) => {
+    let current = 0;
+    const target = targets[i];
+    const interval = setInterval(() => {
+      current = Math.min(current + Math.ceil(target / 20), target);
+      const bar = document.getElementById('fill-' + f);
+      const pct = document.getElementById('pct-' + f);
+      if (bar) bar.style.width = current + '%';
+      if (bar) bar.style.background = current >= 90 ? 'var(--green)' : current >= 70 ? 'var(--gold)' : 'var(--amber)';
+      if (pct) pct.textContent = current + '%';
+      if (current >= target) clearInterval(interval);
+    }, 40 + i * 15);
+  });
+}
+
+// ── Case detail toggle ──
+function showCaseDetail(id) {
+  const el = document.getElementById('case-detail-' + id);
+  if (!el) return;
+  el.style.display = el.style.display === 'none' ? 'block' : 'none';
+  if (el.style.display === 'block') el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+// Add nav-related IDs for new pages
+const origShow = window.showPage;
+window.showPage = function(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  const page = document.getElementById('page-' + id);
+  if (page) page.classList.add('active');
+  const navEl = document.getElementById('nav-' + id);
+  if (navEl) navEl.classList.add('active');
+  window.scrollTo(0, 0);
+  // Default smart form section
+  if (id === 'smartform') switchSFSection('beneficiary');
+};
+</script>
+</body>
+</html>

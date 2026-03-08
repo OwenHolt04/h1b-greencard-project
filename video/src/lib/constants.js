@@ -1,40 +1,78 @@
 // ============================================================
-// CaseBridge Demo Video — Timing, Design Tokens, Captions
-// Presentation theme: navy #162768, cream #fbfdeb, accent #f8f2b6
+// CaseBridge Demo Video — Narrative Journey (9 Scenes)
+// Follows Prajwal Kulkarni's immigration journey
+// Theme: navy #162768, cream #fbfdeb, accent #f8f2b6
 // Fonts: Roca Two Bold (display), Space Mono (body)
 // ============================================================
 
 export const FPS = 30;
 
-// --- Beat Durations (in seconds) ---
-export const BEAT_SECONDS = {
-  currentState: 10,
-  overview: 10,
-  smartIntake: 12,
-  validation: 16,
-  fix: 10,
-  roleSwitcher: 24,
-  scopeClarity: 14,
-  close: 12,
+// --- Scene Durations (in seconds) ---
+export const SCENE_SECONDS = {
+  currentStateChaos: 12,
+  platformReveal: 8,
+  caseWorkspace: 14,
+  intakeSync: 12,
+  validationMoment: 16,
+  roleSwitch: 20,
+  deadlineProtection: 10,
+  scopeClarification: 10,
+  finalImpact: 10,
 };
 
 // Convert to frames
-export const BEAT_FRAMES = Object.fromEntries(
-  Object.entries(BEAT_SECONDS).map(([k, v]) => [k, v * FPS])
+export const SCENE_FRAMES = Object.fromEntries(
+  Object.entries(SCENE_SECONDS).map(([k, v]) => [k, v * FPS])
 );
 
 // --- Per-transition durations (frames) ---
-export const TR_1_2 = 24;
-export const TR_2_3 = 20;
-export const TR_3_4 = 10;
-export const TR_4_5 = 10;
+export const TR_1_2 = 20;
+export const TR_2_3 = 15;
+export const TR_3_4 = 15;
+export const TR_4_5 = 12;
 export const TR_5_6 = 20;
-export const TR_6_7 = 24;
-export const TR_7_8 = 30;
+export const TR_6_7 = 15;
+export const TR_7_8 = 15;
+export const TR_8_9 = 20;
 
-const TOTAL_SCENE_FRAMES = Object.values(BEAT_FRAMES).reduce((a, b) => a + b, 0);
-const TOTAL_TRANSITION_OVERLAP = TR_1_2 + TR_2_3 + TR_3_4 + TR_4_5 + TR_5_6 + TR_6_7 + TR_7_8;
+const TOTAL_SCENE_FRAMES = Object.values(SCENE_FRAMES).reduce((a, b) => a + b, 0);
+const TOTAL_TRANSITION_OVERLAP = TR_1_2 + TR_2_3 + TR_3_4 + TR_4_5 + TR_5_6 + TR_6_7 + TR_7_8 + TR_8_9;
 export const TOTAL_FRAMES = TOTAL_SCENE_FRAMES - TOTAL_TRANSITION_OVERLAP;
+
+// --- Backward compat aliases ---
+export const BEAT_FRAMES = SCENE_FRAMES;
+export const BEAT_SECONDS = SCENE_SECONDS;
+
+// --- Prajwal's Case Data ---
+export const CASE = {
+  applicant: {
+    name: 'Prajwal Kulkarni',
+    country: 'India',
+    degree: 'MBA, UC Davis GSM 2024',
+    title: 'Senior Product Manager',
+    soc: '15-1299.08',
+    salary: '$155,000',
+    h1bExpiry: 'June 15, 2026',
+    h1bDaysLeft: 102,
+    category: 'EB-2',
+    priorityDate: 'March 15, 2022',
+  },
+  employer: {
+    name: 'Hewlett Packard Enterprise Company',
+    shortName: 'HPE',
+    wrongName: 'Hewlett-Packard Enterprise',
+    fein: '47-3298674',
+    location: 'Spring, TX / San Jose, CA',
+    employees: '~62,000 US',
+  },
+  attorney: {
+    name: 'Maya Chen',
+    firm: 'Chen & Patel Immigration',
+    pending: 3,
+  },
+  stage: 'I-485 Preparation',
+  caseId: 'CB-2024-0847',
+};
 
 // --- Color Palette (presentation theme) ---
 export const C = {
@@ -87,31 +125,33 @@ export const C = {
   blue600: '#2563eb',
 };
 
-// --- Captions ---
+// --- Narrative Captions ---
 export const CAPTIONS = {
-  beat1: {
+  scene1: {
+    intro: 'Prajwal Kulkarni',
+    introSub: 'Senior Product Manager. H-1B holder. EB-2 India candidate.',
     line1: '3 agencies.',
-    line2: '4 portals.',
+    line2: '6 forms.',
     line3: '0 dashboards.',
-    sub: 'One inconsistency can reset months of work.',
+    sub: 'One inconsistency can reset months of progress.',
   },
-  beat2: {
+  scene2: {
     main: 'One shared case record',
-    sub: "Yuto Sato\u2019s case \u2014 one record, three stakeholders, all aligned.",
+    sub: 'Prajwal\u2019s case \u2014 one record, three stakeholders, all aligned.',
   },
-  beat3: {
+  scene3: {
+    main: 'A single workspace for the entire case',
+    sub: 'Timeline, agency status, and next steps \u2014 all in one view.',
+  },
+  scene4: {
     main: 'Enter once. Sync across 6 forms.',
     sub: 'One source of truth \u2014 no re-keying, no contradictions.',
   },
-  beat4: {
+  scene5: {
     main: 'Catch errors before filing',
     sub: 'Today: ~25% of filings trigger RFEs. Target: <5%.',
   },
-  beat5: {
-    main: 'Fix once. Three forms update automatically.',
-    sub: 'Score 72 \u2192 80. Two issues remain for attorney review.',
-  },
-  beat6: {
+  scene6: {
     captions: {
       applicant: {
         main: 'Plain-language guidance.',
@@ -127,11 +167,15 @@ export const CAPTIONS = {
       },
     },
   },
-  beat7: {
+  scene7: {
+    main: 'Deadlines protected automatically',
+    sub: 'Auto-triggered 90 days before expiry. Employer and attorney both see the task.',
+  },
+  scene8: {
     main: 'What the portal changes. What still requires legislation.',
     sub: '',
   },
-  beat8: {
+  scene9: {
     closing: 'A better process starts with better coordination.',
   },
 };
