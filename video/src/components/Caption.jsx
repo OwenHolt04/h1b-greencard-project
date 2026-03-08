@@ -1,7 +1,7 @@
 import React from 'react';
 import { useCurrentFrame, useVideoConfig, interpolate, spring } from 'remotion';
 import { C } from '../lib/constants';
-import { FONT_SANS } from '../lib/fonts';
+import { FONT_SANS, FONT_DISPLAY } from '../lib/fonts';
 
 /**
  * Caption overlay — appears at the bottom of the frame.
@@ -43,8 +43,9 @@ export const Caption = ({
       style={{
         position: 'absolute',
         ...positionStyle,
-        padding: '28px 48px',
-        background: 'linear-gradient(to top, rgba(10, 22, 40, 0.88) 0%, rgba(10, 22, 40, 0.65) 60%, transparent 100%)',
+        padding: '40px 56px',
+        background:
+          `linear-gradient(to top, rgba(22, 39, 104, 0.92) 0%, rgba(22, 39, 104, 0.78) 60%, transparent 100%)`,
         opacity,
         transform: `translateY(${translateY}px)`,
         fontFamily: FONT_SANS,
@@ -53,12 +54,23 @@ export const Caption = ({
         ...style,
       }}
     >
+      {/* Accent line */}
+      <div
+        style={{
+          width: 48,
+          height: 2,
+          background: C.accent,
+          marginBottom: 14,
+          ...(align === 'center' ? { marginLeft: 'auto', marginRight: 'auto' } : {}),
+        }}
+      />
       <div
         style={{
           color: C.white,
-          fontSize: 26,
-          fontWeight: 600,
-          lineHeight: 1.3,
+          fontSize: 40,
+          fontWeight: 700,
+          fontFamily: FONT_DISPLAY,
+          lineHeight: 1.25,
           letterSpacing: '-0.01em',
         }}
       >
@@ -67,10 +79,11 @@ export const Caption = ({
       {subtext && (
         <div
           style={{
-            color: 'rgba(255,255,255,0.65)',
-            fontSize: 16,
+            color: 'rgba(255,255,255,0.7)',
+            fontSize: 24,
             fontWeight: 400,
-            marginTop: 6,
+            fontFamily: FONT_SANS,
+            marginTop: 8,
             lineHeight: 1.4,
           }}
         >

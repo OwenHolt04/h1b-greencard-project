@@ -119,15 +119,15 @@ export default function Impact() {
         transition={{ delay: 0.4, duration: 0.4 }}
         className="bg-navy-900 rounded-xl p-8 text-center mb-8"
       >
-        <Lightbulb className="w-6 h-6 text-accent mx-auto mb-3" />
+        <Lightbulb className="w-6 h-6 text-accent mx-auto mb-3 drop-shadow-sm" />
         <p className="font-serif text-xl md:text-2xl text-white font-semibold leading-relaxed max-w-3xl mx-auto mb-3">
           "A better process, even before broader reform."
         </p>
         <p className="text-slate-300 text-sm max-w-2xl mx-auto leading-relaxed mb-4">
           {scopeNote}
         </p>
-        <p className="text-accent/80 text-[13px] font-medium">
-          For Yuto Sato: no missed extension, no RFE from a comma, full case visibility from day one.
+        <p className="text-accent text-[13px] font-medium">
+          For Prajwal Kulkarni: no missed extension, no RFE from a hyphen, full case visibility after years of waiting.
         </p>
       </motion.div>
 
@@ -160,7 +160,7 @@ export default function Impact() {
         <div className="mt-6 pt-4 border-t border-slate-100 text-center">
           <button
             onClick={() => navigate('overview')}
-            className="text-sm font-semibold text-accent hover:text-accent-light transition-colors cursor-pointer inline-flex items-center gap-1"
+            className="text-sm font-semibold text-navy-900 hover:text-navy-700 transition-colors cursor-pointer inline-flex items-center gap-1"
           >
             Back to Overview <ArrowRight className="w-3.5 h-3.5" />
           </button>

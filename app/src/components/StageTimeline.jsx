@@ -1,5 +1,7 @@
 import { Check, Circle, Lock } from 'lucide-react';
-import { stages } from '../data/mockData';
+import { stages as baseStages } from '../data/mockData';
+import { useDemo } from '../context/DemoContext';
+import { useMemo } from 'react';
 
 const statusStyles = {
   complete: {
@@ -8,9 +10,9 @@ const statusStyles = {
     label: 'text-slate-700 font-medium',
   },
   active: {
-    dot: 'bg-accent text-white ring-4 ring-accent/20',
+    dot: 'bg-navy-900 text-white ring-4 ring-navy-900/20',
     line: 'bg-slate-200',
-    label: 'text-slate-900 font-semibold',
+    label: 'text-navy-900 font-semibold',
   },
   upcoming: {
     dot: 'bg-slate-200 text-slate-400',
@@ -25,6 +27,18 @@ const statusStyles = {
 };
 
 export default function StageTimeline({ compact = false }) {
+  const { stageAdvanced } = useDemo();
+
+  const stages = useMemo(() => {
+    if (!stageAdvanced) return baseStages;
+    // Advance: I-485 becomes complete, biometrics becomes active
+    return baseStages.map((s) => {
+      if (s.id === 'i485') return { ...s, status: 'complete', date: 'Mar 2026' };
+      if (s.id === 'biometrics') return { ...s, status: 'active', date: 'Scheduled' };
+      return s;
+    });
+  }, [stageAdvanced]);
+
   return (
     <div className="w-full overflow-x-auto">
       <div className="flex items-start min-w-[600px]">
@@ -37,7 +51,7 @@ export default function StageTimeline({ compact = false }) {
               <div className="flex flex-col items-center">
                 {/* Dot */}
                 <div
-                  className={`flex items-center justify-center rounded-full transition-all duration-300 ${style.dot} ${
+                  className={`flex items-center justify-center rounded-full transition-all duration-500 ${style.dot} ${
                     compact ? 'w-7 h-7' : 'w-9 h-9'
                   }`}
                 >
@@ -54,7 +68,7 @@ export default function StageTimeline({ compact = false }) {
 
                 {/* Label */}
                 <span
-                  className={`mt-2 text-center leading-tight ${style.label} ${
+                  className={`mt-2 text-center leading-tight transition-colors duration-300 ${style.label} ${
                     compact ? 'text-[11px]' : 'text-xs'
                   }`}
                 >
@@ -78,7 +92,7 @@ export default function StageTimeline({ compact = false }) {
               {!isLast && (
                 <div className="flex-1 flex items-center pt-[14px]">
                   <div
-                    className={`h-0.5 w-full mx-1 transition-colors duration-300 ${
+                    className={`h-0.5 w-full mx-1 transition-colors duration-500 ${
                       stage.status === 'complete' ? 'bg-green-600' : 'bg-slate-200'
                     }`}
                   />

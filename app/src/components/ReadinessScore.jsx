@@ -38,7 +38,7 @@ export default function ReadinessScore({ score, size = 120, strokeWidth = 8, sho
 
   const getColor = () => {
     if (displayScore >= 90) return '#16a34a';
-    if (displayScore >= 75) return '#c6993e';
+    if (displayScore >= 75) return '#162768';
     if (displayScore >= 60) return '#d97706';
     return '#dc2626';
   };
@@ -86,7 +86,7 @@ export default function ReadinessScore({ score, size = 120, strokeWidth = 8, sho
           textAnchor="middle"
           dominantBaseline="central"
           className="font-sans font-bold"
-          style={{ fontSize: size * 0.28, fill: '#0f172a' }}
+          style={{ fontSize: size * 0.28, fill: '#162768' }}
         >
           {displayScore}
         </text>

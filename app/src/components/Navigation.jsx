@@ -21,7 +21,7 @@ export default function Navigation() {
           className="flex items-center gap-2 hover:opacity-90 transition-opacity cursor-pointer"
         >
           <div className="w-7 h-7 rounded-lg bg-accent flex items-center justify-center">
-            <span className="text-white font-bold text-sm">CB</span>
+            <span className="text-navy-900 font-bold text-sm">CB</span>
           </div>
           <span className="font-semibold text-[15px] tracking-tight">CaseBridge</span>
         </button>

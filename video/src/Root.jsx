@@ -1,7 +1,7 @@
 import React from 'react';
 import { Composition, Folder } from 'remotion';
 import { CaseBridgeDemo } from './CaseBridgeDemo';
-import { TOTAL_FRAMES, FPS, BEAT_FRAMES, TRANSITION_STANDARD } from './lib/constants';
+import { TOTAL_FRAMES, FPS, BEAT_FRAMES } from './lib/constants';
 
 // --- Individual beat compositions for preview/iteration ---
 import { Beat1_CurrentState } from './scenes/Beat1_CurrentState';

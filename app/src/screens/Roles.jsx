@@ -102,8 +102,8 @@ export default function Roles() {
             <div className="lg:col-span-2">
               <div className="bg-white rounded-xl border border-slate-200/80 shadow-sm p-5 mb-5">
                 <div className="flex items-center gap-2 mb-3">
-                  <div className="w-8 h-8 rounded-lg bg-accent/10 flex items-center justify-center">
-                    <ArrowRight className="w-4 h-4 text-accent" />
+                  <div className="w-8 h-8 rounded-lg bg-accent/40 flex items-center justify-center">
+                    <ArrowRight className="w-4 h-4 text-navy-900" />
                   </div>
                   <h3 className="text-sm font-semibold text-slate-900">Next Step</h3>
                 </div>
@@ -142,10 +142,10 @@ export default function Roles() {
                   <h3 className="text-sm font-semibold text-slate-900 mb-3">Sponsorship Cost Breakdown</h3>
                   <div className="space-y-2">
                     {[
-                      { phase: 'PERM (Labor Cert.)', cost: '$3,000–$5,000', status: 'Paid' },
-                      { phase: 'I-140 (Petition)', cost: '$2,000–$4,000', status: 'Paid' },
-                      { phase: 'I-485 (Adjustment)', cost: '$4,000–$6,000', status: 'Upcoming' },
-                      { phase: 'H-1B Extensions', cost: '$2,000–$4,000 / cycle', status: 'Recurring' },
+                      { phase: 'PERM (Labor Cert.)', cost: '$4,000–$6,000', status: 'Paid' },
+                      { phase: 'I-140 (Petition)', cost: '$3,000–$5,000', status: 'Paid' },
+                      { phase: 'I-485 (Adjustment)', cost: '$5,000–$7,000', status: 'Upcoming' },
+                      { phase: 'H-1B Extensions (×2)', cost: '$2,500–$4,000 / cycle', status: 'Recurring' },
                     ].map((item) => (
                       <div key={item.phase} className="flex items-center justify-between py-2 border-b border-slate-100 last:border-0">
                         <div>
@@ -164,7 +164,7 @@ export default function Roles() {
                   </div>
                   <div className="mt-3 pt-3 border-t border-slate-200 flex items-center justify-between">
                     <span className="text-[13px] font-semibold text-slate-900">Estimated Total</span>
-                    <span className="text-[15px] font-bold text-accent">$12,000–$18,000</span>
+                    <span className="text-[15px] font-bold text-navy-900">$15,000–$22,000</span>
                   </div>
                 </div>
               )}

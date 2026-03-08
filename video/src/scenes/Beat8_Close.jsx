@@ -3,33 +3,31 @@ import {
   useCurrentFrame, useVideoConfig, interpolate, spring, AbsoluteFill,
 } from 'remotion';
 import { C, CAPTIONS } from '../lib/constants';
-import { FONT_SANS, FONT_SERIF } from '../lib/fonts';
+import { FONT_SANS, FONT_DISPLAY } from '../lib/fonts';
 
 const METRICS = [
   { label: 'RFE Rate', before: '~25%', after: '<5%', change: '-80%' },
   { label: 'Status Portals', before: '4', after: '1', change: '-75%' },
-  { label: 'Attorney Hours', before: '~8', after: '~3', change: '-62%' },
+  { label: 'Attorney Hours', before: '~8 hrs', after: '~3 hrs', change: '-62%' },
   { label: 'Extension Cost', before: '$5K+', after: '~$2.5K', change: '-50%' },
-  { label: 'Handoff Idle', before: 'Weeks', after: '<5 days', change: '-75%' },
-  { label: 'PWD Revisions', before: '~15%', after: '<3%', change: '-80%' },
 ];
 
 /**
- * Beat 8 — Close (8s)
- * Metrics strip → closing statement → product name → fade.
+ * Beat 8 — Close (12s)
+ * Closing statement FIRST → metrics grid → product logo → fade out.
  */
 export const Beat8_Close = () => {
   const frame = useCurrentFrame();
   const { fps, durationInFrames } = useVideoConfig();
 
-  const metricsEnter = spring({ frame, fps, config: { damping: 200 }, delay: 10 });
-  const statementEnter = spring({ frame, fps, config: { damping: 200 }, delay: Math.round(1.5 * fps) });
-  const logoEnter = spring({ frame, fps, config: { damping: 200 }, delay: Math.round(2.5 * fps) });
+  const statementEnter = spring({ frame, fps, config: { damping: 200 }, delay: 10 });
+  const metricsEnter = spring({ frame, fps, config: { damping: 200 }, delay: Math.round(2.5 * fps) });
+  const logoEnter = spring({ frame, fps, config: { damping: 200 }, delay: Math.round(5.5 * fps) });
 
   // Fade out at the very end
   const fadeOut = interpolate(
     frame,
-    [durationInFrames - 30, durationInFrames],
+    [durationInFrames - 45, durationInFrames],
     [1, 0],
     { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }
   );
@@ -37,7 +35,7 @@ export const Beat8_Close = () => {
   return (
     <AbsoluteFill
       style={{
-        background: `linear-gradient(160deg, #060e1a 0%, ${C.navy900} 40%, ${C.navy800} 100%)`,
+        background: `linear-gradient(160deg, #0e1a4a 0%, ${C.navy900} 40%, ${C.navy800} 100%)`,
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -46,50 +44,94 @@ export const Beat8_Close = () => {
         opacity: fadeOut,
       }}
     >
-      {/* Metrics Strip */}
+      {/* Closing Statement — appears FIRST */}
       <div
         style={{
-          display: 'flex',
-          gap: 2,
-          marginBottom: 56,
+          opacity: interpolate(statementEnter, [0, 1], [0, 1]),
+          transform: `translateY(${interpolate(statementEnter, [0, 1], [20, 0])}px)`,
+          textAlign: 'center',
+          maxWidth: 900,
+          marginBottom: 48,
+        }}
+      >
+        <div
+          style={{
+            fontSize: 52,
+            fontWeight: 700,
+            fontFamily: FONT_DISPLAY,
+            color: C.white,
+            lineHeight: 1.25,
+            letterSpacing: '-0.02em',
+          }}
+        >
+          {CAPTIONS.beat8.closing}
+        </div>
+      </div>
+
+      {/* Metrics — 2x2 grid */}
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: '1fr 1fr',
+          gap: 3,
           opacity: interpolate(metricsEnter, [0, 1], [0, 1]),
-          transform: `translateY(${interpolate(metricsEnter, [0, 1], [20, 0])}px)`,
+          transform: `translateY(${interpolate(metricsEnter, [0, 1], [16, 0])}px)`,
+          marginBottom: 48,
         }}
       >
         {METRICS.map((m, i) => {
           const metricDelay = spring({
             frame,
             fps,
-            config: { damping: 200 },
-            delay: 15 + i * 4,
+            config: { damping: 20, stiffness: 200 },
+            delay: Math.round(2.8 * fps) + i * 5,
           });
 
           return (
             <div
               key={i}
               style={{
-                padding: '16px 24px',
+                padding: '20px 40px',
                 background: 'rgba(255,255,255,0.04)',
-                borderRadius: i === 0 ? '10px 0 0 10px' : i === METRICS.length - 1 ? '0 10px 10px 0' : 0,
-                borderRight: i < METRICS.length - 1 ? `1px solid rgba(255,255,255,0.08)` : 'none',
+                borderRadius:
+                  i === 0 ? '12px 0 0 0' :
+                  i === 1 ? '0 12px 0 0' :
+                  i === 2 ? '0 0 0 12px' :
+                  '0 0 12px 0',
                 textAlign: 'center',
-                minWidth: 130,
+                minWidth: 260,
                 opacity: interpolate(metricDelay, [0, 1], [0, 1]),
               }}
             >
-              <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)', fontWeight: 500, marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+              <div
+                style={{
+                  fontSize: 13,
+                  color: 'rgba(255,255,255,0.45)',
+                  fontWeight: 600,
+                  marginBottom: 8,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.06em',
+                }}
+              >
                 {m.label}
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
-                <span style={{ fontSize: 14, color: 'rgba(255,255,255,0.35)', textDecoration: 'line-through' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12 }}>
+                <span
+                  style={{
+                    fontSize: 18,
+                    color: 'rgba(255,255,255,0.55)',
+                    textDecoration: 'line-through',
+                    fontWeight: 500,
+                  }}
+                >
                   {m.before}
                 </span>
-                <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.2)' }}>→</span>
-                <span style={{ fontSize: 16, fontWeight: 700, color: C.accent }}>
+                <span style={{ fontSize: 16, color: 'rgba(255,255,255,0.25)' }}>→</span>
+                <span style={{ fontSize: 24, fontWeight: 700, color: C.accent }}>
                   {m.after}
                 </span>
               </div>
-              <div style={{ fontSize: 11, color: C.green500, fontWeight: 600, marginTop: 4 }}>
+              <div style={{ fontSize: 14, color: C.green500, fontWeight: 600, marginTop: 6 }}>
                 {m.change}
               </div>
             </div>
@@ -97,17 +139,19 @@ export const Beat8_Close = () => {
         })}
       </div>
 
-      {/* Product Logo */}
+      {/* Product Logo + accent line */}
       <div
         style={{
           opacity: interpolate(logoEnter, [0, 1], [0, 1]),
           transform: `translateY(${interpolate(logoEnter, [0, 1], [12, 0])}px)`,
-          marginBottom: 24,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
         }}
       >
         <div
           style={{
-            fontSize: 28,
+            fontSize: 48,
             fontWeight: 700,
             color: C.accent,
             letterSpacing: '-0.01em',
@@ -115,56 +159,15 @@ export const Beat8_Close = () => {
         >
           CaseBridge
         </div>
-      </div>
-
-      {/* Closing Statement */}
-      <div
-        style={{
-          opacity: interpolate(statementEnter, [0, 1], [0, 1]),
-          transform: `translateY(${interpolate(statementEnter, [0, 1], [16, 0])}px)`,
-          textAlign: 'center',
-          maxWidth: 750,
-        }}
-      >
+        {/* Gold accent line */}
         <div
           style={{
-            fontSize: 36,
-            fontWeight: 700,
-            fontFamily: FONT_SERIF,
-            color: C.white,
-            lineHeight: 1.3,
-            letterSpacing: '-0.02em',
-          }}
-        >
-          {CAPTIONS.beat8.closing}
-        </div>
-
-        {/* Accent divider */}
-        <div
-          style={{
-            width: 80,
+            width: interpolate(logoEnter, [0, 1], [0, 120], { extrapolateRight: 'clamp' }),
             height: 2,
             background: C.accent,
-            margin: '24px auto',
-            opacity: interpolate(statementEnter, [0, 1], [0, 0.6]),
+            marginTop: 12,
           }}
         />
-
-        {/* Three-line summary */}
-        <div style={{ display: 'flex', justifyContent: 'center', gap: 32, marginTop: 16 }}>
-          {[CAPTIONS.beat8.line1, CAPTIONS.beat8.line2, CAPTIONS.beat8.line3].map((line, i) => (
-            <div
-              key={i}
-              style={{
-                fontSize: 15,
-                color: 'rgba(255,255,255,0.45)',
-                fontWeight: 500,
-              }}
-            >
-              {line}
-            </div>
-          ))}
-        </div>
       </div>
     </AbsoluteFill>
   );

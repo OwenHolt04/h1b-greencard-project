@@ -14,11 +14,9 @@ It improves the process without pretending to solve structural scarcity.**
 Primary target:
 - 75 to 120 seconds
 
-Stretch version:
-- up to 150 seconds
 
 Avoid:
-- over 2.5 minutes for the core walkthrough
+- over 2 minutes
 
 ## Story structure
 

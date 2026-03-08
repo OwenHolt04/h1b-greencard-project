@@ -1,7 +1,7 @@
 import React from 'react';
 import { useCurrentFrame, useVideoConfig, interpolate, spring, AbsoluteFill } from 'remotion';
 import { C } from '../lib/constants';
-import { FONT_SANS, FONT_SERIF } from '../lib/fonts';
+import { FONT_SANS, FONT_DISPLAY } from '../lib/fonts';
 
 /**
  * Full-frame dark title card for section transitions.
@@ -70,7 +70,7 @@ export const TitleCard = ({
           color: C.white,
           fontSize: 52,
           fontWeight: 700,
-          fontFamily: FONT_SERIF,
+          fontFamily: FONT_DISPLAY,
           textAlign: 'center',
           lineHeight: 1.2,
           letterSpacing: '-0.02em',

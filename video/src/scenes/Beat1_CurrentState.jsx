@@ -3,61 +3,61 @@ import {
   useCurrentFrame, useVideoConfig, interpolate, spring, AbsoluteFill,
 } from 'remotion';
 import { C, CAPTIONS } from '../lib/constants';
-import { FONT_SANS, FONT_SERIF } from '../lib/fonts';
+import { FONT_SANS, FONT_DISPLAY } from '../lib/fonts';
 
 /**
- * Beat 1 — Current-State Tension (12s)
- * Dark frame. Three lines reveal one at a time:
- *   "3 agencies." → "4 portals." → "0 dashboards."
- * Then a subline: "No one sees the full picture."
+ * Beat 1 — Current-State Tension (10s)
+ * Dark frame. Three lines reveal with escalating spring intensity:
+ *   "3 agencies." (smooth) → "4 portals." (snappy) → "0 dashboards." (heavy)
  */
 export const Beat1_CurrentState = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
-
   const { line1, line2, line3, sub } = CAPTIONS.beat1;
 
-  // Staggered text reveals
-  const line1Enter = spring({ frame, fps, config: { damping: 200 }, delay: Math.round(1.0 * fps) });
-  const line2Enter = spring({ frame, fps, config: { damping: 200 }, delay: Math.round(2.8 * fps) });
-  const line3Enter = spring({ frame, fps, config: { damping: 200 }, delay: Math.round(4.6 * fps) });
-  const subEnter = spring({ frame, fps, config: { damping: 200 }, delay: Math.round(7.0 * fps) });
+  // Staggered text reveals — tighter for 10s beat
+  const line1Enter = spring({ frame, fps, config: { damping: 200 }, delay: Math.round(0.6 * fps) });
+  const line2Enter = spring({ frame, fps, config: { damping: 20, stiffness: 200 }, delay: Math.round(2.0 * fps) });
+  const line3Enter = spring({ frame, fps, config: { damping: 15, stiffness: 80, mass: 2 }, delay: Math.round(3.4 * fps) });
+  const subEnter = spring({ frame, fps, config: { damping: 200 }, delay: Math.round(5.5 * fps) });
 
-  // Subtle background pulse on "0 dashboards"
-  const bgBrightness = interpolate(line3Enter, [0, 1], [0.95, 1]);
+  // Animated background gradient angle
+  const bgAngle = interpolate(frame, [0, 10 * fps], [160, 172], { extrapolateRight: 'clamp' });
 
-  // Divider line between stats and subline
-  const dividerWidth = interpolate(subEnter, [0, 1], [0, 200], { extrapolateRight: 'clamp' });
+  // Divider
+  const dividerProgress = spring({ frame, fps, config: { damping: 200 }, delay: Math.round(5.0 * fps) });
+  const dividerWidth = interpolate(dividerProgress, [0, 1], [0, 400], { extrapolateRight: 'clamp' });
+
+  const LINES = [
+    { text: line1, enter: line1Enter, size: 88, color: C.white },
+    { text: line2, enter: line2Enter, size: 88, color: C.white },
+    { text: line3, enter: line3Enter, size: 110, color: C.accent },
+  ];
 
   return (
     <AbsoluteFill
       style={{
-        background: `linear-gradient(160deg, #060e1a 0%, ${C.navy900} 50%, #0d1f3a 100%)`,
+        background: `linear-gradient(${bgAngle}deg, #0e1a4a 0%, ${C.navy900} 50%, ${C.navy800} 100%)`,
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
         fontFamily: FONT_SANS,
-        filter: `brightness(${bgBrightness})`,
       }}
     >
       {/* Stat lines */}
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 20 }}>
-        {[
-          { text: line1, enter: line1Enter },
-          { text: line2, enter: line2Enter },
-          { text: line3, enter: line3Enter },
-        ].map(({ text, enter }, i) => (
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16 }}>
+        {LINES.map(({ text, enter, size, color }, i) => (
           <div
             key={i}
             style={{
-              fontSize: i === 2 ? 72 : 60,
+              fontSize: size,
               fontWeight: 700,
-              fontFamily: FONT_SERIF,
-              color: i === 2 ? C.accent : C.white,
+              fontFamily: FONT_DISPLAY,
+              color,
               letterSpacing: '-0.02em',
               opacity: interpolate(enter, [0, 1], [0, 1]),
-              transform: `translateY(${interpolate(enter, [0, 1], [24, 0])}px)`,
+              transform: `translateY(${interpolate(enter, [0, 1], [i === 2 ? 40 : 24, 0])}px)`,
             }}
           >
             {text}
@@ -65,24 +65,25 @@ export const Beat1_CurrentState = () => {
         ))}
       </div>
 
-      {/* Divider */}
+      {/* Divider with glow */}
       <div
         style={{
           width: dividerWidth,
-          height: 1,
+          height: 3,
           background: `linear-gradient(90deg, transparent, ${C.accent}, transparent)`,
-          marginTop: 40,
+          marginTop: 36,
           marginBottom: 24,
+          boxShadow: `0 0 16px rgba(248, 242, 182, 0.4)`,
         }}
       />
 
       {/* Subline */}
       <div
         style={{
-          fontSize: 24,
+          fontSize: 28,
           fontWeight: 400,
-          color: 'rgba(255,255,255,0.5)',
-          letterSpacing: '0.02em',
+          color: 'rgba(255,255,255,0.7)',
+          letterSpacing: '0.01em',
           opacity: interpolate(subEnter, [0, 1], [0, 1]),
           transform: `translateY(${interpolate(subEnter, [0, 1], [12, 0])}px)`,
         }}

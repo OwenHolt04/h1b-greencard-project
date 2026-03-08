@@ -22,7 +22,7 @@ const agencyColors = {
 };
 
 export default function Dashboard() {
-  const { navigate, readinessScore, caseHealth, unresolvedCount } = useDemo();
+  const { navigate, readinessScore, caseHealth, unresolvedCount, stageAdvanced, advanceStage } = useDemo();
 
   return (
     <motion.div
@@ -79,7 +79,7 @@ export default function Dashboard() {
           <div className="flex items-center gap-5">
             <div className="text-right">
               <p className="text-[10px] text-slate-400 uppercase tracking-wider">Stage</p>
-              <p className="text-sm font-semibold text-accent">I-485 Preparation</p>
+              <p className="text-sm font-semibold text-navy-900">I-485 Preparation</p>
             </div>
             <div className="text-right">
               <p className="text-[10px] text-slate-400 uppercase tracking-wider">Priority Date</p>
@@ -94,13 +94,26 @@ export default function Dashboard() {
       <div className="bg-white rounded-xl border border-slate-200/80 shadow-sm px-6 py-5 mb-5">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-sm font-semibold text-slate-900">Case Journey</h2>
-          <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${
-            caseHealth === 'On Track'
-              ? 'bg-green-50 text-green-700'
-              : 'bg-amber-50 text-amber-700'
-          }`}>
-            {caseHealth}
-          </span>
+          <div className="flex items-center gap-2">
+            {!stageAdvanced && (
+              <button
+                onClick={advanceStage}
+                className="text-[11px] font-medium text-navy-900 hover:text-navy-700 transition-colors cursor-pointer flex items-center gap-1"
+              >
+                <ArrowRight className="w-3 h-3" />
+                Advance to Biometrics
+              </button>
+            )}
+            <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${
+              stageAdvanced
+                ? 'bg-green-50 text-green-700'
+                : caseHealth === 'On Track'
+                ? 'bg-green-50 text-green-700'
+                : 'bg-amber-50 text-amber-700'
+            }`}>
+              {stageAdvanced ? 'Progressing' : caseHealth}
+            </span>
+          </div>
         </div>
         <StageTimeline />
       </div>
@@ -133,18 +146,18 @@ export default function Dashboard() {
           {/* Plain-Language Next Step */}
           <div className="bg-white rounded-xl border border-slate-200/80 shadow-sm p-5">
             <div className="flex items-center gap-2 mb-3">
-              <div className="w-7 h-7 rounded-lg bg-accent/10 flex items-center justify-center">
-                <FileText className="w-4 h-4 text-accent" />
+              <div className="w-7 h-7 rounded-lg bg-accent/40 flex items-center justify-center">
+                <FileText className="w-4 h-4 text-navy-900" />
               </div>
               <h2 className="text-sm font-semibold text-slate-900">What's Happening Now</h2>
             </div>
             <p className="text-[14px] text-slate-700 leading-relaxed">
-              Your I-485 adjustment of status package is being prepared for concurrent filing. Your attorney is reviewing 3 items before the package can be finalized. Your priority date is current for EB-2 Japan, so there is no visa bulletin wait.
+              Your I-485 adjustment of status package is being prepared for concurrent filing. Your attorney is reviewing 3 items before the package can be finalized. After a multi-year wait, your EB-2 India priority date is now current — this is the filing window.
             </p>
             <div className="mt-4 flex gap-3">
               <button
                 onClick={() => navigate('intake')}
-                className="text-sm font-semibold text-accent hover:text-accent-light transition-colors flex items-center gap-1 cursor-pointer"
+                className="text-sm font-semibold text-navy-900 hover:text-navy-700 transition-colors flex items-center gap-1 cursor-pointer"
               >
                 Open Validation Review <ArrowRight className="w-3.5 h-3.5" />
               </button>

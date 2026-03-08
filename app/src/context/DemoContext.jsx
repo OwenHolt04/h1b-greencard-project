@@ -14,6 +14,8 @@ const defaultState = {
   },
   syncing: false,
   employerNameFixed: false,
+  stageAdvanced: false,
+  overviewMode: 'future', // 'current' or 'future'
 };
 
 // Parse URL params for Remotion deep-linking: ?screen=intake&role=attorney&validated=true&fixed=employer-name
@@ -70,6 +72,10 @@ function demoReducer(state, action) {
       };
     case 'SYNC_COMPLETE':
       return { ...state, syncing: false };
+    case 'ADVANCE_STAGE':
+      return { ...state, stageAdvanced: true };
+    case 'SET_OVERVIEW_MODE':
+      return { ...state, overviewMode: action.payload };
     case 'RESET_DEMO':
       return { ...defaultState };
     default:
@@ -118,6 +124,14 @@ export function DemoProvider({ children }) {
     }, 800);
   }, []);
 
+  const advanceStage = useCallback(() => {
+    dispatch({ type: 'ADVANCE_STAGE' });
+  }, []);
+
+  const setOverviewMode = useCallback((mode) => {
+    dispatch({ type: 'SET_OVERVIEW_MODE', payload: mode });
+  }, []);
+
   const resetDemo = useCallback(() => {
     dispatch({ type: 'RESET_DEMO' });
   }, []);
@@ -139,9 +153,11 @@ export function DemoProvider({ children }) {
       switchRole,
       runValidation,
       resolveIssue,
+      advanceStage,
+      setOverviewMode,
       resetDemo,
     }),
-    [state, readinessScore, caseHealth, unresolvedCount, navigate, switchRole, runValidation, resolveIssue, resetDemo]
+    [state, readinessScore, caseHealth, unresolvedCount, navigate, switchRole, runValidation, resolveIssue, advanceStage, setOverviewMode, resetDemo]
   );
 
   return <DemoContext.Provider value={value}>{children}</DemoContext.Provider>;
