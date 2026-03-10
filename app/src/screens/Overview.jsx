@@ -8,42 +8,34 @@ const capabilities = [
   {
     icon: FileText,
     title: 'Smart Intake',
-    description: 'Enter data once. Auto-populate across 6 immigration forms — eliminating re-keying contradictions.',
+    description: 'Enter data once. Auto-populate across 6 immigration forms.',
     metric: '6 forms, 1 entry',
     color: 'bg-blue-50 text-blue-700',
     kano: 'Basic',
-    kanoColor: 'bg-slate-800 text-white',
-    kanoNote: 'Must-have',
   },
   {
     icon: Shield,
     title: 'Validation Engine',
-    description: 'Pre-submission checks catch inconsistencies that would otherwise trigger RFEs months later.',
+    description: 'Pre-submission checks catch inconsistencies before filing.',
     metric: 'RFE rate: 25% → <5%',
     color: 'bg-green-50 text-green-700',
     kano: 'Basic',
-    kanoColor: 'bg-slate-800 text-white',
-    kanoNote: 'Must-have',
   },
   {
     icon: LayoutDashboard,
     title: 'Unified Dashboard',
-    description: 'One view across DOL, USCIS, and DOS — replacing 4 separate portals plus a physical mailbox.',
+    description: 'One view across DOL, USCIS, and DOS.',
     metric: 'Status calls: −60%',
     color: 'bg-amber-50 text-amber-700',
     kano: 'Performance',
-    kanoColor: 'bg-accent text-navy-900',
-    kanoNote: 'Differentiator',
   },
   {
     icon: Users,
     title: 'Role-Based Views',
-    description: 'Same case record, different priorities. Plain language for applicants. Precision for attorneys.',
+    description: 'Same case record, different stakeholder priorities.',
     metric: 'Attorney hours: 8 → 3',
     color: 'bg-purple-50 text-purple-700',
     kano: 'Delighter',
-    kanoColor: 'bg-purple-700 text-white',
-    kanoNote: 'Exceeds expectations',
   },
 ];
 
@@ -76,13 +68,13 @@ export default function Overview() {
         <div className="absolute inset-0 bg-gradient-to-br from-navy-900 via-navy-800 to-navy-900" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(248,242,182,0.06),transparent_60%)]" />
 
-        <div className="relative max-w-5xl mx-auto px-6 pt-14 pb-14 text-center">
+        <div className="relative max-w-5xl mx-auto px-6 pt-16 pb-16 text-center">
           {/* Current/Future toggle */}
           <div className="flex justify-center mb-8">
             <div className="bg-white/10 backdrop-blur-sm rounded-lg p-1 inline-flex">
               <button
                 onClick={() => setOverviewMode('current')}
-                className={`px-5 py-2 rounded-md text-sm font-medium transition-all duration-200 cursor-pointer ${
+                className={`px-6 py-2.5 rounded-md text-sm font-medium transition-all duration-200 cursor-pointer ${
                   overviewMode === 'current'
                     ? 'bg-red-500/90 text-white shadow-sm'
                     : 'text-white/50 hover:text-white/80'
@@ -92,7 +84,7 @@ export default function Overview() {
               </button>
               <button
                 onClick={() => setOverviewMode('future')}
-                className={`px-5 py-2 rounded-md text-sm font-medium transition-all duration-200 cursor-pointer ${
+                className={`px-6 py-2.5 rounded-md text-sm font-medium transition-all duration-200 cursor-pointer ${
                   overviewMode === 'future'
                     ? 'bg-accent text-navy-900 shadow-sm'
                     : 'text-white/50 hover:text-white/80'
@@ -115,7 +107,7 @@ export default function Overview() {
                 <p className="text-red-400 text-sm font-semibold tracking-wider uppercase mb-4">
                   Current State
                 </p>
-                <h1 className="font-serif text-4xl md:text-5xl font-bold text-white leading-tight mb-5">
+                <h1 className="font-serif text-5xl md:text-6xl font-bold text-white leading-tight mb-5">
                   Fragmented, opaque,
                   <br />
                   and expensive to navigate.
@@ -142,7 +134,7 @@ export default function Overview() {
                 <p className="text-accent text-sm font-bold tracking-wider uppercase mb-4">
                   Future-State Technology Platform
                 </p>
-                <h1 className="font-serif text-4xl md:text-5xl font-bold text-white leading-tight mb-5">
+                <h1 className="font-serif text-5xl md:text-6xl font-bold text-white leading-tight mb-5">
                   One shared case record for the
                   <br />
                   H-1B to green card journey.
@@ -150,21 +142,13 @@ export default function Overview() {
                 <p className="text-slate-300 text-lg max-w-2xl mx-auto leading-relaxed mb-8">
                   Reduce rework, simplify handoffs, and make status visible — across applicant, employer, attorney, and agencies.
                 </p>
-                <div className="flex items-center justify-center gap-4">
-                  <button
-                    onClick={() => navigate('dashboard')}
-                    className="inline-flex items-center gap-2 bg-accent hover:bg-accent-dark text-navy-900 font-semibold px-6 py-3 rounded-lg transition-colors duration-200 cursor-pointer"
-                  >
-                    View Demo Case
-                    <ArrowRight className="w-4 h-4" />
-                  </button>
-                  <button
-                    onClick={() => navigate('impact')}
-                    className="inline-flex items-center gap-2 text-white/70 hover:text-white font-medium px-6 py-3 rounded-lg border border-white/20 hover:border-white/40 transition-all duration-200 cursor-pointer"
-                  >
-                    See What the Portal Solves
-                  </button>
-                </div>
+                <button
+                  onClick={() => navigate('dashboard')}
+                  className="inline-flex items-center gap-2 bg-accent hover:bg-accent-dark text-navy-900 font-semibold px-7 py-3.5 rounded-lg transition-colors duration-200 cursor-pointer text-base"
+                >
+                  View Demo Case
+                  <ArrowRight className="w-4 h-4" />
+                </button>
               </motion.div>
             )}
           </AnimatePresence>
@@ -195,12 +179,12 @@ export default function Overview() {
                     className="bg-white rounded-xl border border-red-200/60 p-5 shadow-sm"
                   >
                     <div className="flex items-start gap-3">
-                      <div className="w-9 h-9 rounded-lg bg-red-50 text-red-500 flex items-center justify-center flex-shrink-0">
+                      <div className="w-10 h-10 rounded-lg bg-red-50 text-red-500 flex items-center justify-center flex-shrink-0">
                         <prob.icon className="w-5 h-5" />
                       </div>
                       <div>
-                        <h3 className="font-semibold text-slate-900 text-[15px] mb-0.5">{prob.label}</h3>
-                        <p className="text-slate-500 text-[13px] leading-relaxed">{prob.detail}</p>
+                        <h3 className="font-semibold text-slate-900 text-base mb-0.5">{prob.label}</h3>
+                        <p className="text-slate-500 text-sm leading-relaxed">{prob.detail}</p>
                       </div>
                     </div>
                   </motion.div>
@@ -213,12 +197,12 @@ export default function Overview() {
                 <div className="flex items-center justify-center gap-3 flex-wrap">
                   {['DOL Portal', 'USCIS Portal', 'DOS Portal', 'Employer HRIS', 'Email Threads', 'Physical Mail'].map((portal) => (
                     <div key={portal} className="px-4 py-3 rounded-lg bg-slate-100 border border-slate-200 text-center">
-                      <p className="text-[13px] font-medium text-slate-600">{portal}</p>
-                      <p className="text-[10px] text-red-400 font-medium mt-0.5">Not connected</p>
+                      <p className="text-sm font-medium text-slate-600">{portal}</p>
+                      <p className="text-xs text-red-400 font-medium mt-0.5">Not connected</p>
                     </div>
                   ))}
                 </div>
-                <p className="text-center text-slate-400 text-[13px] mt-4">
+                <p className="text-center text-slate-400 text-sm mt-4">
                   5 portals + 1 mailbox + 0 dashboards = no single source of truth
                 </p>
               </div>
@@ -232,7 +216,7 @@ export default function Overview() {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.25 }}
           >
-            {/* Capability Cards with Kano annotations */}
+            {/* Capability Cards — no Kano badges */}
             <section className="max-w-6xl mx-auto px-6 -mt-6 relative z-10">
               <motion.div
                 variants={container}
@@ -244,27 +228,24 @@ export default function Overview() {
                   <motion.div
                     key={cap.title}
                     variants={item}
-                    className="bg-white rounded-xl border border-slate-200/80 p-5 shadow-sm hover:shadow-md transition-shadow duration-200"
+                    className="bg-white rounded-xl border border-slate-200/80 p-5 shadow-sm"
                   >
                     <div className="flex items-center justify-between mb-3">
                       <div className={`w-10 h-10 rounded-lg ${cap.color} flex items-center justify-center`}>
                         <cap.icon className="w-5 h-5" />
                       </div>
-                      <span className={`text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${cap.kanoColor}`}>
+                      <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">
                         {cap.kano}
                       </span>
                     </div>
-                    <h3 className="font-semibold text-slate-900 text-[15px] mb-1.5">{cap.title}</h3>
-                    <p className="text-slate-500 text-[13px] leading-relaxed mb-3">{cap.description}</p>
+                    <h3 className="font-semibold text-slate-900 text-base mb-1.5">{cap.title}</h3>
+                    <p className="text-slate-500 text-sm leading-relaxed mb-3">{cap.description}</p>
                     <div className="pt-2 border-t border-slate-100">
-                      <span className="text-navy-900 font-bold text-[15px]">{cap.metric}</span>
+                      <span className="text-navy-900 font-bold text-base">{cap.metric}</span>
                     </div>
                   </motion.div>
                 ))}
               </motion.div>
-              <p className="text-center text-[11px] text-slate-400 mt-3">
-                Demo order follows Kano model: <span className="font-semibold text-slate-500">Basic</span> (must-have) → <span className="font-semibold text-navy-900 bg-accent px-1 rounded">Performance</span> (differentiator) → <span className="font-semibold text-purple-600">Delighter</span> (exceeds expectations)
-              </p>
             </section>
 
             {/* Case Preview */}
@@ -278,7 +259,7 @@ export default function Overview() {
                 <div className="border-b border-slate-100 px-6 py-4 flex items-center justify-between">
                   <div>
                     <p className="text-xs text-slate-400 font-medium uppercase tracking-wider mb-0.5">Demo Case</p>
-                    <h3 className="font-semibold text-slate-900">{applicant.fullName} — EB-2 Green Card via {employer.displayName}</h3>
+                    <h3 className="font-semibold text-slate-900 text-base">{applicant.fullName} — EB-2 Green Card via {employer.displayName}</h3>
                   </div>
                   <button
                     onClick={() => navigate('dashboard')}
@@ -291,12 +272,12 @@ export default function Overview() {
                   <div>
                     <p className="text-xs text-slate-400 font-medium mb-1">Applicant</p>
                     <p className="text-sm text-slate-900 font-medium">{applicant.fullName}</p>
-                    <p className="text-xs text-slate-500">{applicant.educationLevel} {applicant.degreeField}, {applicant.university} · {applicant.currentStatus}</p>
+                    <p className="text-xs text-slate-500">{applicant.educationLevel}, {applicant.university}</p>
                   </div>
                   <div>
                     <p className="text-xs text-slate-400 font-medium mb-1">Employer</p>
                     <p className="text-sm text-slate-900 font-medium">{employer.legalName}</p>
-                    <p className="text-xs text-slate-500">{employer.industry} · {employer.headquarters}</p>
+                    <p className="text-xs text-slate-500">{employer.industry}</p>
                   </div>
                   <div>
                     <p className="text-xs text-slate-400 font-medium mb-1">Attorney</p>
@@ -306,7 +287,7 @@ export default function Overview() {
                   <div>
                     <p className="text-xs text-slate-400 font-medium mb-1">Current Stage</p>
                     <p className="text-sm text-slate-900 font-medium">I-485 Preparation</p>
-                    <p className="text-xs text-slate-500">Priority Date: Mar 2024</p>
+                    <p className="text-xs text-slate-500">Priority Date: Mar 2022</p>
                   </div>
                 </div>
                 <div className="px-6 py-4 bg-slate-50/50 border-t border-slate-100">
@@ -324,7 +305,7 @@ export default function Overview() {
                 className="flex items-start gap-3 bg-slate-50 border border-slate-200/80 rounded-lg px-5 py-4"
               >
                 <Info className="w-4 h-4 text-slate-400 mt-0.5 flex-shrink-0" />
-                <p className="text-slate-500 text-[13px] leading-relaxed">{scopeNote}</p>
+                <p className="text-slate-500 text-sm leading-relaxed">{scopeNote}</p>
               </motion.div>
             </section>
           </motion.div>

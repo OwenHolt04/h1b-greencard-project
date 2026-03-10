@@ -16,6 +16,7 @@ const defaultState = {
   employerNameFixed: false,
   stageAdvanced: false,
   overviewMode: 'future',
+  alertFocus: null, // 'deadline' for Beat 7 focused view
   documentChecks: {}, // key: "stageNum-docIdx" => boolean override
   openFormCode: null, // null or form code string like 'I-485'
 };
@@ -49,6 +50,18 @@ function getInitialState() {
     });
   }
 
+  // Overview mode from URL: ?mode=current
+  const mode = params.get('mode');
+  if (mode === 'current') {
+    state.overviewMode = 'current';
+  }
+
+  // Alert focus from URL: ?alert=deadline (Beat 7)
+  const alert = params.get('alert');
+  if (alert === 'deadline') {
+    state.alertFocus = 'deadline';
+  }
+
   return state;
 }
 
@@ -77,6 +90,8 @@ function demoReducer(state, action) {
       return { ...state, stageAdvanced: true };
     case 'SET_OVERVIEW_MODE':
       return { ...state, overviewMode: action.payload };
+    case 'SET_ALERT_FOCUS':
+      return { ...state, alertFocus: action.payload };
     case 'TOGGLE_DOCUMENT': {
       const key = action.payload.key;
       const wasChecked = action.payload.wasChecked;
@@ -90,7 +105,7 @@ function demoReducer(state, action) {
     case 'CLOSE_FORM':
       return { ...state, openFormCode: null };
     case 'RESET_DEMO':
-      return { ...defaultState, issues: { ...defaultState.issues }, documentChecks: {} };
+      return { ...defaultState, issues: { ...defaultState.issues }, documentChecks: {}, alertFocus: null };
     default:
       return state;
   }
@@ -125,6 +140,7 @@ export function DemoProvider({ children }) {
   }, []);
   const advanceStage = useCallback(() => dispatch({ type: 'ADVANCE_STAGE' }), []);
   const setOverviewMode = useCallback((mode) => dispatch({ type: 'SET_OVERVIEW_MODE', payload: mode }), []);
+  const setAlertFocus = useCallback((focus) => dispatch({ type: 'SET_ALERT_FOCUS', payload: focus }), []);
   const toggleDocument = useCallback((key, wasChecked) => dispatch({ type: 'TOGGLE_DOCUMENT', payload: { key, wasChecked } }), []);
   const openForm = useCallback((code) => dispatch({ type: 'OPEN_FORM', payload: code }), []);
   const closeForm = useCallback(() => dispatch({ type: 'CLOSE_FORM' }), []);
@@ -139,12 +155,12 @@ export function DemoProvider({ children }) {
       ...state,
       readinessScore, caseHealth, unresolvedCount,
       navigate, switchRole, runValidation, resolveIssue,
-      advanceStage, setOverviewMode, toggleDocument,
+      advanceStage, setOverviewMode, setAlertFocus, toggleDocument,
       openForm, closeForm, resetDemo,
     }),
     [state, readinessScore, caseHealth, unresolvedCount,
      navigate, switchRole, runValidation, resolveIssue,
-     advanceStage, setOverviewMode, toggleDocument,
+     advanceStage, setOverviewMode, setAlertFocus, toggleDocument,
      openForm, closeForm, resetDemo]
   );
 

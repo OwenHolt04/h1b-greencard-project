@@ -4,26 +4,37 @@ import { TransitionSeries, linearTiming, springTiming } from '@remotion/transiti
 import { fade } from '@remotion/transitions/fade';
 import { slide } from '@remotion/transitions/slide';
 import {
-  BEAT_FRAMES, TOTAL_FRAMES, C,
-  TR_1_2, TR_2_3, TR_3_4, TR_4_5, TR_5_6, TR_6_7, TR_7_8,
+  SCENE_FRAMES, TOTAL_FRAMES, C,
+  TR_1_2, TR_2_3, TR_3_4, TR_4_5, TR_5_6, TR_6_7, TR_7_8, TR_8_9,
 } from './lib/constants';
 
-import { Beat1_CurrentState } from './scenes/Beat1_CurrentState';
-import { Beat2_Overview } from './scenes/Beat2_Overview';
-import { Beat3_SmartIntake } from './scenes/Beat3_SmartIntake';
-import { Beat4_Validation } from './scenes/Beat4_Validation';
-import { Beat5_Fix } from './scenes/Beat5_Fix';
-import { Beat6_RoleSwitcher } from './scenes/Beat6_RoleSwitcher';
-import { Beat7_ScopeClarity } from './scenes/Beat7_ScopeClarity';
-import { Beat8_Close } from './scenes/Beat8_Close';
+import { Scene1_CurrentStateChaos } from './scenes/Scene1_CurrentStateChaos';
+import { Scene2_PlatformReveal } from './scenes/Scene2_PlatformReveal';
+import { Scene3_CaseWorkspace } from './scenes/Scene3_CaseWorkspace';
+import { Scene4_IntakeSync } from './scenes/Scene4_IntakeSync';
+import { Scene5_ValidationMoment } from './scenes/Scene5_ValidationMoment';
+import { Scene6_RoleSwitch } from './scenes/Scene6_RoleSwitch';
+import { Scene7_DeadlineProtection } from './scenes/Scene7_DeadlineProtection';
+import { Scene8_ScopeClarification } from './scenes/Scene8_ScopeClarification';
+import { Scene9_FinalImpact } from './scenes/Scene9_FinalImpact';
 
 /**
- * CaseBridge Demo — Full 8-Beat Composition (~103s)
+ * CaseBridge Demo — Narrative Journey (9 Scenes, ~108s)
+ *
+ * Follows Prajwal Kulkarni's immigration case through:
+ *   1. Current-state chaos
+ *   2. Platform reveal
+ *   3. Shared case workspace (dashboard)
+ *   4. Smart intake (data sync)
+ *   5. Validation moment (hero scene)
+ *   6. Role switching (3 stakeholder views)
+ *   7. Deadline protection (NEW)
+ *   8. Scope clarification
+ *   9. Final impact + close
  *
  * Transitions:
- *   slide(from-right) between unrelated scenes (forward motion)
- *   quick fade between related scenes (beats 3→4→5, same screen)
- *   slow fade for closing
+ *   fade between related scenes (most transitions)
+ *   slide(from-right) for the role-switch entry (forward motion)
  */
 export const CaseBridgeDemo = () => {
   const frame = useCurrentFrame();
@@ -31,19 +42,19 @@ export const CaseBridgeDemo = () => {
   return (
     <AbsoluteFill style={{ background: C.navy900 }}>
       <TransitionSeries>
-        {/* Beat 1 — Current-State Tension */}
-        <TransitionSeries.Sequence durationInFrames={BEAT_FRAMES.currentState}>
-          <Beat1_CurrentState />
+        {/* Scene 1 — Current-State Chaos */}
+        <TransitionSeries.Sequence durationInFrames={SCENE_FRAMES.currentStateChaos}>
+          <Scene1_CurrentStateChaos />
         </TransitionSeries.Sequence>
 
         <TransitionSeries.Transition
-          presentation={slide({ direction: 'from-right' })}
-          timing={springTiming({ config: { damping: 200 }, durationInFrames: TR_1_2 })}
+          presentation={fade()}
+          timing={linearTiming({ durationInFrames: TR_1_2 })}
         />
 
-        {/* Beat 2 — CaseBridge Overview */}
-        <TransitionSeries.Sequence durationInFrames={BEAT_FRAMES.overview}>
-          <Beat2_Overview />
+        {/* Scene 2 — Platform Reveal */}
+        <TransitionSeries.Sequence durationInFrames={SCENE_FRAMES.platformReveal}>
+          <Scene2_PlatformReveal />
         </TransitionSeries.Sequence>
 
         <TransitionSeries.Transition
@@ -51,9 +62,9 @@ export const CaseBridgeDemo = () => {
           timing={linearTiming({ durationInFrames: TR_2_3 })}
         />
 
-        {/* Beat 3 — Smart Intake + Form Sync */}
-        <TransitionSeries.Sequence durationInFrames={BEAT_FRAMES.smartIntake}>
-          <Beat3_SmartIntake />
+        {/* Scene 3 — Case Workspace (Dashboard) */}
+        <TransitionSeries.Sequence durationInFrames={SCENE_FRAMES.caseWorkspace}>
+          <Scene3_CaseWorkspace />
         </TransitionSeries.Sequence>
 
         <TransitionSeries.Transition
@@ -61,9 +72,9 @@ export const CaseBridgeDemo = () => {
           timing={linearTiming({ durationInFrames: TR_3_4 })}
         />
 
-        {/* Beat 4 — Validation Catches Issues (hero beat) */}
-        <TransitionSeries.Sequence durationInFrames={BEAT_FRAMES.validation}>
-          <Beat4_Validation />
+        {/* Scene 4 — Smart Intake (Data Sync) */}
+        <TransitionSeries.Sequence durationInFrames={SCENE_FRAMES.intakeSync}>
+          <Scene4_IntakeSync />
         </TransitionSeries.Sequence>
 
         <TransitionSeries.Transition
@@ -71,9 +82,9 @@ export const CaseBridgeDemo = () => {
           timing={linearTiming({ durationInFrames: TR_4_5 })}
         />
 
-        {/* Beat 5 — Fix + Score Improvement */}
-        <TransitionSeries.Sequence durationInFrames={BEAT_FRAMES.fix}>
-          <Beat5_Fix />
+        {/* Scene 5 — Validation Moment (Hero Scene) */}
+        <TransitionSeries.Sequence durationInFrames={SCENE_FRAMES.validationMoment}>
+          <Scene5_ValidationMoment />
         </TransitionSeries.Sequence>
 
         <TransitionSeries.Transition
@@ -81,9 +92,9 @@ export const CaseBridgeDemo = () => {
           timing={linearTiming({ durationInFrames: TR_5_6 })}
         />
 
-        {/* Beat 6 — Role Switcher (3 views) */}
-        <TransitionSeries.Sequence durationInFrames={BEAT_FRAMES.roleSwitcher}>
-          <Beat6_RoleSwitcher />
+        {/* Scene 6 — Role Switch */}
+        <TransitionSeries.Sequence durationInFrames={SCENE_FRAMES.roleSwitch}>
+          <Scene6_RoleSwitch />
         </TransitionSeries.Sequence>
 
         <TransitionSeries.Transition
@@ -91,9 +102,9 @@ export const CaseBridgeDemo = () => {
           timing={linearTiming({ durationInFrames: TR_6_7 })}
         />
 
-        {/* Beat 7 — Scope Clarity */}
-        <TransitionSeries.Sequence durationInFrames={BEAT_FRAMES.scopeClarity}>
-          <Beat7_ScopeClarity />
+        {/* Scene 7 — Deadline Protection */}
+        <TransitionSeries.Sequence durationInFrames={SCENE_FRAMES.deadlineProtection}>
+          <Scene7_DeadlineProtection />
         </TransitionSeries.Sequence>
 
         <TransitionSeries.Transition
@@ -101,9 +112,19 @@ export const CaseBridgeDemo = () => {
           timing={linearTiming({ durationInFrames: TR_7_8 })}
         />
 
-        {/* Beat 8 — Close */}
-        <TransitionSeries.Sequence durationInFrames={BEAT_FRAMES.close}>
-          <Beat8_Close />
+        {/* Scene 8 — Scope Clarification */}
+        <TransitionSeries.Sequence durationInFrames={SCENE_FRAMES.scopeClarification}>
+          <Scene8_ScopeClarification />
+        </TransitionSeries.Sequence>
+
+        <TransitionSeries.Transition
+          presentation={fade()}
+          timing={linearTiming({ durationInFrames: TR_8_9 })}
+        />
+
+        {/* Scene 9 — Final Impact */}
+        <TransitionSeries.Sequence durationInFrames={SCENE_FRAMES.finalImpact}>
+          <Scene9_FinalImpact />
         </TransitionSeries.Sequence>
       </TransitionSeries>
 
