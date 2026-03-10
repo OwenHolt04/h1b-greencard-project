@@ -2,6 +2,8 @@ import { createContext, useContext, useReducer, useCallback, useMemo } from 'rea
 
 const DemoContext = createContext(null);
 
+const TOTAL_SCENES = 8;
+
 const defaultState = {
   currentScreen: 'overview',
   currentRole: 'applicant',
@@ -19,6 +21,8 @@ const defaultState = {
   alertFocus: null, // 'deadline' for Beat 7 focused view
   documentChecks: {}, // key: "stageNum-docIdx" => boolean override
   openFormCode: null, // null or form code string like 'I-485'
+  presentationMode: false,
+  currentScene: 0,
 };
 
 function getInitialState() {
@@ -60,6 +64,20 @@ function getInitialState() {
   const alert = params.get('alert');
   if (alert === 'deadline') {
     state.alertFocus = 'deadline';
+  }
+
+  // Presentation mode from URL: ?mode=presentation
+  if (params.get('mode') === 'presentation') {
+    state.presentationMode = true;
+  }
+
+  // Scene from URL: ?scene=3
+  const scene = params.get('scene');
+  if (scene !== null) {
+    const sceneNum = parseInt(scene, 10);
+    if (!isNaN(sceneNum) && sceneNum >= 0 && sceneNum < TOTAL_SCENES) {
+      state.currentScene = sceneNum;
+    }
   }
 
   return state;
@@ -104,8 +122,16 @@ function demoReducer(state, action) {
       return { ...state, openFormCode: action.payload };
     case 'CLOSE_FORM':
       return { ...state, openFormCode: null };
+    case 'NEXT_SCENE':
+      return { ...state, currentScene: Math.min(state.currentScene + 1, TOTAL_SCENES - 1) };
+    case 'PREV_SCENE':
+      return { ...state, currentScene: Math.max(state.currentScene - 1, 0) };
+    case 'GO_TO_SCENE':
+      return { ...state, currentScene: Math.max(0, Math.min(action.payload, TOTAL_SCENES - 1)) };
+    case 'SET_PRESENTATION_MODE':
+      return { ...state, presentationMode: action.payload };
     case 'RESET_DEMO':
-      return { ...defaultState, issues: { ...defaultState.issues }, documentChecks: {}, alertFocus: null };
+      return { ...defaultState, issues: { ...defaultState.issues }, documentChecks: {}, alertFocus: null, presentationMode: state.presentationMode, currentScene: 0 };
     default:
       return state;
   }
@@ -144,6 +170,10 @@ export function DemoProvider({ children }) {
   const toggleDocument = useCallback((key, wasChecked) => dispatch({ type: 'TOGGLE_DOCUMENT', payload: { key, wasChecked } }), []);
   const openForm = useCallback((code) => dispatch({ type: 'OPEN_FORM', payload: code }), []);
   const closeForm = useCallback(() => dispatch({ type: 'CLOSE_FORM' }), []);
+  const nextScene = useCallback(() => dispatch({ type: 'NEXT_SCENE' }), []);
+  const prevScene = useCallback(() => dispatch({ type: 'PREV_SCENE' }), []);
+  const goToScene = useCallback((n) => dispatch({ type: 'GO_TO_SCENE', payload: n }), []);
+  const setPresentationMode = useCallback((on) => dispatch({ type: 'SET_PRESENTATION_MODE', payload: on }), []);
   const resetDemo = useCallback(() => dispatch({ type: 'RESET_DEMO' }), []);
 
   const readinessScore = useMemo(() => computeReadiness(state.issues), [state.issues]);
@@ -157,11 +187,13 @@ export function DemoProvider({ children }) {
       navigate, switchRole, runValidation, resolveIssue,
       advanceStage, setOverviewMode, setAlertFocus, toggleDocument,
       openForm, closeForm, resetDemo,
+      nextScene, prevScene, goToScene, setPresentationMode,
     }),
     [state, readinessScore, caseHealth, unresolvedCount,
      navigate, switchRole, runValidation, resolveIssue,
      advanceStage, setOverviewMode, setAlertFocus, toggleDocument,
-     openForm, closeForm, resetDemo]
+     openForm, closeForm, resetDemo,
+     nextScene, prevScene, goToScene, setPresentationMode]
   );
 
   return <DemoContext.Provider value={value}>{children}</DemoContext.Provider>;

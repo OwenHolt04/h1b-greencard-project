@@ -13,29 +13,29 @@ const METRICS = [
 ];
 
 /**
- * Scene 9 — Final Impact (10s)
+ * Scene 9 — Final Impact (14s)
  *
  * Closing scene. Zoom out from Prajwal's case to systemic impact.
  *
  * Visual arc:
- *   0-2s: Closing statement fades in
- *   2-5s: Prajwal's case summary — one line
- *   5-8s: Metrics grid appears
- *   8-10s: CaseBridge logo + fade out
+ *   0-3s: Closing statement fades in (more breathing)
+ *   3-5s: Prajwal's case summary line
+ *   5-9.5s: Metrics grid with staggered entrance
+ *   9.5-14s: CaseBridge logo, accent line, fade out
  */
 export const Scene9_FinalImpact = () => {
   const frame = useCurrentFrame();
   const { fps, durationInFrames } = useVideoConfig();
 
-  const statementEnter = spring({ frame, fps, config: { damping: 200 }, delay: 10 });
-  const caseLineEnter = spring({ frame, fps, config: { damping: 200 }, delay: Math.round(2.0 * fps) });
-  const metricsEnter = spring({ frame, fps, config: { damping: 200 }, delay: Math.round(4.0 * fps) });
-  const logoEnter = spring({ frame, fps, config: { damping: 200 }, delay: Math.round(7.0 * fps) });
+  const statementEnter = spring({ frame, fps, config: { damping: 200 }, delay: 12 });
+  const caseLineEnter = spring({ frame, fps, config: { damping: 200 }, delay: Math.round(3.0 * fps) });
+  const metricsEnter = spring({ frame, fps, config: { damping: 200 }, delay: Math.round(5.0 * fps) });
+  const logoEnter = spring({ frame, fps, config: { damping: 200 }, delay: Math.round(9.5 * fps) });
 
   // Fade out at the very end
   const fadeOut = interpolate(
     frame,
-    [durationInFrames - 45, durationInFrames],
+    [durationInFrames - 50, durationInFrames],
     [1, 0],
     { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }
   );
@@ -58,13 +58,13 @@ export const Scene9_FinalImpact = () => {
           opacity: interpolate(statementEnter, [0, 1], [0, 1]),
           transform: `translateY(${interpolate(statementEnter, [0, 1], [20, 0])}px)`,
           textAlign: 'center',
-          maxWidth: 900,
-          marginBottom: 24,
+          maxWidth: 960,
+          marginBottom: 28,
         }}
       >
         <div
           style={{
-            fontSize: 52,
+            fontSize: 56,
             fontWeight: 700,
             fontFamily: FONT_DISPLAY,
             color: C.white,
@@ -82,11 +82,11 @@ export const Scene9_FinalImpact = () => {
           opacity: interpolate(caseLineEnter, [0, 1], [0, 1]),
           transform: `translateY(${interpolate(caseLineEnter, [0, 1], [10, 0])}px)`,
           textAlign: 'center',
-          marginBottom: 40,
+          marginBottom: 48,
         }}
       >
-        <div style={{ fontSize: 20, color: 'rgba(255,255,255,0.5)', fontWeight: 500 }}>
-          {CASE.applicant.name} \u2022 {CASE.employer.shortName} \u2022 {CASE.attorney.firm} \u2022 {CASE.stage}
+        <div style={{ fontSize: 22, color: 'rgba(255,255,255,0.5)', fontWeight: 500 }}>
+          {CASE.applicant.name} {'\u2022'} {CASE.employer.shortName} {'\u2022'} {CASE.attorney.firm} {'\u2022'} {CASE.stage}
         </div>
       </div>
 
@@ -98,21 +98,21 @@ export const Scene9_FinalImpact = () => {
           gap: 3,
           opacity: interpolate(metricsEnter, [0, 1], [0, 1]),
           transform: `translateY(${interpolate(metricsEnter, [0, 1], [16, 0])}px)`,
-          marginBottom: 48,
+          marginBottom: 52,
         }}
       >
         {METRICS.map((m, i) => {
           const metricDelay = spring({
             frame, fps,
             config: { damping: 20, stiffness: 200 },
-            delay: Math.round(4.3 * fps) + i * 5,
+            delay: Math.round(5.5 * fps) + i * 6,
           });
 
           return (
             <div
               key={i}
               style={{
-                padding: '20px 40px',
+                padding: '24px 48px',
                 background: 'rgba(255,255,255,0.04)',
                 borderRadius:
                   i === 0 ? '12px 0 0 0' :
@@ -120,7 +120,7 @@ export const Scene9_FinalImpact = () => {
                   i === 2 ? '0 0 0 12px' :
                   '0 0 12px 0',
                 textAlign: 'center',
-                minWidth: 260,
+                minWidth: 280,
                 opacity: interpolate(metricDelay, [0, 1], [0, 1]),
               }}
             >
@@ -129,17 +129,17 @@ export const Scene9_FinalImpact = () => {
                   fontSize: 13,
                   color: 'rgba(255,255,255,0.45)',
                   fontWeight: 600,
-                  marginBottom: 8,
+                  marginBottom: 10,
                   textTransform: 'uppercase',
                   letterSpacing: '0.06em',
                 }}
               >
                 {m.label}
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12 }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 14 }}>
                 <span
                   style={{
-                    fontSize: 18,
+                    fontSize: 20,
                     color: 'rgba(255,255,255,0.55)',
                     textDecoration: 'line-through',
                     fontWeight: 500,
@@ -147,12 +147,12 @@ export const Scene9_FinalImpact = () => {
                 >
                   {m.before}
                 </span>
-                <span style={{ fontSize: 16, color: 'rgba(255,255,255,0.25)' }}>\u2192</span>
-                <span style={{ fontSize: 24, fontWeight: 700, color: C.accent }}>
+                <span style={{ fontSize: 18, color: 'rgba(255,255,255,0.25)' }}>{'\u2192'}</span>
+                <span style={{ fontSize: 28, fontWeight: 700, color: C.accent }}>
                   {m.after}
                 </span>
               </div>
-              <div style={{ fontSize: 14, color: C.green500, fontWeight: 600, marginTop: 6 }}>
+              <div style={{ fontSize: 15, color: C.green500, fontWeight: 600, marginTop: 8 }}>
                 {m.change}
               </div>
             </div>
@@ -172,7 +172,7 @@ export const Scene9_FinalImpact = () => {
       >
         <div
           style={{
-            fontSize: 48,
+            fontSize: 52,
             fontWeight: 700,
             fontFamily: FONT_DISPLAY,
             color: C.accent,
@@ -183,10 +183,10 @@ export const Scene9_FinalImpact = () => {
         </div>
         <div
           style={{
-            width: interpolate(logoEnter, [0, 1], [0, 120], { extrapolateRight: 'clamp' }),
+            width: interpolate(logoEnter, [0, 1], [0, 140], { extrapolateRight: 'clamp' }),
             height: 2,
             background: C.accent,
-            marginTop: 12,
+            marginTop: 14,
           }}
         />
       </div>

@@ -1,7 +1,9 @@
+import { useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { DemoProvider, useDemo } from './context/DemoContext';
 import Layout from './components/Layout';
 import FormExplorer from './components/FormExplorer';
+import PresentationShell from './presentation/PresentationShell';
 import Overview from './screens/Overview';
 import Dashboard from './screens/Dashboard';
 import Intake from './screens/Intake';
@@ -35,13 +37,39 @@ function ScreenRouter() {
   );
 }
 
-export default function App() {
+function AppContent() {
+  const { presentationMode, setPresentationMode } = useDemo();
+
+  // P key toggles presentation mode from normal app
+  useEffect(() => {
+    if (presentationMode) return; // PresentationShell has its own key handler
+    const handler = (e) => {
+      if (e.key === 'p' && !e.metaKey && !e.ctrlKey && !e.altKey && e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
+        setPresentationMode(true);
+      }
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [presentationMode, setPresentationMode]);
+
+  if (presentationMode) {
+    return <PresentationShell />;
+  }
+
   return (
-    <DemoProvider>
+    <>
       <Layout>
         <ScreenRouter />
       </Layout>
       <FormExplorer />
+    </>
+  );
+}
+
+export default function App() {
+  return (
+    <DemoProvider>
+      <AppContent />
     </DemoProvider>
   );
 }

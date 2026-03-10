@@ -1,5 +1,5 @@
 import { useDemo } from '../context/DemoContext';
-import { RotateCcw } from 'lucide-react';
+import { RotateCcw, Play } from 'lucide-react';
 
 const navItems = [
   { id: 'overview', label: 'Overview' },
@@ -10,7 +10,7 @@ const navItems = [
 ];
 
 export default function Navigation() {
-  const { currentScreen, navigate, resetDemo } = useDemo();
+  const { currentScreen, navigate, resetDemo, setPresentationMode } = useDemo();
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-navy-900 text-white shadow-lg">
@@ -43,15 +43,25 @@ export default function Navigation() {
           ))}
         </div>
 
-        {/* Reset */}
-        <button
-          onClick={resetDemo}
-          className="flex items-center gap-1.5 text-white/40 hover:text-white/70 text-[12px] font-medium transition-colors cursor-pointer"
-          title="Reset demo to initial state"
-        >
-          <RotateCcw className="w-3.5 h-3.5" />
-          Reset
-        </button>
+        {/* Controls */}
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => setPresentationMode(true)}
+            className="flex items-center gap-1.5 text-accent/70 hover:text-accent text-[12px] font-medium transition-colors cursor-pointer"
+            title="Enter presentation mode (P)"
+          >
+            <Play className="w-3.5 h-3.5" />
+            Present
+          </button>
+          <button
+            onClick={resetDemo}
+            className="flex items-center gap-1.5 text-white/40 hover:text-white/70 text-[12px] font-medium transition-colors cursor-pointer"
+            title="Reset demo to initial state"
+          >
+            <RotateCcw className="w-3.5 h-3.5" />
+            Reset
+          </button>
+        </div>
       </div>
     </nav>
   );

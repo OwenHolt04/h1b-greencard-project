@@ -1,6 +1,6 @@
 import React from 'react';
 import { AbsoluteFill, useCurrentFrame } from 'remotion';
-import { TransitionSeries, linearTiming, springTiming } from '@remotion/transitions';
+import { TransitionSeries, linearTiming } from '@remotion/transitions';
 import { fade } from '@remotion/transitions/fade';
 import { slide } from '@remotion/transitions/slide';
 import {
@@ -19,22 +19,18 @@ import { Scene8_ScopeClarification } from './scenes/Scene8_ScopeClarification';
 import { Scene9_FinalImpact } from './scenes/Scene9_FinalImpact';
 
 /**
- * CaseBridge Demo — Narrative Journey (9 Scenes, ~108s)
+ * CaseBridge Demo — Narrative Journey (9 Scenes, ~158s / ~2:38)
  *
  * Follows Prajwal Kulkarni's immigration case through:
- *   1. Current-state chaos
- *   2. Platform reveal
- *   3. Shared case workspace (dashboard)
- *   4. Smart intake (data sync)
- *   5. Validation moment (hero scene)
- *   6. Role switching (3 stakeholder views)
- *   7. Deadline protection (NEW)
- *   8. Scope clarification
- *   9. Final impact + close
- *
- * Transitions:
- *   fade between related scenes (most transitions)
- *   slide(from-right) for the role-switch entry (forward motion)
+ *   1. Current-state chaos (22s)
+ *   2. Platform reveal (12s)
+ *   3. Shared case workspace (18s)
+ *   4. Smart intake — data sync (20s)
+ *   5. Validation moment — hero scene (25s)
+ *   6. Role switching — 3 stakeholder views (25s)
+ *   7. Deadline protection (15s)
+ *   8. Scope clarification (12s)
+ *   9. Final impact + close (14s)
  */
 export const CaseBridgeDemo = () => {
   const frame = useCurrentFrame();

@@ -3,21 +3,23 @@
 // Follows Prajwal Kulkarni's immigration journey
 // Theme: navy #162768, cream #fbfdeb, accent #f8f2b6
 // Fonts: Roca Two Bold (display), Space Mono (body)
+// Target runtime: ~2:38 (158s net after transition overlap)
 // ============================================================
 
 export const FPS = 30;
 
 // --- Scene Durations (in seconds) ---
+// Pacing follows 07-remotion-visual-suggestions.md guidance
 export const SCENE_SECONDS = {
-  currentStateChaos: 12,
-  platformReveal: 8,
-  caseWorkspace: 14,
-  intakeSync: 12,
-  validationMoment: 16,
-  roleSwitch: 20,
-  deadlineProtection: 10,
-  scopeClarification: 10,
-  finalImpact: 10,
+  currentStateChaos: 22,    // was 12 — needs pain annotations + emotional dwell
+  platformReveal: 12,       // was 8  — needs breathing room for chaos→order
+  caseWorkspace: 18,        // was 14 — progressive disclosure needs more layers
+  intakeSync: 20,           // was 12 — sync pulse needs more drama
+  validationMoment: 25,     // was 16 — hero scene, biggest proof beat
+  roleSwitch: 25,           // was 20 — ~8.3s per role vs 6.7s
+  deadlineProtection: 15,   // was 10 — operational value needs landing time
+  scopeClarification: 12,   // was 10 — scope quote needs to breathe
+  finalImpact: 14,          // was 10 — closing needs gravitas
 };
 
 // Convert to frames
@@ -26,14 +28,15 @@ export const SCENE_FRAMES = Object.fromEntries(
 );
 
 // --- Per-transition durations (frames) ---
-export const TR_1_2 = 20;
-export const TR_2_3 = 15;
-export const TR_3_4 = 15;
-export const TR_4_5 = 12;
+// Longer transitions for more cinematic crossfades
+export const TR_1_2 = 25;   // chaos → reveal (key emotional shift)
+export const TR_2_3 = 20;
+export const TR_3_4 = 18;
+export const TR_4_5 = 15;
 export const TR_5_6 = 20;
-export const TR_6_7 = 15;
-export const TR_7_8 = 15;
-export const TR_8_9 = 20;
+export const TR_6_7 = 18;
+export const TR_7_8 = 18;
+export const TR_8_9 = 25;   // scope → impact (final transition)
 
 const TOTAL_SCENE_FRAMES = Object.values(SCENE_FRAMES).reduce((a, b) => a + b, 0);
 const TOTAL_TRANSITION_OVERLAP = TR_1_2 + TR_2_3 + TR_3_4 + TR_4_5 + TR_5_6 + TR_6_7 + TR_7_8 + TR_8_9;
@@ -172,7 +175,7 @@ export const CAPTIONS = {
     sub: 'Auto-triggered 90 days before expiry. Employer and attorney both see the task.',
   },
   scene8: {
-    main: 'What the portal changes. What still requires legislation.',
+    main: 'Process help, not magic.',
     sub: '',
   },
   scene9: {
