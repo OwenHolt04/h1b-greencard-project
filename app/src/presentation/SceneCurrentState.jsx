@@ -13,7 +13,7 @@ const problems = [
 
 export default function SceneCurrentState() {
   return (
-    <div className="h-screen w-full bg-gradient-to-br from-navy-900 via-navy-800 to-navy-900 flex flex-col justify-center items-center px-12">
+    <div className="h-screen w-full bg-gradient-to-br from-navy-900 via-navy-800 to-navy-900 flex flex-col items-center px-12 overflow-y-auto">
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(248,242,182,0.04),transparent_60%)]" />
 
       <SceneShell maxWidth="max-w-4xl" className="relative text-center">

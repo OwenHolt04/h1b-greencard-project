@@ -23,7 +23,7 @@ export default function SceneValidation() {
   const secondaryIssues = validationIssues.filter((i) => i.id !== 'employer-name');
 
   return (
-    <div className="h-screen w-full bg-surface flex flex-col justify-center items-center px-12">
+    <div className="h-screen w-full bg-surface flex flex-col items-center px-12 overflow-y-auto">
       <SceneShell maxWidth="max-w-3xl">
         {/* Scene heading */}
         <MaskedHeading className="text-center mb-5">

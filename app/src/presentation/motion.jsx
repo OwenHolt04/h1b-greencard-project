@@ -16,7 +16,7 @@ export function SceneShell({ children, className = '', maxWidth = 'max-w-3xl', d
       initial={{ scale: 0.985, y: 24, opacity: 0 }}
       animate={{ scale: 1, y: 0, opacity: 1 }}
       transition={{ duration: 0.55, delay, ease: EASE }}
-      className={`${maxWidth} w-full mx-auto ${className}`}
+      className={`${maxWidth} w-full mx-auto my-auto py-8 ${className}`}
     >
       {children}
     </motion.div>

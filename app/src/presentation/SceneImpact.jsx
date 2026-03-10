@@ -7,7 +7,7 @@ export default function SceneImpact() {
   const metricEntries = Object.values(metrics);
 
   return (
-    <div className="h-screen w-full bg-surface flex flex-col justify-center items-center px-10">
+    <div className="h-screen w-full bg-surface flex flex-col items-center px-10 overflow-y-auto">
       <SceneShell maxWidth="max-w-4xl">
         {/* Scene heading */}
         <MaskedHeading className="text-center mb-4">

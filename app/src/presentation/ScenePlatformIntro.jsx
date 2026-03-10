@@ -40,10 +40,10 @@ const capabilities = [
 
 export default function ScenePlatformIntro() {
   return (
-    <div className="h-screen w-full flex flex-col">
+    <div className="h-screen w-full flex flex-col overflow-y-auto">
       {/* Navy hero — top portion */}
-      <div className="flex-[55] bg-gradient-to-br from-navy-900 via-navy-800 to-navy-900 flex items-end justify-center px-12 pb-10 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(248,242,182,0.06),transparent_60%)]" />
+      <div className="flex-[55] min-h-0 bg-gradient-to-br from-navy-900 via-navy-800 to-navy-900 flex items-end justify-center px-12 pb-10 relative">
+        <div className="absolute inset-0 overflow-hidden bg-[radial-gradient(ellipse_at_top_right,rgba(248,242,182,0.06),transparent_60%)]" />
         <div className="relative max-w-4xl w-full">
           <MaskedHeading className="text-center">
             <p className="text-accent text-sm font-bold tracking-wider uppercase mb-3">
@@ -62,7 +62,7 @@ export default function ScenePlatformIntro() {
       </div>
 
       {/* Capabilities — bottom portion */}
-      <div className="flex-[45] bg-surface px-12 flex items-start justify-center pt-8">
+      <div className="flex-[45] min-h-0 bg-surface px-12 flex items-start justify-center pt-8">
         <div className="max-w-4xl w-full">
           <StaggerGroup className="grid grid-cols-4 gap-4" stagger={0.08} delay={0.2}>
             {capabilities.map((cap) => (
