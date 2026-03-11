@@ -4,6 +4,16 @@ import { CaseBridgeDemo } from './CaseBridgeDemo';
 import { CaseBridgeDemoV2 } from './CaseBridgeDemoV2';
 import { TOTAL_FRAMES, FPS, SCENE_FRAMES, MS_FRAMES, MS_TOTAL_FRAMES } from './lib/constants';
 
+// --- Walkthrough branch (website-driven alternate) ---
+import { CaseBridgeWalkthrough } from './walkthrough/CaseBridgeWalkthrough';
+import { WK_TOTAL_FRAMES, WK_FRAMES, WK_FPS } from './walkthrough/shared';
+import { WK1_DashboardReveal } from './walkthrough/WK1_DashboardReveal';
+import { WK2_SmartIntake } from './walkthrough/WK2_SmartIntake';
+import { WK3_ValidationFix } from './walkthrough/WK3_ValidationFix';
+import { WK4_PlainLanguage } from './walkthrough/WK4_PlainLanguage';
+import { WK5_StakeholderDeadline } from './walkthrough/WK5_StakeholderDeadline';
+import { WK6_ImpactClose } from './walkthrough/WK6_ImpactClose';
+
 // --- V1 scenes (legacy) ---
 import { Scene1_CurrentStateChaos } from './scenes/Scene1_CurrentStateChaos';
 import { Scene2_PlatformReveal } from './scenes/Scene2_PlatformReveal';
@@ -39,6 +49,26 @@ export const RemotionRoot = () => {
         width={1920}
         height={1080}
       />
+
+      {/* Walkthrough — Website-driven alternate branch */}
+      <Composition
+        id="CaseBridgeWalkthrough"
+        component={CaseBridgeWalkthrough}
+        durationInFrames={WK_TOTAL_FRAMES}
+        fps={WK_FPS}
+        width={1920}
+        height={1080}
+      />
+
+      {/* Walkthrough individual scenes for preview */}
+      <Folder name="Walkthrough-Scenes">
+        <Composition id="WK1-DashboardReveal" component={WK1_DashboardReveal} durationInFrames={WK_FRAMES.dashboardReveal} fps={WK_FPS} width={1920} height={1080} />
+        <Composition id="WK2-SmartIntake" component={WK2_SmartIntake} durationInFrames={WK_FRAMES.smartIntake} fps={WK_FPS} width={1920} height={1080} />
+        <Composition id="WK3-ValidationFix" component={WK3_ValidationFix} durationInFrames={WK_FRAMES.validationFix} fps={WK_FPS} width={1920} height={1080} />
+        <Composition id="WK4-PlainLanguage" component={WK4_PlainLanguage} durationInFrames={WK_FRAMES.plainLanguage} fps={WK_FPS} width={1920} height={1080} />
+        <Composition id="WK5-StakeholderDeadline" component={WK5_StakeholderDeadline} durationInFrames={WK_FRAMES.stakeholderDeadline} fps={WK_FPS} width={1920} height={1080} />
+        <Composition id="WK6-ImpactClose" component={WK6_ImpactClose} durationInFrames={WK_FRAMES.impactClose} fps={WK_FPS} width={1920} height={1080} />
+      </Folder>
 
       {/* V2 individual micro-scenes for preview */}
       <Folder name="V2-MicroScenes">
