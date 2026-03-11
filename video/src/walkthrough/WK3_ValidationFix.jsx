@@ -58,7 +58,7 @@ export const WK3_ValidationFix = () => {
     clickFix: 13 * fps,
     fixApplied: 14 * fps,
     propagation: 15 * fps,
-    scoreRise: 16 * fps,
+    scoreRise: 14.5 * fps,
     kineticIn: 19.5 * fps,
     metricIn: 21 * fps,
   };

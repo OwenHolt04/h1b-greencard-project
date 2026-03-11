@@ -206,8 +206,8 @@ export default function Intake() {
       {/* Main layout: Form (7 cols) + Filing/Validation (5 cols) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
 
-        {/* ═══ Smart Form: Sidebar + Fields ═══ */}
-        <div className="lg:col-span-7">
+        {/* ═══ Smart Form + Checklist (left column) ═══ */}
+        <div className="lg:col-span-7 space-y-4">
           <div className="bg-white rounded-xl border border-slate-200/80 shadow-sm overflow-hidden flex min-h-[460px]">
 
             {/* Section sidebar */}
@@ -282,6 +282,58 @@ export default function Intake() {
               </div>
             </div>
           </div>
+
+          {/* Filing Checklist — below form card */}
+          {validationRun && (
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4, duration: 0.3 }}
+            >
+              <div className="bg-white rounded-xl border border-slate-200/80 shadow-sm overflow-hidden">
+                <div className="px-4 py-2.5 border-b border-slate-100 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <ClipboardCheck className="w-4 h-4 text-navy-900" />
+                    <h2 className="text-sm font-semibold text-slate-900">I-485 Filing Checklist</h2>
+                    <span className="text-[10px] font-semibold text-navy-900 bg-accent/20 px-2 py-0.5 rounded-full uppercase tracking-wider">
+                      Basic
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-3 text-[10px] text-slate-500">
+                    <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-green-500" />{checklistCounts.done}</span>
+                    <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-amber-500" />{checklistCounts.flagged}</span>
+                    <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-red-500" />{checklistCounts.missing}</span>
+                    <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-slate-300" />{checklistCounts.pending}</span>
+                  </div>
+                </div>
+                <div className="p-4">
+                  <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden flex mb-3">
+                    <div className="bg-green-500 h-full" style={{ width: `${(checklistCounts.done / checklistCounts.total) * 100}%` }} />
+                    <div className="bg-amber-500 h-full" style={{ width: `${(checklistCounts.flagged / checklistCounts.total) * 100}%` }} />
+                    <div className="bg-red-500 h-full" style={{ width: `${(checklistCounts.missing / checklistCounts.total) * 100}%` }} />
+                    <div className="bg-slate-300 h-full" style={{ width: `${(checklistCounts.pending / checklistCounts.total) * 100}%` }} />
+                  </div>
+                  <div className="grid grid-cols-2 gap-x-4 gap-y-1">
+                    {i485Docs.map((doc, i) => {
+                      const sc = statusIcon[doc.status] || statusIcon.pending;
+                      const Icon = sc.icon;
+                      return (
+                        <div key={i} className={`flex items-start gap-1.5 py-1 px-1.5 rounded ${sc.bg}`}>
+                          <Icon className={`w-3 h-3 ${sc.color} flex-shrink-0 mt-0.5`} />
+                          <div className="min-w-0">
+                            <p className={`text-[11px] ${doc.status === 'done' ? 'text-slate-400' : 'text-slate-700 font-medium'} leading-snug`}>
+                              {doc.name}
+                            </p>
+                            {doc.flag && <p className="text-[9px] text-amber-600 font-medium">{doc.flag}</p>}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          )}
         </div>
 
         {/* ═══ Right panel: Filing Package + Readiness + Validation ═══ */}
@@ -499,58 +551,6 @@ export default function Intake() {
         </div>
       </div>
 
-      {/* Filing Checklist — full width below */}
-      {validationRun && (
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4, duration: 0.3 }}
-          className="mt-6"
-        >
-          <div className="bg-white rounded-xl border border-slate-200/80 shadow-sm overflow-hidden">
-            <div className="px-5 py-3 border-b border-slate-100 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <ClipboardCheck className="w-4 h-4 text-navy-900" />
-                <h2 className="text-base font-semibold text-slate-900">I-485 Filing Checklist</h2>
-                <span className="text-[10px] font-semibold text-navy-900 bg-accent/20 px-2 py-0.5 rounded-full uppercase tracking-wider">
-                  Basic
-                </span>
-              </div>
-              <div className="flex items-center gap-4 text-xs text-slate-500">
-                <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-green-500" />{checklistCounts.done} complete</span>
-                <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-amber-500" />{checklistCounts.flagged} flagged</span>
-                <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-red-500" />{checklistCounts.missing} missing</span>
-                <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-slate-300" />{checklistCounts.pending} pending</span>
-              </div>
-            </div>
-            <div className="p-5">
-              <div className="h-2 bg-slate-100 rounded-full overflow-hidden flex mb-4">
-                <div className="bg-green-500 h-full" style={{ width: `${(checklistCounts.done / checklistCounts.total) * 100}%` }} />
-                <div className="bg-amber-500 h-full" style={{ width: `${(checklistCounts.flagged / checklistCounts.total) * 100}%` }} />
-                <div className="bg-red-500 h-full" style={{ width: `${(checklistCounts.missing / checklistCounts.total) * 100}%` }} />
-                <div className="bg-slate-300 h-full" style={{ width: `${(checklistCounts.pending / checklistCounts.total) * 100}%` }} />
-              </div>
-              <div className="grid grid-cols-3 gap-x-6 gap-y-1.5">
-                {i485Docs.map((doc, i) => {
-                  const sc = statusIcon[doc.status] || statusIcon.pending;
-                  const Icon = sc.icon;
-                  return (
-                    <div key={i} className={`flex items-start gap-2 py-1.5 px-2 rounded ${sc.bg}`}>
-                      <Icon className={`w-3.5 h-3.5 ${sc.color} flex-shrink-0 mt-0.5`} />
-                      <div className="min-w-0">
-                        <p className={`text-xs ${doc.status === 'done' ? 'text-slate-500' : 'text-slate-800 font-medium'} leading-snug`}>
-                          {doc.name}
-                        </p>
-                        {doc.flag && <p className="text-[10px] text-amber-600 font-medium mt-0.5">{doc.flag}</p>}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
-        </motion.div>
-      )}
     </motion.div>
   );
 }

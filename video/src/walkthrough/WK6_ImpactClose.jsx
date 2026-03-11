@@ -68,9 +68,9 @@ export const WK6_ImpactClose = () => {
   // Camera
   const camera = getCameraState(frame, fps, [
     { t: 0, zoom: 1, focusX: CONTENT.width / 2, focusY: CONTENT.height / 2 },
-    { t: 4, zoom: 1.2, focusX: CONTENT.width / 2, focusY: 300 },   // zoom to metrics
-    { t: 9, zoom: 1.2, focusX: CONTENT.width / 2, focusY: 300 },
-    { t: 11, zoom: 1.2, focusX: CONTENT.width / 2, focusY: 550 },  // pan to scope
+    { t: 4, zoom: 1.08, focusX: CONTENT.width / 2, focusY: 320 },   // zoom to metrics
+    { t: 9, zoom: 1.08, focusX: CONTENT.width / 2, focusY: 320 },
+    { t: 11, zoom: 1.05, focusX: CONTENT.width / 2, focusY: 460 },   // pan to scope
     { t: 17, zoom: 1, focusX: CONTENT.width / 2, focusY: CONTENT.height / 2 },
   ]);
 

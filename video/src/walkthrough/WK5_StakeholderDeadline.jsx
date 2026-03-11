@@ -58,11 +58,11 @@ export const WK5_StakeholderDeadline = () => {
   // Camera
   const camera = getCameraState(frame, fps, [
     { t: 0, zoom: 1, focusX: CONTENT.width / 2, focusY: CONTENT.height / 2 },
-    { t: 2, zoom: 1.3, focusX: CONTENT.width * 0.6, focusY: 350 },    // zoom employer view
-    { t: 7, zoom: 1.3, focusX: CONTENT.width * 0.6, focusY: 350 },
-    { t: 9, zoom: 1.3, focusX: CONTENT.width * 0.6, focusY: 350 },    // attorney view (same area)
-    { t: 14, zoom: 1.3, focusX: CONTENT.width * 0.6, focusY: 350 },
-    { t: 16, zoom: 1.5, focusX: CONTENT.width * 0.5, focusY: 280 },   // zoom deadline card
+    { t: 2, zoom: 1.08, focusX: CONTENT.width / 2, focusY: 360 },        // zoom employer view
+    { t: 7, zoom: 1.08, focusX: CONTENT.width / 2, focusY: 360 },
+    { t: 9, zoom: 1.08, focusX: CONTENT.width / 2, focusY: 360 },       // attorney view
+    { t: 14, zoom: 1.08, focusX: CONTENT.width / 2, focusY: 360 },
+    { t: 16, zoom: 1.2, focusX: CONTENT.width * 0.38, focusY: 360 },    // zoom deadline card
     { t: 20, zoom: 1, focusX: CONTENT.width / 2, focusY: CONTENT.height / 2 },
   ]);
 
@@ -113,8 +113,8 @@ export const WK5_StakeholderDeadline = () => {
             </div>
 
             {/* ═══ EMPLOYER VIEW ═══ */}
-            {(isEmployer || (isAttorney && roleTransition < 1)) && (
-              <div style={{ opacity: isAttorney ? 1 - roleTransition : 1 }}>
+            {(isEmployer || isDeadline || (isAttorney && roleTransition < 1)) && (
+              <div style={{ opacity: isAttorney ? 1 - roleTransition : isDeadline ? deadlineTransition : 1 }}>
                 <WebCard style={{ marginBottom: 16, background: '#fffbeb', borderColor: '#f59e0b30' }}>
                   <div style={{ fontSize: 18, fontWeight: 700, color: C.navy900 }}>
                     Case active — deadlines approaching.
@@ -199,7 +199,7 @@ export const WK5_StakeholderDeadline = () => {
                       marginTop: 8, paddingTop: 8, borderTop: '1px solid #e2e8f0',
                       fontSize: 13, fontWeight: 700, color: C.navy900,
                     }}>
-                      Total: $15,000\u2013$22,000
+                      Total: $15,000{'\u2013'}$22,000
                     </div>
                   </WebCard>
                 </div>
