@@ -7,10 +7,10 @@ import { FONT_SANS } from '../lib/fonts';
 export const WK_FPS = 30;
 
 export const WK_SECONDS = {
-  dashboardReveal: 24,
-  smartIntake: 22,
-  validationFix: 24,
-  impactClose: 24,
+  sharedRecord: 14,
+  smartIntake: 18,
+  validationQuick: 7,
+  rolePerspectives: 60,
 };
 
 export const WK_FRAMES = Object.fromEntries(
@@ -18,9 +18,9 @@ export const WK_FRAMES = Object.fromEntries(
 );
 
 export const WK_TR = {
-  '1_2': 18,
-  '2_3': 15,
-  '3_4': 18,
+  '1_2': 15,
+  '2_3': 12,
+  '3_4': 12,
 };
 
 const WK_GROSS = Object.values(WK_FRAMES).reduce((a, b) => a + b, 0);
@@ -259,6 +259,74 @@ export const MetricBadge = ({ before, after, label, change }) => (
     {change && <div style={{ fontSize: 12, color: '#16a34a', fontWeight: 600, marginTop: 4 }}>{change}</div>}
   </WebCard>
 );
+
+// ── Presentation-matching card (FocalCard / SupportingModule equivalent) ──
+export const PCard = ({ children, style = {}, focal = false }) => (
+  <div style={{
+    background: '#ffffff',
+    borderRadius: 12,
+    border: '1px solid #e2e8f0',
+    boxShadow: focal ? '0 4px 12px rgba(0,0,0,0.06)' : '0 1px 3px rgba(0,0,0,0.04)',
+    fontFamily: FONT_SANS,
+    ...style,
+  }}>
+    {children}
+  </div>
+);
+
+// ── Animated tile entrance (spring-based fade+slide) ──
+export const tileEntrance = (frame, fps, delaySec) => {
+  const delayF = Math.round(delaySec * fps);
+  if (frame < delayF) return { opacity: 0, transform: 'translateY(10px)' };
+  const t = Math.min((frame - delayF) / 12, 1);
+  const ease = 1 - Math.pow(1 - t, 3); // ease-out cubic
+  return {
+    opacity: ease,
+    transform: `translateY(${10 * (1 - ease)}px)`,
+  };
+};
+
+// ── Role tab pill for SingleSource header ──
+export const RoleTab = ({ label, active, icon }) => (
+  <div style={{
+    display: 'flex', alignItems: 'center', gap: 6,
+    padding: '7px 16px', borderRadius: 8,
+    fontSize: 12, fontWeight: 600, fontFamily: FONT_SANS,
+    color: active ? '#ffffff' : '#64748b',
+    background: active ? C.navy900 : '#ffffff',
+    border: active ? 'none' : '1px solid #e2e8f0',
+    boxShadow: active ? '0 2px 8px rgba(22,39,104,0.2)' : 'none',
+  }}>
+    {icon && <span style={{ fontSize: 11 }}>{icon}</span>}
+    {label}
+  </div>
+);
+
+// ── Readiness ring (SVG) ──
+export const ReadinessRing = ({ score, size = 56 }) => {
+  const r = (size - 8) / 2;
+  const circ = 2 * Math.PI * r;
+  const offset = circ * (1 - score / 100);
+  const color = score >= 90 ? '#22c55e' : score >= 70 ? '#f59e0b' : '#ef4444';
+  return (
+    <svg width={size} height={size}>
+      <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="#e2e8f0" strokeWidth={4} />
+      <circle cx={size / 2} cy={size / 2} r={r}
+        fill="none" stroke={color} strokeWidth={4}
+        strokeLinecap="round" strokeDasharray={circ}
+        strokeDashoffset={offset}
+        transform={`rotate(-90 ${size / 2} ${size / 2})`}
+      />
+      <text x={size / 2} y={size / 2} textAnchor="middle" dominantBaseline="central"
+        style={{ fontSize: size * 0.28, fontWeight: 700, fill: C.navy900, fontFamily: FONT_SANS }}>
+        {score}
+      </text>
+    </svg>
+  );
+};
+
+// ── Presentation content area (light gradient bg matching website) ──
+export const PRES_BG = 'linear-gradient(180deg, #fbfdeb 0%, #ffffff 100%)';
 
 // ── Caption overlay (outside browser frame) ──
 export const CaptionOverlay = ({ text, visible = true, position = 'bottom' }) => {

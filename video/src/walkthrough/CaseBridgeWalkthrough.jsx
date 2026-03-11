@@ -5,19 +5,19 @@ import { fade } from '@remotion/transitions/fade';
 import { WK_FRAMES, WK_TR, WK_TOTAL_FRAMES } from './shared';
 import { C } from '../lib/constants';
 
-import { WK1_DashboardReveal } from './WK1_DashboardReveal';
+import { WK1_SharedRecord } from './WK1_SharedRecord';
 import { WK2_SmartIntake } from './WK2_SmartIntake';
-import { WK3_ValidationFix } from './WK3_ValidationFix';
-import { WK6_ImpactClose } from './WK6_ImpactClose';
+import { WK3_ValidationQuick } from './WK3_ValidationQuick';
+import { WK4_RolePerspectivesClose } from './WK4_RolePerspectivesClose';
 
 /**
- * CaseBridge Walkthrough — Website-Driven Presentation
+ * CaseBridge Walkthrough — Single continuous script-aligned video
  *
- * 4 segments mapping to presentation screens:
- *   WK1 (24s): Case Record / Single Source of Truth (with role tabs)
- *   WK2 (22s): Smart Intake + Form Sync
- *   WK3 (24s): Pre-Submission Validation + RFE Prevention + Fix
- *   WK4 (24s): Impact + Scope + Close
+ * 4 segments (~1:38 total):
+ *   WK1 (14s): Shared case record overview — SingleSource screen
+ *   WK2 (18s): Smart Intake — form + sync
+ *   WK3  (7s): Validation quick beat — scan + issues + RFE
+ *   WK4 (60s): Role perspectives (Applicant→Employer→Attorney) + Close
  */
 export const CaseBridgeWalkthrough = () => {
   const frame = useCurrentFrame();
@@ -25,9 +25,9 @@ export const CaseBridgeWalkthrough = () => {
   return (
     <AbsoluteFill style={{ background: C.navy900 }}>
       <TransitionSeries>
-        {/* WK1 — Case Record / Single Source of Truth */}
-        <TransitionSeries.Sequence durationInFrames={WK_FRAMES.dashboardReveal}>
-          <WK1_DashboardReveal />
+        {/* WK1 — Shared Case Record */}
+        <TransitionSeries.Sequence durationInFrames={WK_FRAMES.sharedRecord}>
+          <WK1_SharedRecord />
         </TransitionSeries.Sequence>
         <TransitionSeries.Transition
           presentation={fade()}
@@ -43,18 +43,18 @@ export const CaseBridgeWalkthrough = () => {
           timing={linearTiming({ durationInFrames: WK_TR['2_3'] })}
         />
 
-        {/* WK3 — Pre-Submission Validation + Fix */}
-        <TransitionSeries.Sequence durationInFrames={WK_FRAMES.validationFix}>
-          <WK3_ValidationFix />
+        {/* WK3 — Validation Quick Beat */}
+        <TransitionSeries.Sequence durationInFrames={WK_FRAMES.validationQuick}>
+          <WK3_ValidationQuick />
         </TransitionSeries.Sequence>
         <TransitionSeries.Transition
           presentation={fade()}
           timing={linearTiming({ durationInFrames: WK_TR['3_4'] })}
         />
 
-        {/* WK4 — Impact + Scope + Close */}
-        <TransitionSeries.Sequence durationInFrames={WK_FRAMES.impactClose}>
-          <WK6_ImpactClose />
+        {/* WK4 — Role Perspectives + Close */}
+        <TransitionSeries.Sequence durationInFrames={WK_FRAMES.rolePerspectives}>
+          <WK4_RolePerspectivesClose />
         </TransitionSeries.Sequence>
       </TransitionSeries>
 

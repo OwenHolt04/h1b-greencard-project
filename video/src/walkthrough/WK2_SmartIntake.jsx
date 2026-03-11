@@ -1,31 +1,26 @@
 import React from 'react';
-import { useCurrentFrame, useVideoConfig, interpolate, spring, AbsoluteFill } from 'remotion';
+import { useCurrentFrame, useVideoConfig, interpolate, AbsoluteFill } from 'remotion';
 import { C, CASE } from '../lib/constants';
-import { FONT_SANS, FONT_DISPLAY } from '../lib/fonts';
+import { FONT_SANS } from '../lib/fonts';
 import {
   BrowserFrame, WebNavBar, AnimatedCursor,
   getCursorState, getCameraState, cameraStyle,
-  WebCard, CONTENT, NAV_H,
+  PCard, tileEntrance, PRES_BG, CONTENT, NAV_H,
 } from './shared';
 
 /**
- * WK2 — Smart Intake + Form Sync (22s / 660f)
+ * WK2 — Smart Intake + Form Sync (18s / 540f)
  *
  * Script: "Krishna only enters his information once. Fields that today
  *  get repeated across six or more filings now populate across the
  *  entire package from a single entry."
  *
- * Visual: Real form with sidebar navigation, visible input fields with
- *  light blue backgrounds, section headers, sync badges. Cursor types
- *  into employer field, sync ripples across 6 form cards.
- *
  * Phases:
- *   0-3s:   Full layout appears — sidebar + form + form cards
- *   3-8s:   Camera zooms into employer section, cursor highlights employer field
- *   8-10s:  Cursor "edits" employer field (text appears letter by letter)
- *   10-14s: Sync ripple — green flash propagates across 6 form cards
- *   14-16s: "Enter once." kinetic text
- *   16-22s: Camera shows full layout, "6 forms synced" badge
+ *   0-3s:   Layout appears, tiles animate in
+ *   3-6s:   Camera zooms to employer name field
+ *   6-10s:  Typing animation — clears wrong name, types correct name
+ *   10-14s: Sync ripple — form cards flash green one by one
+ *   14-18s: Camera zooms out, "6 forms synced from 1 entry" badge
  */
 
 /* ── Sidebar sections ── */
@@ -39,13 +34,13 @@ const SIDEBAR = [
   { label: 'Generate Docs', active: false },
 ];
 
-/* ── Form fields for employer section (with real input styling) ── */
+/* ── Form fields ── */
 const EMPLOYER_FIELDS = [
-  { label: 'Company / Organization Name', value: CASE.employer.name, syncCount: 4, fullWidth: true, editable: true },
-  { label: 'Federal Employer ID (FEIN)', value: 'XX-XXXXXXX', syncCount: 5, fullWidth: false },
+  { label: 'Company / Organization Name', value: CASE.employer.wrongName, syncCount: 4, fullWidth: true, editable: true },
+  { label: 'Federal Employer ID (FEIN)', value: CASE.employer.fein, syncCount: 5, fullWidth: false },
   { label: 'NAICS Code', value: '541512', syncCount: 3, fullWidth: false },
   { label: 'Year Established', value: '2015', syncCount: 2, fullWidth: false },
-  { label: 'Total U.S. Employees', value: '~62,000', syncCount: 3, fullWidth: false },
+  { label: 'Total U.S. Employees', value: CASE.employer.employees, syncCount: 3, fullWidth: false },
 ];
 
 const ADDRESS_FIELDS = [
@@ -67,6 +62,12 @@ const FORMS = [
   { code: 'G-28', title: 'Attorney Representation', fields: 4, pct: 100 },
 ];
 
+const HOW_IT_WORKS = [
+  { step: '1', text: 'Enter data once in the shared record' },
+  { step: '2', text: 'Fields auto-sync to all relevant forms' },
+  { step: '3', text: 'Fix once → correction propagates everywhere' },
+];
+
 const SIDEBAR_W = 180;
 const FORM_W = 620;
 
@@ -74,79 +75,78 @@ export const WK2_SmartIntake = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
-  // Typing animation for employer field (8-10s)
-  const typingStart = 8 * fps;
+  /* ── Typing animation (6-10s) ── */
+  const typingStart = 6 * fps;
   const typingEnd = 10 * fps;
   const isTyping = frame >= typingStart && frame < typingEnd;
-  const fullText = CASE.employer.name;
+  const correctName = CASE.employer.name;
   const typedChars = isTyping
-    ? Math.floor(interpolate(frame, [typingStart, typingEnd - 10], [0, fullText.length], {
+    ? Math.floor(interpolate(frame, [typingStart, typingEnd - 10], [0, correctName.length], {
         extrapolateLeft: 'clamp', extrapolateRight: 'clamp',
       }))
-    : frame >= typingEnd ? fullText.length : 0;
+    : frame >= typingEnd ? correctName.length : 0;
+  const showTypedText = typedChars > 0;
 
-  // Sync animation: starts at ~10s
+  /* ── Sync animation (10-14s) ── */
   const syncTrigger = 10 * fps;
   const syncing = frame >= syncTrigger;
-  const syncFlash = syncing ? interpolate(frame - syncTrigger, [0, 10, 30], [0, 1, 0], {
-    extrapolateLeft: 'clamp', extrapolateRight: 'clamp',
-  }) : 0;
 
-  // Camera
+  /* ── "6 forms synced" badge (14-18s) ── */
+  const badgeTrigger = 14 * fps;
+  const showBadge = frame >= badgeTrigger;
+  const badgeOpacity = showBadge
+    ? interpolate(frame - badgeTrigger, [0, 15], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
+    : 0;
+
+  /* ── Editable field state ── */
+  const fieldFocused = frame >= 5 * fps && frame < 12 * fps;
+  const cursorBlink = Math.floor(frame / 15) % 2 === 0;
+
+  /* ── Camera ── */
   const camera = getCameraState(frame, fps, [
     { t: 0, zoom: 1, focusX: CONTENT.width / 2, focusY: CONTENT.height / 2 },
     { t: 3, zoom: 1, focusX: CONTENT.width / 2, focusY: CONTENT.height / 2 },
-    { t: 5, zoom: 1.5, focusX: SIDEBAR_W + 220, focusY: 280 },        // zoom into company name field
-    { t: 10, zoom: 1.5, focusX: SIDEBAR_W + 220, focusY: 280 },       // hold during typing
-    { t: 12, zoom: 1.15, focusX: CONTENT.width * 0.65, focusY: 350 }, // pan to show forms
+    { t: 5, zoom: 1.08, focusX: CONTENT.width * 0.4, focusY: CONTENT.height * 0.4 },
+    { t: 10, zoom: 1.08, focusX: CONTENT.width * 0.4, focusY: CONTENT.height * 0.4 },
+    { t: 12, zoom: 1.03, focusX: CONTENT.width * 0.55, focusY: CONTENT.height * 0.45 },
     { t: 16, zoom: 1, focusX: CONTENT.width / 2, focusY: CONTENT.height / 2 },
   ]);
 
-  // Cursor
+  /* ── Cursor ── */
   const cursor = getCursorState(frame, fps, [
     { t: 0, x: 960, y: 500, visible: false },
-    { t: 1, x: 960, y: 500, visible: true },
-    { t: 2, x: 520, y: 96, visible: true },                       // Intake tab
-    { t: 2.5, x: 520, y: 96, click: true, visible: true },
-    { t: 4, x: SIDEBAR_W + 300, y: 200, visible: true },          // hover form area
-    { t: 6, x: SIDEBAR_W + 300, y: 260, visible: true },          // hover company field
-    { t: 7.5, x: SIDEBAR_W + 350, y: 270, visible: true },        // click into field
-    { t: 8, x: SIDEBAR_W + 350, y: 270, click: true, visible: true },
-    { t: 10, x: SIDEBAR_W + 350, y: 270, visible: true },         // done typing
-    { t: 12, x: CONTENT.width - 300, y: 300, visible: true },     // move to form cards
-    { t: 15, x: 960, y: 400, visible: true },
-    { t: 21, x: 960, y: 500, visible: false },
+    { t: 3, x: 960, y: 500, visible: false },
+    { t: 3.5, x: SIDEBAR_W + 300, y: 230, visible: true },
+    { t: 5, x: SIDEBAR_W + 300, y: 260, visible: true },
+    { t: 5.5, x: SIDEBAR_W + 350, y: 260, click: true, visible: true },
+    { t: 6, x: SIDEBAR_W + 350, y: 260, visible: true },
+    { t: 10, x: SIDEBAR_W + 350, y: 260, visible: true },
+    { t: 11, x: CONTENT.width - 200, y: 250, visible: true },
+    { t: 14, x: CONTENT.width - 200, y: 350, visible: true },
+    { t: 16, x: 960, y: 400, visible: false },
   ]);
 
-  // "Enter once." kinetic
-  const kineticFrame = 14 * fps;
-  const kineticIn = spring({ frame, fps, config: { damping: 16, stiffness: 180 }, delay: kineticFrame });
-  const kineticExit = interpolate(frame, [kineticFrame + 50, kineticFrame + 65], [1, 0], {
-    extrapolateLeft: 'clamp', extrapolateRight: 'clamp',
-  });
+  /* ── Tile entrance helper ── */
+  const tile = (delaySec) => tileEntrance(frame, fps, delaySec);
 
-  // Editable field highlight
-  const editFocused = frame >= 6 * fps && frame < 12 * fps;
-  const cursorBlink = Math.floor(frame / 15) % 2 === 0;
-
-  /* ── Render an input field ── */
-  const renderField = (f, fi, isEmployer) => {
+  /* ── Render a form input field ── */
+  const renderField = (f, idx) => {
     const isEditable = f.editable;
-    const isActive = isEditable && editFocused;
-    const showTyped = isEditable && typedChars > 0;
+    const isActive = isEditable && fieldFocused;
 
     return (
-      <div key={fi} style={{
+      <div key={idx} style={{
         gridColumn: f.fullWidth ? '1 / -1' : undefined,
       }}>
-        {/* Label with sync badge */}
+        {/* Label + sync badge */}
         <div style={{
           display: 'flex', alignItems: 'center', gap: 6,
           marginBottom: 4,
         }}>
           <span style={{
-            fontSize: 9, fontWeight: 700, color: '#64748b',
+            fontSize: 10, fontWeight: 700, color: '#64748b',
             textTransform: 'uppercase', letterSpacing: '0.04em',
+            fontFamily: FONT_SANS,
           }}>
             {f.label}
           </span>
@@ -154,37 +154,59 @@ export const WK2_SmartIntake = () => {
             fontSize: 8, color: '#94a3b8', fontWeight: 600,
             background: '#f1f5f9', padding: '1px 6px', borderRadius: 4,
           }}>
-            {'\u2192'} {f.syncCount} forms
+            → {f.syncCount} forms
           </span>
         </div>
-        {/* Input field — visible border + light blue bg */}
+
+        {/* Input */}
         <div style={{
-          fontSize: 13, fontWeight: 600, color: C.navy900,
+          fontSize: 13, fontWeight: 600,
           padding: '8px 12px', borderRadius: 8,
-          background: isActive ? '#eff6ff' : showTyped ? '#f0fdf4' : '#eff6ff80',
-          border: isActive ? '2px solid #3b82f6' : isEditable && !showTyped ? '2px dashed #f59e0b' : '1.5px solid #bfdbfe',
-          boxShadow: isActive ? '0 0 0 3px rgba(59,130,246,0.1)' : 'none',
+          minHeight: 36,
           display: 'flex', alignItems: 'center',
-          minHeight: 34,
-          transition: 'all 0.2s',
+          fontFamily: FONT_SANS,
+          ...(isEditable ? (
+            showTypedText ? {
+              background: '#f0fdf4',
+              border: '2px solid #86efac',
+              color: '#16a34a',
+            } : isActive ? {
+              background: '#eff6ff',
+              border: '2px solid #3b82f6',
+              boxShadow: '0 0 0 3px rgba(59,130,246,0.1)',
+              color: '#b45309',
+            } : {
+              background: '#fffbeb',
+              border: '2px dashed #f59e0b',
+              color: '#b45309',
+            }
+          ) : {
+            background: 'rgba(239,246,255,0.5)',
+            border: '1.5px solid #bfdbfe',
+            color: C.navy900,
+          }),
         }}>
-          {showTyped ? (
-            <>
-              <span style={{ color: '#16a34a' }}>{fullText.slice(0, typedChars)}</span>
-              {isTyping && cursorBlink && (
-                <span style={{ borderRight: '2px solid #3b82f6', height: 16, marginLeft: 1 }} />
-              )}
-            </>
+          {isEditable ? (
+            showTypedText ? (
+              <>
+                <span>{correctName.slice(0, typedChars)}</span>
+                {isTyping && cursorBlink && (
+                  <span style={{ borderRight: '2px solid #3b82f6', height: 16, marginLeft: 1 }} />
+                )}
+              </>
+            ) : (
+              <>
+                <span>{f.value}</span>
+                {!isActive && (
+                  <span style={{
+                    marginLeft: 'auto', fontSize: 9, color: '#ffffff', fontWeight: 700,
+                    background: C.navy900, padding: '2px 8px', borderRadius: 4,
+                  }}>Fix →</span>
+                )}
+              </>
+            )
           ) : (
-            <span style={{
-              color: isEditable ? '#b45309' : C.navy900,
-            }}>{f.value}</span>
-          )}
-          {isEditable && !isActive && !showTyped && (
-            <span style={{
-              marginLeft: 'auto', fontSize: 9, color: '#ffffff', fontWeight: 700,
-              background: C.navy900, padding: '2px 8px', borderRadius: 4,
-            }}>Fix {'\u2192'}</span>
+            <span>{f.value}</span>
           )}
         </div>
       </div>
@@ -200,200 +222,250 @@ export const WK2_SmartIntake = () => {
         <div style={cameraStyle(camera)}>
           <WebNavBar activeTab="Intake" />
 
+          {/* Content area with light gradient bg */}
           <div style={{
             position: 'absolute', top: NAV_H, left: 0,
             width: CONTENT.width, height: CONTENT.height - NAV_H,
-            display: 'grid', gridTemplateColumns: `${SIDEBAR_W}px ${FORM_W}px 1fr`,
-            gap: 0,
+            background: PRES_BG,
+            display: 'flex', flexDirection: 'column', alignItems: 'center',
+            paddingTop: 16, paddingBottom: 16,
           }}>
-            {/* ── SIDEBAR: Section Navigation ── */}
+            {/* Title */}
             <div style={{
-              borderRight: '1px solid #e2e8f0',
-              background: '#ffffff',
-              paddingTop: 8,
+              textAlign: 'center', marginBottom: 12,
+              ...tile(0),
             }}>
-              {SIDEBAR.map((s, i) => (
-                <div key={i} style={{
-                  display: 'flex', alignItems: 'center', gap: 8,
-                  padding: '8px 16px',
-                  background: s.active ? C.navy900 : 'transparent',
-                  color: s.active ? '#ffffff' : '#64748b',
-                  fontSize: 11, fontWeight: s.active ? 700 : 500,
-                  cursor: 'default',
-                }}>
-                  <span style={{
-                    width: 7, height: 7, borderRadius: '50%',
-                    background: s.active ? '#60a5fa' : '#cbd5e1',
-                  }} />
-                  {s.label}
-                </div>
-              ))}
-              {/* Auto-sync badge */}
-              <div style={{
-                margin: '16px 12px 0',
-                padding: '8px 10px',
-                background: '#f0fdf4', borderRadius: 8,
-                border: '1px solid #bbf7d0',
-              }}>
-                <div style={{ fontSize: 8, fontWeight: 700, color: '#166534', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
-                  Auto-Sync Active
-                </div>
-                <div style={{ fontSize: 8, color: '#16a34a', marginTop: 2 }}>
-                  Changes propagate to all 7 forms instantly
-                </div>
+              <div style={{ fontSize: 22, fontWeight: 700, color: C.navy900 }}>Smart Intake</div>
+              <div style={{ fontSize: 12, color: '#64748b', marginTop: 2 }}>
+                Enter once. Auto-populate across 6 immigration forms.
               </div>
             </div>
 
-            {/* ── CENTER: Form Content ── */}
+            {/* 3-column grid */}
             <div style={{
-              borderRight: '1px solid #e2e8f0',
-              background: '#ffffff',
-              overflowY: 'hidden',
+              display: 'grid',
+              gridTemplateColumns: `${SIDEBAR_W}px ${FORM_W}px 1fr`,
+              gap: 12,
+              width: 1100,
+              maxWidth: CONTENT.width - 80,
+              flex: 1,
+              minHeight: 0,
             }}>
-              {/* Form header */}
-              <div style={{
-                padding: '14px 20px',
-                borderBottom: '1px solid #e2e8f0',
-              }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <div>
-                    <div style={{ fontSize: 16, fontWeight: 700, color: C.navy900 }}>Employer Information</div>
-                    <div style={{ fontSize: 9, color: '#94a3b8', marginTop: 2 }}>
-                      Shared across: I-129 Part 1, I-140 Part 1, ETA-9089 Sec C, ETA-9142A Sec B
+
+              {/* ── LEFT SIDEBAR ── */}
+              <PCard style={{ padding: 0, overflow: 'hidden', ...tile(0.1), alignSelf: 'start' }}>
+                <div style={{ paddingTop: 8 }}>
+                  {SIDEBAR.map((s, i) => (
+                    <div key={i} style={{
+                      display: 'flex', alignItems: 'center', gap: 8,
+                      padding: '8px 14px',
+                      background: s.active ? C.navy900 : 'transparent',
+                      color: s.active ? '#ffffff' : '#64748b',
+                      fontSize: 11, fontWeight: s.active ? 700 : 500,
+                      fontFamily: FONT_SANS,
+                    }}>
+                      <span style={{
+                        width: 7, height: 7, borderRadius: '50%',
+                        background: s.active ? '#60a5fa' : '#cbd5e1',
+                        flexShrink: 0,
+                      }} />
+                      {s.label}
                     </div>
-                  </div>
-                  <div style={{ display: 'flex', gap: 4 }}>
-                    {SHARED_FORMS.map((f) => (
-                      <span key={f} style={{
-                        fontSize: 9, padding: '2px 8px', borderRadius: 4,
-                        background: C.navy900 + '12', color: C.navy900, fontWeight: 600,
-                      }}>{f}</span>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              {/* Company Identity section */}
-              <div style={{ padding: '16px 20px' }}>
-                <div style={{
-                  fontSize: 9, fontWeight: 700, color: '#94a3b8',
-                  textTransform: 'uppercase', letterSpacing: '0.06em',
-                  marginBottom: 10,
-                }}>Company Identity</div>
-
-                <div style={{
-                  display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)',
-                  gap: '10px 16px',
-                }}>
-                  {EMPLOYER_FIELDS.map((f, i) => renderField(f, i, true))}
+                  ))}
                 </div>
 
-                {/* Mailing Address section */}
+                {/* Auto-sync badge */}
                 <div style={{
-                  marginTop: 20, paddingTop: 12,
-                  borderTop: '1px solid #e2e8f0',
+                  margin: '12px 12px 12px',
+                  padding: '8px 10px',
+                  background: '#f0fdf4', borderRadius: 8,
+                  border: '1px solid #bbf7d0',
                 }}>
                   <div style={{
-                    display: 'flex', alignItems: 'center', gap: 8,
-                    marginBottom: 10,
+                    fontSize: 8, fontWeight: 700, color: '#166534',
+                    textTransform: 'uppercase', letterSpacing: '0.06em',
                   }}>
-                    <span style={{
-                      fontSize: 9, fontWeight: 700, color: '#94a3b8',
-                      textTransform: 'uppercase', letterSpacing: '0.06em',
-                    }}>Mailing Address</span>
-                    <span style={{ fontSize: 8, color: '#cbd5e1' }}>{'\u2192'} propagates to all forms</span>
+                    Auto-Sync Active
                   </div>
+                  <div style={{ fontSize: 8, color: '#16a34a', marginTop: 2 }}>
+                    Changes propagate to all 7 forms instantly
+                  </div>
+                </div>
+              </PCard>
+
+              {/* ── CENTER FORM ── */}
+              <PCard style={{ padding: 0, overflow: 'hidden', ...tile(0.15) }}>
+                {/* Header bar */}
+                <div style={{
+                  padding: '12px 20px',
+                  borderBottom: '1px solid #e2e8f0',
+                }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div>
+                      <div style={{ fontSize: 16, fontWeight: 700, color: C.navy900 }}>Employer Information</div>
+                      <div style={{ fontSize: 9, color: '#94a3b8', marginTop: 2 }}>
+                        Shared across: I-129 Part 1, I-140 Part 1, ETA-9089 Sec C, ETA-9142A Sec B
+                      </div>
+                    </div>
+                    <div style={{ display: 'flex', gap: 4 }}>
+                      {SHARED_FORMS.map((f) => (
+                        <span key={f} style={{
+                          fontSize: 9, padding: '2px 8px', borderRadius: 4,
+                          background: C.navy900 + '14', color: C.navy900, fontWeight: 600,
+                        }}>{f}</span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Form body */}
+                <div style={{ padding: '16px 20px' }}>
+                  {/* COMPANY IDENTITY section */}
+                  <div style={{
+                    fontSize: 10, fontWeight: 700, color: '#94a3b8',
+                    textTransform: 'uppercase', letterSpacing: '0.06em',
+                    marginBottom: 10,
+                  }}>Company Identity</div>
 
                   <div style={{
                     display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)',
                     gap: '10px 16px',
                   }}>
-                    {ADDRESS_FIELDS.map((f, i) => renderField(f, i + 10, false))}
+                    {EMPLOYER_FIELDS.map((f, i) => renderField(f, i))}
+                  </div>
+
+                  {/* MAILING ADDRESS section */}
+                  <div style={{
+                    marginTop: 20, paddingTop: 12,
+                    borderTop: '1px solid #e2e8f0',
+                  }}>
+                    <div style={{
+                      display: 'flex', alignItems: 'center', gap: 8,
+                      marginBottom: 10,
+                    }}>
+                      <span style={{
+                        fontSize: 10, fontWeight: 700, color: '#94a3b8',
+                        textTransform: 'uppercase', letterSpacing: '0.06em',
+                      }}>Mailing Address</span>
+                      <span style={{ fontSize: 8, color: '#cbd5e1' }}>→ propagates to all forms</span>
+                    </div>
+
+                    <div style={{
+                      display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)',
+                      gap: '10px 16px',
+                    }}>
+                      {ADDRESS_FIELDS.map((f, i) => renderField(f, i + 100))}
+                    </div>
                   </div>
                 </div>
-              </div>
-            </div>
+              </PCard>
 
-            {/* ── RIGHT: Downstream Forms ── */}
-            <div style={{ padding: '16px 16px', background: '#f8fafc' }}>
-              <div style={{
-                display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                marginBottom: 12,
-              }}>
-                <div style={{ fontSize: 14, fontWeight: 700, color: C.navy900 }}>Filing Package</div>
-                <div style={{ fontSize: 10, color: '#94a3b8' }}>6 forms</div>
-              </div>
-
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 8 }}>
-                {FORMS.map((f, i) => {
-                  const formSynced = syncing && frame >= syncTrigger + i * 5;
-                  return (
-                    <WebCard key={i} glow={formSynced && syncFlash > 0.1} style={{
-                      borderTop: `3px solid ${formSynced ? '#22c55e' : C.navy900 + '30'}`,
-                    }}>
-                      <div style={{
-                        display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                        marginBottom: 4,
-                      }}>
-                        <span style={{ fontSize: 12, fontWeight: 700, color: C.navy900 }}>{f.code}</span>
-                        {formSynced
-                          ? <span style={{ fontSize: 8, color: '#22c55e', fontWeight: 700 }}>{'\u2713'} Synced</span>
-                          : <span style={{ fontSize: 8, background: '#f1f5f9', padding: '1px 6px', borderRadius: 8, color: '#64748b', fontWeight: 600 }}>{f.pct}%</span>
-                        }
-                      </div>
-                      <div style={{ fontSize: 9, color: '#64748b', marginBottom: 4 }}>{f.title}</div>
-                      <div style={{ fontSize: 8, color: '#94a3b8' }}>{f.fields} fields synced</div>
-
-                      {formSynced && (
-                        <div style={{
-                          marginTop: 5, padding: '3px 6px', borderRadius: 4,
-                          background: '#dcfce7', fontSize: 8, color: '#166534',
-                        }}>
-                          {'\u2713'} Employer name updated
-                        </div>
-                      )}
-                    </WebCard>
-                  );
-                })}
-              </div>
-
-              {/* Sync count badge */}
-              {syncing && (
-                <div style={{
-                  marginTop: 12, textAlign: 'center',
-                  opacity: interpolate(frame - syncTrigger, [0, 15], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }),
-                }}>
-                  <span style={{
-                    display: 'inline-block', padding: '5px 14px', borderRadius: 16,
-                    background: '#dcfce7', border: '1px solid #22c55e40',
-                    fontSize: 11, fontWeight: 700, color: '#166534',
+              {/* ── RIGHT PANEL ── */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                {/* Filing Package */}
+                <PCard style={{ padding: '14px 14px', ...tile(0.25) }}>
+                  <div style={{
+                    display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                    marginBottom: 10,
                   }}>
-                    6 forms synced from 1 entry
-                  </span>
-                </div>
-              )}
+                    <div style={{ fontSize: 13, fontWeight: 700, color: C.navy900 }}>Filing Package</div>
+                    <div style={{ fontSize: 10, color: '#94a3b8' }}>6 forms</div>
+                  </div>
+
+                  {/* 2x3 grid of form cards */}
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 8 }}>
+                    {FORMS.map((f, i) => {
+                      const formSyncDelay = syncTrigger + i * 8;
+                      const formSynced = syncing && frame >= formSyncDelay;
+                      const flashProgress = formSynced
+                        ? interpolate(frame - formSyncDelay, [0, 8, 24], [0, 1, 0.15], {
+                            extrapolateLeft: 'clamp', extrapolateRight: 'clamp',
+                          })
+                        : 0;
+
+                      return (
+                        <PCard key={i} style={{
+                          padding: '8px 10px',
+                          borderTop: `3px solid ${formSynced ? '#22c55e' : C.navy900 + '25'}`,
+                          background: formSynced ? `rgba(240,253,244,${0.3 + flashProgress * 0.7})` : '#ffffff',
+                          boxShadow: flashProgress > 0.3 ? `0 0 12px rgba(34,197,94,${flashProgress * 0.3})` : '0 1px 3px rgba(0,0,0,0.04)',
+                          ...tile(0.3 + i * 0.05),
+                        }}>
+                          <div style={{
+                            display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                            marginBottom: 3,
+                          }}>
+                            <span style={{ fontSize: 11, fontWeight: 700, color: C.navy900 }}>{f.code}</span>
+                            {formSynced ? (
+                              <span style={{ fontSize: 8, color: '#22c55e', fontWeight: 700 }}>✓ Synced</span>
+                            ) : (
+                              <span style={{
+                                fontSize: 8, background: '#f1f5f9', padding: '1px 6px',
+                                borderRadius: 8, color: '#64748b', fontWeight: 600,
+                              }}>{f.pct}%</span>
+                            )}
+                          </div>
+                          <div style={{ fontSize: 9, color: '#64748b', marginBottom: 3 }}>{f.title}</div>
+                          <div style={{ fontSize: 8, color: '#94a3b8' }}>{f.fields} fields synced</div>
+                          {formSynced && (
+                            <div style={{
+                              marginTop: 4, padding: '2px 6px', borderRadius: 4,
+                              background: '#dcfce7', fontSize: 7, color: '#166534',
+                              opacity: interpolate(frame - formSyncDelay, [0, 10], [0, 1], {
+                                extrapolateLeft: 'clamp', extrapolateRight: 'clamp',
+                              }),
+                            }}>
+                              ✓ Employer name updated
+                            </div>
+                          )}
+                        </PCard>
+                      );
+                    })}
+                  </div>
+
+                  {/* Sync count badge */}
+                  {showBadge && (
+                    <div style={{
+                      marginTop: 12, textAlign: 'center',
+                      opacity: badgeOpacity,
+                    }}>
+                      <span style={{
+                        display: 'inline-block', padding: '5px 14px', borderRadius: 16,
+                        background: '#dcfce7', border: '1px solid rgba(34,197,94,0.25)',
+                        fontSize: 11, fontWeight: 700, color: '#166534',
+                      }}>
+                        6 forms synced from 1 entry
+                      </span>
+                    </div>
+                  )}
+                </PCard>
+
+                {/* How It Works */}
+                <PCard style={{ padding: '12px 14px', ...tile(0.4) }}>
+                  <div style={{ fontSize: 12, fontWeight: 700, color: C.navy900, marginBottom: 8 }}>
+                    How It Works
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                    {HOW_IT_WORKS.map((item) => (
+                      <div key={item.step} style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
+                        <span style={{
+                          fontSize: 9, width: 16, height: 16, borderRadius: '50%',
+                          background: C.navy900, color: '#ffffff',
+                          display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          fontWeight: 700, flexShrink: 0,
+                        }}>{item.step}</span>
+                        <span style={{ fontSize: 10, color: '#475569', lineHeight: 1.4 }}>{item.text}</span>
+                      </div>
+                    ))}
+                  </div>
+                </PCard>
+              </div>
             </div>
           </div>
         </div>
       </BrowserFrame>
 
       <AnimatedCursor {...cursor} />
-
-      {/* Kinetic "Enter once." text */}
-      {frame > kineticFrame && frame < kineticFrame + 65 && (
-        <div style={{
-          position: 'absolute', top: '45%', left: '50%',
-          transform: `translate(-50%, -50%) scale(${interpolate(kineticIn, [0, 1], [0.8, 1])})`,
-          zIndex: 60, opacity: interpolate(kineticIn, [0, 1], [0, 1]) * kineticExit,
-        }}>
-          <div style={{
-            fontSize: 56, fontWeight: 700, fontFamily: FONT_DISPLAY, color: C.accent,
-            textShadow: '0 0 80px rgba(14,26,74,0.95), 0 0 160px rgba(14,26,74,0.9)',
-          }}>
-            Enter once.
-          </div>
-        </div>
-      )}
     </AbsoluteFill>
   );
 };

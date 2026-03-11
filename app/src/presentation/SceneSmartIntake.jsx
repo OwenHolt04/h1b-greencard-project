@@ -99,7 +99,7 @@ export default function SceneSmartIntake() {
   const isSyncing = showSync || (isFixed && syncing);
 
   return (
-    <div className="h-full flex flex-col items-center justify-center bg-gradient-to-b from-surface to-white px-6 overflow-y-auto">
+    <div className="h-full flex flex-col items-center bg-gradient-to-b from-surface to-white px-6 overflow-y-auto pt-6">
       <SceneShell maxWidth="max-w-5xl" className="py-4">
         {/* Title */}
         <MaskedHeading className="text-2xl font-bold text-navy-900 text-center mb-0.5">

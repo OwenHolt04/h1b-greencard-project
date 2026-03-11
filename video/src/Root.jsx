@@ -4,13 +4,13 @@ import { CaseBridgeDemo } from './CaseBridgeDemo';
 import { CaseBridgeDemoV2 } from './CaseBridgeDemoV2';
 import { TOTAL_FRAMES, FPS, SCENE_FRAMES, MS_FRAMES, MS_TOTAL_FRAMES } from './lib/constants';
 
-// --- Walkthrough branch (website-driven alternate) ---
+// --- Walkthrough branch (website-driven, script-aligned) ---
 import { CaseBridgeWalkthrough } from './walkthrough/CaseBridgeWalkthrough';
 import { WK_TOTAL_FRAMES, WK_FRAMES, WK_FPS } from './walkthrough/shared';
-import { WK1_DashboardReveal } from './walkthrough/WK1_DashboardReveal';
+import { WK1_SharedRecord } from './walkthrough/WK1_SharedRecord';
 import { WK2_SmartIntake } from './walkthrough/WK2_SmartIntake';
-import { WK3_ValidationFix } from './walkthrough/WK3_ValidationFix';
-import { WK6_ImpactClose } from './walkthrough/WK6_ImpactClose';
+import { WK3_ValidationQuick } from './walkthrough/WK3_ValidationQuick';
+import { WK4_RolePerspectivesClose } from './walkthrough/WK4_RolePerspectivesClose';
 
 // --- V1 scenes (legacy) ---
 import { Scene1_CurrentStateChaos } from './scenes/Scene1_CurrentStateChaos';
@@ -60,10 +60,10 @@ export const RemotionRoot = () => {
 
       {/* Walkthrough individual scenes for preview */}
       <Folder name="Walkthrough-Scenes">
-        <Composition id="WK1-DashboardReveal" component={WK1_DashboardReveal} durationInFrames={WK_FRAMES.dashboardReveal} fps={WK_FPS} width={1920} height={1080} />
+        <Composition id="WK1-SharedRecord" component={WK1_SharedRecord} durationInFrames={WK_FRAMES.sharedRecord} fps={WK_FPS} width={1920} height={1080} />
         <Composition id="WK2-SmartIntake" component={WK2_SmartIntake} durationInFrames={WK_FRAMES.smartIntake} fps={WK_FPS} width={1920} height={1080} />
-        <Composition id="WK3-ValidationFix" component={WK3_ValidationFix} durationInFrames={WK_FRAMES.validationFix} fps={WK_FPS} width={1920} height={1080} />
-        <Composition id="WK4-ImpactClose" component={WK6_ImpactClose} durationInFrames={WK_FRAMES.impactClose} fps={WK_FPS} width={1920} height={1080} />
+        <Composition id="WK3-ValidationQuick" component={WK3_ValidationQuick} durationInFrames={WK_FRAMES.validationQuick} fps={WK_FPS} width={1920} height={1080} />
+        <Composition id="WK4-RolePerspectivesClose" component={WK4_RolePerspectivesClose} durationInFrames={WK_FRAMES.rolePerspectives} fps={WK_FPS} width={1920} height={1080} />
       </Folder>
 
       {/* V2 individual micro-scenes for preview */}
