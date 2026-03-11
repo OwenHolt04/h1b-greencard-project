@@ -4,6 +4,16 @@ import { CaseBridgeDemo } from './CaseBridgeDemo';
 import { CaseBridgeDemoV2 } from './CaseBridgeDemoV2';
 import { TOTAL_FRAMES, FPS, SCENE_FRAMES, MS_FRAMES, MS_TOTAL_FRAMES } from './lib/constants';
 
+// --- V3 (script-aligned, website-themed) ---
+import { CaseBridgeDemoV3 } from './v3/CaseBridgeDemoV3';
+import { V3_TOTAL_FRAMES, V3_FPS, V3_FRAMES } from './v3/theme';
+import { V3S1_Dashboard } from './v3/V3S1_Dashboard';
+import { V3S2_EnterOnce } from './v3/V3S2_EnterOnce';
+import { V3S3_PlainLanguage } from './v3/V3S3_PlainLanguage';
+import { V3S4_StakeholderViews } from './v3/V3S4_StakeholderViews';
+import { V3S5_DeadlineAlert } from './v3/V3S5_DeadlineAlert';
+import { V3S6_Close } from './v3/V3S6_Close';
+
 // --- Walkthrough branch (website-driven, script-aligned) ---
 import { CaseBridgeWalkthrough } from './walkthrough/CaseBridgeWalkthrough';
 import { WK_TOTAL_FRAMES, WK_FRAMES, WK_FPS } from './walkthrough/shared';
@@ -38,7 +48,27 @@ import { MS4B_ScopeClose } from './micro/MS4B_ScopeClose';
 export const RemotionRoot = () => {
   return (
     <>
-      {/* V2 — Main composition (micro-scene architecture) */}
+      {/* V3 — Script-aligned, website-themed (PRIMARY) */}
+      <Composition
+        id="CaseBridgeDemoV3"
+        component={CaseBridgeDemoV3}
+        durationInFrames={V3_TOTAL_FRAMES}
+        fps={V3_FPS}
+        width={1920}
+        height={1080}
+      />
+
+      {/* V3 individual scenes for preview */}
+      <Folder name="V3-Scenes">
+        <Composition id="V3S1-Dashboard" component={V3S1_Dashboard} durationInFrames={V3_FRAMES.dashboard} fps={V3_FPS} width={1920} height={1080} />
+        <Composition id="V3S2-EnterOnce" component={V3S2_EnterOnce} durationInFrames={V3_FRAMES.enterOnce} fps={V3_FPS} width={1920} height={1080} />
+        <Composition id="V3S3-PlainLanguage" component={V3S3_PlainLanguage} durationInFrames={V3_FRAMES.plainLanguage} fps={V3_FPS} width={1920} height={1080} />
+        <Composition id="V3S4-StakeholderViews" component={V3S4_StakeholderViews} durationInFrames={V3_FRAMES.stakeholders} fps={V3_FPS} width={1920} height={1080} />
+        <Composition id="V3S5-DeadlineAlert" component={V3S5_DeadlineAlert} durationInFrames={V3_FRAMES.deadline} fps={V3_FPS} width={1920} height={1080} />
+        <Composition id="V3S6-Close" component={V3S6_Close} durationInFrames={V3_FRAMES.close} fps={V3_FPS} width={1920} height={1080} />
+      </Folder>
+
+      {/* V2 — Previous version (micro-scene architecture) */}
       <Composition
         id="CaseBridgeDemoV2"
         component={CaseBridgeDemoV2}

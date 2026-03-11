@@ -9,12 +9,13 @@ import { useDemo } from '../context/DemoContext';
 import { SceneShell, MaskedHeading, FocalCard, SupportingModule } from './motion';
 import {
   applicant, employer, attorney, job, caseRecord, stages,
-  roleContent, eligibilityChecks,
+  roleContent, eligibilityChecks, documentChecklist,
 } from '../data/mockData';
 import {
   User, Building2, Scale, CheckCircle2, Clock, AlertTriangle,
   ChevronRight, Shield, FileText, TrendingUp, Sparkles,
   Users, BarChart3, DollarSign, TrendingDown, ShieldCheck, ShieldAlert, Bell,
+  MessageCircle, ListChecks, BookOpen,
 } from 'lucide-react';
 
 /* ── Readiness ring (compact SVG) ─────────────────────────────────── */
@@ -209,61 +210,258 @@ export default function SceneSingleSource() {
 /* ── Applicant Dashboard ──────────────────────────────────────────── */
 function ApplicantDash({ readinessScore }) {
   const c = roleContent.applicant;
+
+  // I-485 stage checklist (the active filing stage)
+  const i485Stage = documentChecklist.find(s => s.stage.startsWith('I-485'));
+  const i485Docs = i485Stage?.documents || [];
+
+  // Checklist auto-update: "Employment verification letter from HPE" transitions missing→done
+  const [docReceived, setDocReceived] = useState(false);
+  const [showDocToast, setShowDocToast] = useState(false);
+  const UPDATED_DOC_INDEX = i485Docs.findIndex(d => d.name.startsWith('Employment verification'));
+
+  const effectiveDocs = i485Docs.map((doc, i) => {
+    if (i === UPDATED_DOC_INDEX && docReceived) {
+      return { ...doc, status: 'done', flag: undefined };
+    }
+    return doc;
+  });
+
+  const doneCount = effectiveDocs.filter(d => d.status === 'done').length;
+  const totalCount = effectiveDocs.length;
+
+  const handleChecklistUpdate = () => {
+    if (docReceived) return;
+    setShowDocToast(true);
+    setTimeout(() => setDocReceived(true), 600);
+    setTimeout(() => setShowDocToast(false), 3500);
+  };
+
+  // Chatbot: one-click interaction
+  const [chatAsked, setChatAsked] = useState(false);
+  const handleChatAsk = () => {
+    if (chatAsked) return;
+    setChatAsked(true);
+  };
+
   return (
     <div className="space-y-2">
       {/* Case Journey — visual node timeline */}
       <CaseJourney readinessScore={readinessScore} />
 
+      {/* Row 2: Plain-language guidance + Eligibility */}
       <div className="grid grid-cols-3 gap-2">
-      {/* Status (span 2) */}
-      <SupportingModule delay={0} className="col-span-2 p-4">
-        <div className="flex items-start gap-3">
-          <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center shrink-0">
-            <User size={15} className="text-blue-600" />
-          </div>
-          <div className="min-w-0">
-            <p className="text-base font-semibold text-navy-900">{c.greeting}</p>
-            <p className="text-xs text-slate-600 mt-1 leading-relaxed">{c.statusSummary}</p>
-            <div className="mt-2 px-3 py-2 bg-blue-50 rounded-lg border border-blue-100">
-              <p className="text-[11px] text-blue-800 font-medium">Next Step</p>
-              <p className="text-[11px] text-blue-700 mt-0.5">{c.nextStep}</p>
+        {/* Plain-Language Guidance Panel */}
+        <FocalCard delay={0.05} className="col-span-2 p-4">
+          <div className="flex items-center gap-2 mb-3">
+            <div className="w-7 h-7 rounded-lg bg-blue-100 flex items-center justify-center shrink-0">
+              <BookOpen size={14} className="text-blue-600" />
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-navy-900">Your Case in Plain Language</p>
+              <p className="text-[10px] text-slate-400 uppercase tracking-wider font-medium">No legal jargon — just what you need to know</p>
             </div>
           </div>
-        </div>
-      </SupportingModule>
 
-      {/* Eligibility */}
-      <SupportingModule delay={0.1} className="p-4">
-        <div className="flex items-center gap-1.5 mb-2">
-          <Sparkles size={13} className="text-blue-500" />
-          <p className="text-xs font-semibold text-navy-900">Eligibility Check</p>
-        </div>
-        <div className="space-y-1.5">
-          {eligibilityChecks.slice(0, 6).map((ck) => (
-            <div key={ck.id} className="flex items-center gap-2">
-              <div className={`w-4 h-4 rounded-full flex items-center justify-center ${
-                ck.answer ? 'bg-green-100' : 'bg-amber-100'
-              }`}>
-                {ck.answer
-                  ? <CheckCircle2 size={10} className="text-green-600" />
-                  : <AlertTriangle size={10} className="text-amber-600" />}
+          <div className="space-y-2.5">
+            <div className="flex items-start gap-2.5">
+              <span className="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded mt-0.5 shrink-0 uppercase">Where you are</span>
+              <p className="text-xs text-slate-700 leading-relaxed">You're at step 6 of 8. Your employer's petition was approved, and after years of waiting, your priority date is finally current. You're now preparing the I-485 — the actual green card application.</p>
+            </div>
+            <div className="flex items-start gap-2.5">
+              <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded mt-0.5 shrink-0 uppercase">What's next</span>
+              <p className="text-xs text-slate-700 leading-relaxed">
+                {docReceived
+                  ? 'Your attorney is finalizing the filing package. One document is still needed: your December 2023 travel dates.'
+                  : 'Your attorney is finalizing the filing package. Two documents are still needed: an employment verification letter from HPE and your December 2023 travel dates.'}
+              </p>
+            </div>
+            <div className="flex items-start gap-2.5">
+              <span className="text-[10px] font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded mt-0.5 shrink-0 uppercase">Your action</span>
+              <p className="text-xs text-slate-700 leading-relaxed">Confirm your December 2023 travel dates. Your attorney and HR are handling everything else. Filing target: March 17–20 while your date remains current.</p>
+            </div>
+          </div>
+        </FocalCard>
+
+        {/* Eligibility — plain language */}
+        <SupportingModule delay={0.1} className="p-4">
+          <div className="flex items-center gap-1.5 mb-2">
+            <Sparkles size={13} className="text-blue-500" />
+            <p className="text-xs font-semibold text-navy-900">Eligibility Check</p>
+          </div>
+          <div className="space-y-1.5">
+            {eligibilityChecks.map((ck) => (
+              <div key={ck.id} className="flex items-center gap-2">
+                <div className={`w-4 h-4 rounded flex items-center justify-center shrink-0 ${
+                  ck.answer ? 'bg-green-100' : 'bg-amber-100'
+                }`}>
+                  {ck.answer
+                    ? <CheckCircle2 size={10} className="text-green-600" />
+                    : <AlertTriangle size={10} className="text-amber-600" />}
+                </div>
+                <span className="text-[11px] text-slate-600">{ck.plain || ck.category}</span>
               </div>
-              <span className="text-[11px] text-slate-600">{ck.category}</span>
-            </div>
-          ))}
-        </div>
-        <p className="text-[11px] text-green-600 font-medium mt-2">7 / 8 met</p>
-      </SupportingModule>
-
-      {/* Alert cards */}
-      {c.alerts.map((a, i) => (
-        <SupportingModule key={i} delay={0.15 + i * 0.04} className="p-3">
-          <p className={`text-xs font-semibold mb-0.5 ${
-            a.type === 'success' ? 'text-green-700' : a.type === 'warning' ? 'text-amber-700' : 'text-blue-700'
-          }`}>{a.title}</p>
-          <p className="text-[11px] text-slate-500 leading-relaxed">{a.body}</p>
+            ))}
+          </div>
+          <p className="text-[11px] text-green-600 font-medium mt-2">7 / 8 met</p>
         </SupportingModule>
-      ))}
+      </div>
+
+      {/* Row 3: Consolidated Checklist + Chatbot Helper */}
+      <div className="grid grid-cols-3 gap-2">
+        {/* Consolidated Checklist */}
+        <SupportingModule delay={0.15} className="col-span-2 p-4 relative">
+          {/* System notification toast */}
+          <AnimatePresence>
+            {showDocToast && (
+              <motion.div
+                initial={{ opacity: 0, y: -8, x: '-50%' }}
+                animate={{ opacity: 1, y: 0, x: '-50%' }}
+                exit={{ opacity: 0, y: -8, x: '-50%' }}
+                className="absolute -top-2 left-1/2 z-10 px-4 py-2 bg-green-600 text-white rounded-lg shadow-lg flex items-center gap-2"
+              >
+                <CheckCircle2 size={13} />
+                <span className="text-[11px] font-medium whitespace-nowrap">HPE HR submitted: Employment verification letter</span>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          <div className="flex items-center justify-between mb-2.5">
+            <div className="flex items-center gap-2">
+              <ListChecks size={15} className="text-navy-900" />
+              <p className="text-sm font-semibold text-navy-900">Filing Checklist</p>
+              <span className="text-[10px] text-slate-400 font-medium">I-485 Package</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              {/* Notification badge — click to trigger system update */}
+              {!docReceived && (
+                <button
+                  onClick={handleChecklistUpdate}
+                  className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 text-[10px] font-medium cursor-pointer hover:bg-blue-200 transition-colors"
+                >
+                  <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
+                  1 new
+                </button>
+              )}
+              <motion.span
+                key={doneCount}
+                initial={{ scale: 1.3 }}
+                animate={{ scale: 1 }}
+                className="text-xs font-bold text-navy-900"
+              >{doneCount}/{totalCount}</motion.span>
+              <div className="w-16 h-1.5 rounded-full bg-slate-200 overflow-hidden">
+                <motion.div
+                  className="h-full rounded-full bg-blue-500"
+                  animate={{ width: `${(doneCount / totalCount) * 100}%` }}
+                  transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
+                />
+              </div>
+              <span className="text-[10px] text-slate-400 italic">auto-updates</span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-x-3 gap-y-1">
+            {effectiveDocs.map((doc, i) => {
+              const justUpdated = i === UPDATED_DOC_INDEX && docReceived;
+              return (
+                <motion.div
+                  key={i}
+                  className="flex items-start gap-2 py-0.5"
+                  animate={justUpdated ? { backgroundColor: ['rgba(34,197,94,0.15)', 'rgba(34,197,94,0)'] } : {}}
+                  transition={justUpdated ? { duration: 1.5, delay: 0.2 } : {}}
+                  style={{ borderRadius: 4 }}
+                >
+                  <div className={`w-4 h-4 rounded flex items-center justify-center shrink-0 mt-0.5 transition-colors duration-500 ${
+                    doc.status === 'done' ? 'bg-green-100 border border-green-300' :
+                    doc.status === 'missing' ? 'bg-red-50 border border-red-300' :
+                    doc.status === 'flagged' ? 'bg-amber-50 border border-amber-300' :
+                    'bg-slate-50 border border-slate-300'
+                  }`}>
+                    {doc.status === 'done' && <CheckCircle2 size={10} className="text-green-600" />}
+                    {doc.status === 'missing' && <AlertTriangle size={10} className="text-red-500" />}
+                    {doc.status === 'flagged' && <AlertTriangle size={10} className="text-amber-500" />}
+                    {doc.status === 'pending' && <Clock size={10} className="text-slate-400" />}
+                  </div>
+                  <div className="min-w-0">
+                    <p className={`text-[11px] leading-tight transition-all duration-500 ${
+                      doc.status === 'done' ? 'text-slate-400 line-through' :
+                      doc.status === 'missing' ? 'text-red-700 font-medium' :
+                      doc.status === 'flagged' ? 'text-amber-700 font-medium' :
+                      'text-slate-600'
+                    }`}>{doc.name}</p>
+                    {doc.flag && (
+                      <p className="text-[9px] text-red-500 mt-0.5">{doc.flag}</p>
+                    )}
+                  </div>
+                </motion.div>
+              );
+            })}
+          </div>
+        </SupportingModule>
+
+        {/* Immigration Help — Chatbot / Explainer */}
+        <SupportingModule delay={0.2} className="p-4 flex flex-col">
+          <div className="flex items-center gap-2 mb-3">
+            <div className="w-7 h-7 rounded-lg bg-indigo-100 flex items-center justify-center shrink-0">
+              <MessageCircle size={14} className="text-indigo-600" />
+            </div>
+            <div>
+              <p className="text-xs font-semibold text-navy-900">Immigration Help</p>
+              <p className="text-[10px] text-slate-400">Ask anything about your case</p>
+            </div>
+          </div>
+
+          {/* Conversation */}
+          <div className="space-y-2 flex-1 overflow-y-auto">
+            {/* First Q&A — always visible */}
+            <div className="bg-slate-100 rounded-lg px-3 py-2">
+              <p className="text-[11px] text-slate-700">What does "priority date current" mean?</p>
+            </div>
+            <div className="bg-indigo-50 rounded-lg px-3 py-2 border border-indigo-100">
+              <p className="text-[11px] text-indigo-900 leading-relaxed">It means your place in line has been reached. The government processes green cards in order of priority dates. Yours (March 2022) is now eligible because EB-2 India dates advanced to April 2022 in the February 2026 bulletin. <span className="font-medium">This is your filing window.</span></p>
+            </div>
+
+            {/* Second Q&A — appears on click */}
+            <AnimatePresence>
+              {chatAsked && (
+                <>
+                  <motion.div
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="bg-slate-100 rounded-lg px-3 py-2"
+                  >
+                    <p className="text-[11px] text-slate-700">Can I travel while my I-485 is pending?</p>
+                  </motion.div>
+                  <motion.div
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.4, delay: 0.8 }}
+                    className="bg-indigo-50 rounded-lg px-3 py-2 border border-indigo-100"
+                  >
+                    <p className="text-[11px] text-indigo-900 leading-relaxed">You'll need Advance Parole (I-131) before traveling. Your attorney is filing this with your package. <span className="font-medium">Do not travel without it</span> — it could abandon your application.</p>
+                  </motion.div>
+                </>
+              )}
+            </AnimatePresence>
+          </div>
+
+          {/* Input area — clickable suggested question */}
+          {!chatAsked ? (
+            <button
+              onClick={handleChatAsk}
+              className="mt-2 flex items-center gap-2 px-3 py-2 bg-indigo-50 rounded-lg border border-indigo-200 cursor-pointer hover:bg-indigo-100 transition-colors text-left w-full"
+            >
+              <p className="text-[11px] text-indigo-600 flex-1">Can I travel while my I-485 is pending?</p>
+              <ChevronRight size={13} className="text-indigo-400" />
+            </button>
+          ) : (
+            <div className="mt-2 flex items-center gap-2 px-3 py-2 bg-slate-50 rounded-lg border border-slate-200">
+              <p className="text-[11px] text-slate-400 flex-1">Ask about your case...</p>
+              <MessageCircle size={13} className="text-indigo-400" />
+            </div>
+          )}
+        </SupportingModule>
       </div>
     </div>
   );
@@ -271,6 +469,8 @@ function ApplicantDash({ readinessScore }) {
 
 /* ── Employer Dashboard — Portfolio Ops View ──────────────────────── */
 function EmployerDash() {
+  const [deadlineExpanded, setDeadlineExpanded] = useState(false);
+
   return (
     <div className="space-y-2">
       {/* Metrics strip */}
@@ -329,7 +529,7 @@ function EmployerDash() {
 
         {/* Right sidebar: deadline + actions (1 col) */}
         <div className="space-y-2">
-          {/* Deadline Protection */}
+          {/* Deadline Protection — clickable to expand extension plan */}
           <SupportingModule delay={0.15} className="p-4">
             <div className="flex items-center gap-2 mb-2">
               <ShieldAlert size={16} className="text-amber-500" />
@@ -340,9 +540,54 @@ function EmployerDash() {
               <p className="text-sm text-slate-500">days until expiry</p>
               <p className="text-[11px] text-slate-400 mt-0.5">{applicant.fullName} · June 15, 2026</p>
             </div>
-            <div className="px-3 py-2 bg-amber-50 rounded-lg border border-amber-200">
-              <p className="text-[11px] text-amber-700">Auto-triggers at 90 days · Est. $2,500–4,000</p>
-            </div>
+
+            {/* Expandable extension plan */}
+            <button
+              onClick={() => setDeadlineExpanded(!deadlineExpanded)}
+              className="w-full px-3 py-2 bg-amber-50 rounded-lg border border-amber-200 cursor-pointer hover:bg-amber-100 transition-colors text-left"
+            >
+              <div className="flex items-center justify-between">
+                <p className="text-[11px] text-amber-700 font-medium">
+                  {deadlineExpanded ? 'Auto-Extension Plan' : 'Auto-triggers at 90 days'}
+                </p>
+                <motion.div
+                  animate={{ rotate: deadlineExpanded ? 90 : 0 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <ChevronRight size={12} className="text-amber-500" />
+                </motion.div>
+              </div>
+            </button>
+
+            <AnimatePresence>
+              {deadlineExpanded && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+                  className="overflow-hidden"
+                >
+                  <div className="mt-2 space-y-1.5">
+                    {[
+                      { day: '90 days', label: 'Auto-alert sent to HR + attorney', done: false },
+                      { day: '85 days', label: 'Extension petition prepared', done: false },
+                      { day: '75 days', label: 'Budget approval ($2,500–4,000)', done: false },
+                      { day: '60 days', label: 'Extension filed with USCIS', done: false },
+                    ].map((step, i) => (
+                      <div key={i} className="flex items-center gap-2">
+                        <div className="w-3 h-3 rounded-full border-2 border-amber-300 shrink-0" />
+                        <div className="flex-1">
+                          <span className="text-[10px] font-bold text-amber-700">{step.day}</span>
+                          <span className="text-[10px] text-slate-500 ml-1.5">{step.label}</span>
+                        </div>
+                      </div>
+                    ))}
+                    <p className="text-[9px] text-slate-400 mt-1 italic">Zero-gap coverage — no lapse in work authorization</p>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </SupportingModule>
 
           {/* Action Items */}
