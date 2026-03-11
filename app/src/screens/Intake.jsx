@@ -1,17 +1,36 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useDemo } from '../context/DemoContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import ReadinessScore from '../components/ReadinessScore';
-import { intakeSections, formPackage, validationIssues } from '../data/mockData';
+import { intakeSections, formPackage, validationIssues, documentChecklist } from '../data/mockData';
 import {
   Search, CheckCircle, AlertTriangle, AlertCircle, Info,
-  ArrowRight, Loader2, Link2, Zap, Eye
+  ArrowRight, Loader2, Link2, Zap, Eye, Pencil, ClipboardCheck, Circle,
 } from 'lucide-react';
 
 const severityConfig = {
   high: { label: 'High', color: 'bg-red-100 text-red-700 border-red-200', border: 'border-l-red-500', icon: AlertTriangle, iconColor: 'text-red-500' },
   medium: { label: 'Medium', color: 'bg-amber-100 text-amber-700 border-amber-200', border: 'border-l-amber-500', icon: AlertCircle, iconColor: 'text-amber-500' },
   low: { label: 'Low', color: 'bg-blue-100 text-blue-700 border-blue-200', border: 'border-l-blue-500', icon: Info, iconColor: 'text-blue-500' },
+};
+
+// I-485 checklist data
+const i485Stage = documentChecklist.find((s) => s.stageNumber === 4);
+const i485Docs = i485Stage?.documents || [];
+const checklistCounts = {
+  done: i485Docs.filter((d) => d.status === 'done').length,
+  flagged: i485Docs.filter((d) => d.status === 'flagged').length,
+  missing: i485Docs.filter((d) => d.status === 'missing').length,
+  pending: i485Docs.filter((d) => d.status === 'pending').length,
+  total: i485Docs.length,
+};
+
+const statusIcon = {
+  done: { icon: CheckCircle, color: 'text-green-500', bg: '' },
+  flagged: { icon: AlertTriangle, color: 'text-amber-500', bg: 'bg-amber-50' },
+  missing: { icon: AlertCircle, color: 'text-red-500', bg: 'bg-red-50' },
+  pending: { icon: Circle, color: 'text-slate-400', bg: '' },
+  na: { icon: Circle, color: 'text-slate-200', bg: '' },
 };
 
 export default function Intake() {
@@ -23,6 +42,9 @@ export default function Intake() {
 
   const [syncingFormIds, setSyncingFormIds] = useState(new Set());
   const [syncFlashFormIds, setSyncFlashFormIds] = useState(new Set());
+  const [editingField, setEditingField] = useState(null);
+  const [editValue, setEditValue] = useState('');
+  const editInputRef = useRef(null);
 
   // Trigger sync animation + "updated" flash on form cards when employer name is fixed
   useEffect(() => {
@@ -37,6 +59,23 @@ export default function Intake() {
   }, [syncing]);
 
   const getEmployerNameValue = () => employerNameFixed ? 'Hewlett Packard Enterprise' : 'Hewlett-Packard Enterprise';
+
+  // Start inline editing a field
+  const startEditing = (field) => {
+    const currentValue = field.key === 'employerLegalName' ? getEmployerNameValue() : field.value;
+    setEditingField(field.key);
+    setEditValue(currentValue);
+    setTimeout(() => editInputRef.current?.focus(), 30);
+  };
+
+  // Finish editing
+  const finishEditing = () => {
+    if (editingField === 'employerLegalName' && editValue === 'Hewlett Packard Enterprise' && !employerNameFixed) {
+      resolveIssue('employer-name');
+    }
+    setEditingField(null);
+    setEditValue('');
+  };
 
   return (
     <motion.div
@@ -65,13 +104,13 @@ export default function Intake() {
             <ReadinessScore score={readinessScore} size={52} strokeWidth={5} showLabel={false} />
           ) : (
             <div className="w-[52px] h-[52px] rounded-full border-[5px] border-slate-200 flex items-center justify-center">
-              <span className="text-sm font-bold text-slate-300">—</span>
+              <span className="text-sm font-bold text-slate-300">&mdash;</span>
             </div>
           )}
         </div>
       </div>
 
-      {/* Three-panel layout — simplified: data → forms → validation */}
+      {/* Three-panel layout — data → forms → validation */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
         {/* Left panel: Shared Intake Data */}
         <div className="lg:col-span-4">
@@ -92,6 +131,8 @@ export default function Intake() {
                       const wasFixed = isMismatchField && employerNameFixed;
                       const displayValue = isMismatchField ? getEmployerNameValue() : field.value;
                       const isGapField = field.hasGap && validationRun && !issues['travel-history'];
+                      const isCurrentlyEditing = editingField === field.key;
+                      const isEditable = isMismatchField;
 
                       return (
                         <div
@@ -106,17 +147,40 @@ export default function Intake() {
                               : ''
                           }`}
                         >
-                          <div className="min-w-0">
+                          <div className="min-w-0 flex-1">
                             <p className="text-xs text-slate-400">{field.label}</p>
-                            <p className={`text-sm font-medium ${
-                              showMismatch ? 'text-amber-700' : wasFixed ? 'text-green-700' : 'text-slate-800'
-                            }`}>
-                              {displayValue}
-                            </p>
+                            {isCurrentlyEditing ? (
+                              <input
+                                ref={editInputRef}
+                                value={editValue}
+                                onChange={(e) => setEditValue(e.target.value)}
+                                onBlur={finishEditing}
+                                onKeyDown={(e) => e.key === 'Enter' && e.target.blur()}
+                                className="text-sm font-medium text-navy-900 bg-accent/10 border border-accent/40 focus:border-accent rounded px-1.5 py-0.5 w-full outline-none transition-colors mt-0.5"
+                              />
+                            ) : isEditable ? (
+                              <button
+                                onClick={() => startEditing(field)}
+                                className="flex items-center gap-1 cursor-pointer group text-left mt-0.5"
+                              >
+                                <span className={`text-sm font-medium border-b border-dashed transition-colors ${
+                                  showMismatch ? 'text-amber-700 border-amber-400' : wasFixed ? 'text-green-700 border-green-300' : 'text-slate-800 border-slate-300'
+                                }`}>
+                                  {displayValue}
+                                </span>
+                                <Pencil className="w-3 h-3 text-slate-300 group-hover:text-navy-900 transition-colors flex-shrink-0" />
+                              </button>
+                            ) : (
+                              <p className={`text-sm font-medium ${
+                                showMismatch ? 'text-amber-700' : wasFixed ? 'text-green-700' : 'text-slate-800'
+                              }`}>
+                                {displayValue}
+                              </p>
+                            )}
                           </div>
                           <div className="flex items-center gap-1 flex-shrink-0 mt-1">
                             <span className="text-xs text-slate-400 font-medium whitespace-nowrap">
-                              → {field.syncTargets.length} forms
+                              &rarr; {field.syncTargets.length} forms
                             </span>
                             {wasFixed && <CheckCircle className="w-3.5 h-3.5 text-green-500 ml-1" />}
                           </div>
@@ -219,7 +283,7 @@ export default function Intake() {
           </div>
         </div>
 
-        {/* Right panel: Validation */}
+        {/* Right panel: Validation + Checklist */}
         <div className="lg:col-span-4 space-y-4">
           {/* Readiness + Validation button */}
           <div className="bg-white rounded-xl border border-slate-200/80 shadow-sm p-5">
@@ -241,6 +305,41 @@ export default function Intake() {
                 </div>
               )}
             </div>
+
+            {/* Document readiness summary — shown after validation */}
+            {validationRun && !validationRunning && (
+              <motion.div
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2, duration: 0.3 }}
+                className="mb-4"
+              >
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs font-semibold text-slate-700">I-485 Documents</span>
+                  <span className="text-xs font-bold text-navy-900">{checklistCounts.done}/{checklistCounts.total} ready</span>
+                </div>
+                <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden flex">
+                  <div className="bg-green-500 h-full" style={{ width: `${(checklistCounts.done / checklistCounts.total) * 100}%` }} />
+                  <div className="bg-amber-500 h-full" style={{ width: `${(checklistCounts.flagged / checklistCounts.total) * 100}%` }} />
+                  <div className="bg-red-500 h-full" style={{ width: `${(checklistCounts.missing / checklistCounts.total) * 100}%` }} />
+                  <div className="bg-slate-300 h-full" style={{ width: `${(checklistCounts.pending / checklistCounts.total) * 100}%` }} />
+                </div>
+                <div className="flex items-center gap-3 mt-1.5">
+                  <span className="flex items-center gap-1 text-[10px] text-slate-500">
+                    <span className="w-1.5 h-1.5 rounded-full bg-green-500" />{checklistCounts.done} done
+                  </span>
+                  <span className="flex items-center gap-1 text-[10px] text-slate-500">
+                    <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />{checklistCounts.flagged} flagged
+                  </span>
+                  <span className="flex items-center gap-1 text-[10px] text-slate-500">
+                    <span className="w-1.5 h-1.5 rounded-full bg-red-500" />{checklistCounts.missing} missing
+                  </span>
+                  <span className="flex items-center gap-1 text-[10px] text-slate-500">
+                    <span className="w-1.5 h-1.5 rounded-full bg-slate-300" />{checklistCounts.pending} pending
+                  </span>
+                </div>
+              </motion.div>
+            )}
 
             {!validationRun && !validationRunning && (
               <button
@@ -342,7 +441,7 @@ export default function Intake() {
                             className="mt-1 flex items-center gap-1.5 text-sm font-semibold text-navy-900 hover:text-navy-700 transition-colors cursor-pointer"
                           >
                             <Zap className="w-3.5 h-3.5" />
-                            Fix: Standardize to "{issue.correctedValue}"
+                            Fix: Standardize to &ldquo;{issue.correctedValue}&rdquo;
                           </button>
                         )}
 
@@ -360,6 +459,80 @@ export default function Intake() {
           </AnimatePresence>
         </div>
       </div>
+
+      {/* Filing Checklist — full width below panels */}
+      {validationRun && (
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4, duration: 0.3 }}
+          className="mt-6"
+        >
+          <div className="bg-white rounded-xl border border-slate-200/80 shadow-sm overflow-hidden">
+            <div className="px-5 py-3 border-b border-slate-100 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <ClipboardCheck className="w-4 h-4 text-navy-900" />
+                <h2 className="text-base font-semibold text-slate-900">I-485 Filing Checklist</h2>
+                <span className="text-[10px] font-semibold text-navy-900 bg-accent/20 px-2 py-0.5 rounded-full uppercase tracking-wider">
+                  Basic
+                </span>
+              </div>
+              <div className="flex items-center gap-4 text-xs text-slate-500">
+                <span className="flex items-center gap-1">
+                  <span className="w-2 h-2 rounded-full bg-green-500" />
+                  {checklistCounts.done} complete
+                </span>
+                <span className="flex items-center gap-1">
+                  <span className="w-2 h-2 rounded-full bg-amber-500" />
+                  {checklistCounts.flagged} flagged
+                </span>
+                <span className="flex items-center gap-1">
+                  <span className="w-2 h-2 rounded-full bg-red-500" />
+                  {checklistCounts.missing} missing
+                </span>
+                <span className="flex items-center gap-1">
+                  <span className="w-2 h-2 rounded-full bg-slate-300" />
+                  {checklistCounts.pending} pending
+                </span>
+              </div>
+            </div>
+
+            <div className="p-5">
+              {/* Progress bar */}
+              <div className="h-2 bg-slate-100 rounded-full overflow-hidden flex mb-4">
+                <div className="bg-green-500 h-full" style={{ width: `${(checklistCounts.done / checklistCounts.total) * 100}%` }} />
+                <div className="bg-amber-500 h-full" style={{ width: `${(checklistCounts.flagged / checklistCounts.total) * 100}%` }} />
+                <div className="bg-red-500 h-full" style={{ width: `${(checklistCounts.missing / checklistCounts.total) * 100}%` }} />
+                <div className="bg-slate-300 h-full" style={{ width: `${(checklistCounts.pending / checklistCounts.total) * 100}%` }} />
+              </div>
+
+              {/* Document grid */}
+              <div className="grid grid-cols-3 gap-x-6 gap-y-1.5">
+                {i485Docs.map((doc, i) => {
+                  const sc = statusIcon[doc.status] || statusIcon.pending;
+                  const Icon = sc.icon;
+                  return (
+                    <div
+                      key={i}
+                      className={`flex items-start gap-2 py-1.5 px-2 rounded ${sc.bg}`}
+                    >
+                      <Icon className={`w-3.5 h-3.5 ${sc.color} flex-shrink-0 mt-0.5`} />
+                      <div className="min-w-0">
+                        <p className={`text-xs ${doc.status === 'done' ? 'text-slate-500' : 'text-slate-800 font-medium'} leading-snug`}>
+                          {doc.name}
+                        </p>
+                        {doc.flag && (
+                          <p className="text-[10px] text-amber-600 font-medium mt-0.5">{doc.flag}</p>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </motion.div>
+      )}
     </motion.div>
   );
 }

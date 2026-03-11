@@ -5,18 +5,17 @@ import { FONT_SANS, FONT_DISPLAY } from '../lib/fonts';
 import { FormFragment } from '../components/FormFragment';
 
 /**
- * MS3B — Validation (26s/780f) — HERO SCENE
+ * MS3B — Validation + Completeness (28s/840f) — HERO SCENE
  *
  * TRUE MICRO-SCENE GRAMMAR:
  *   Phase 1 (0-3s): A visible form (I-140) appears centered, large. THE TARGET.
  *   Phase 2 (3-5.5s): Scan line sweeps the form. Detecting.
  *   Phase 3 (5.5-10s): Form dims/shrinks. ONE issue EXTRACTED and enlarged center.
- *                       The employer-name inconsistency is the star.
  *   Phase 4 (10-14s): Before/after comparison. Full-screen hero focus on the fix.
  *   Phase 5 (14-17s): Fix applied. Green propagation to affected form badges.
  *   Phase 6 (17-20s): Score rises. Other issues briefly appear at small scale.
  *   Phase 7 (20-23s): "Caught before filing." + "~25% → <5%"
- *   Phase 8 (23-26s): Brief assembled clean state — all issues visible, 1 resolved.
+ *   Phase 8 (23.5-28s): Completeness checklist — cream focal card, "21 of 23", done/missing/flagged.
  */
 export const MS3B_CapValidation = () => {
   const frame = useCurrentFrame();
@@ -38,7 +37,8 @@ export const MS3B_CapValidation = () => {
     otherIssues: Math.round(17 * fps),
     kineticIn: Math.round(20 * fps),
     metricIn: Math.round(21.5 * fps),
-    assembledIn: Math.round(23 * fps),
+    checklistIn: Math.round(23.5 * fps),
+    checklistExit: Math.round(27 * fps),
   };
 
   // ── Phase 1: Target form ──
@@ -85,6 +85,23 @@ export const MS3B_CapValidation = () => {
   const kineticExit = interpolate(frame, [P.kineticIn + 50, P.kineticIn + 65], [1, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
 
   const metricIn = spring({ frame, fps, config: { damping: 200 }, delay: P.metricIn });
+
+  // ── Phase 8: Completeness checklist ──
+  const checklistIn = spring({ frame, fps, config: { damping: 18, stiffness: 120 }, delay: P.checklistIn });
+  const checklistExit = interpolate(frame, [P.checklistExit, P.checklistExit + 15], [1, 0], {
+    extrapolateLeft: 'clamp', extrapolateRight: 'clamp',
+  });
+  // Dim everything else when checklist appears
+  const priorDim = interpolate(frame, [P.checklistIn - 10, P.checklistIn + 10], [1, 0], {
+    extrapolateLeft: 'clamp', extrapolateRight: 'clamp',
+  });
+
+  const CL_ITEMS = [
+    { name: 'I-485 (signed)', s: 'done' }, { name: 'I-765 (EAD)', s: 'done' },
+    { name: 'I-131 (Advance Parole)', s: 'done' }, { name: 'Birth certificate', s: 'done' },
+    { name: 'Medical exam (I-693)', s: 'done' }, { name: 'Employment verification', s: 'missing' },
+    { name: 'Travel history (5yr)', s: 'flagged' }, { name: 'Tax returns (3yr)', s: 'done' },
+  ];
 
   return (
     <AbsoluteFill style={{
@@ -133,7 +150,7 @@ export const MS3B_CapValidation = () => {
         <div style={{
           position: 'absolute', left: CX, top: issueY,
           transform: `translate(-50%, -50%) scale(${issueScale})`,
-          opacity: issueExtract, zIndex: 20,
+          opacity: issueExtract * priorDim, zIndex: 20,
           width: 700,
         }}>
           {/* Issue card */}
@@ -241,7 +258,7 @@ export const MS3B_CapValidation = () => {
         <div style={{
           position: 'absolute', left: CX, bottom: 200,
           transform: 'translateX(-50%)',
-          opacity: interpolate(scoreIn, [0, 1], [0, 1]),
+          opacity: interpolate(scoreIn, [0, 1], [0, 1]) * priorDim,
           zIndex: 20,
           display: 'flex', alignItems: 'center', gap: 20,
         }}>
@@ -257,7 +274,7 @@ export const MS3B_CapValidation = () => {
       {frame > P.otherIssues && (
         <div style={{
           position: 'absolute', left: 80, top: 200,
-          opacity: interpolate(othersIn, [0, 1], [0, 0.5]),
+          opacity: interpolate(othersIn, [0, 1], [0, 0.5]) * priorDim,
           transform: `scale(0.7) translateX(${interpolate(othersIn, [0, 1], [-20, 0])}px)`,
         }}>
           {[
@@ -298,7 +315,7 @@ export const MS3B_CapValidation = () => {
       {frame > P.metricIn && (
         <div style={{
           position: 'absolute', bottom: 80, left: 0, right: 0, textAlign: 'center',
-          opacity: interpolate(metricIn, [0, 1], [0, 1]),
+          opacity: interpolate(metricIn, [0, 1], [0, 1]) * priorDim,
           zIndex: 25,
         }}>
           <span style={{
@@ -307,6 +324,88 @@ export const MS3B_CapValidation = () => {
           }}>
             ~25% → {'<'}5% RFE rate
           </span>
+        </div>
+      )}
+
+      {/* ── Phase 8: Completeness checklist (centered focal card) ── */}
+      {frame > P.checklistIn - 10 && (
+        <div style={{
+          position: 'absolute', inset: 0,
+          display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+          opacity: interpolate(checklistIn, [0, 1], [0, 1]) * checklistExit,
+          zIndex: 35,
+        }}>
+          <div style={{
+            ...CARD.focal,
+            width: 540, padding: '24px 28px',
+            transform: `scale(${interpolate(checklistIn, [0, 1], [0.95, 1])})`,
+          }}>
+            {/* Header */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+              <div>
+                <div style={{ fontSize: 11, color: C.navy900, fontWeight: 700, letterSpacing: '0.06em', opacity: 0.5 }}>
+                  I-485 PACKAGE
+                </div>
+                <div style={{ fontSize: 18, fontWeight: 700, color: C.navy900 }}>
+                  Document Readiness
+                </div>
+              </div>
+              <div style={{
+                padding: '6px 14px', borderRadius: 8,
+                background: 'rgba(248,242,182,0.3)', border: '1px solid rgba(248,242,182,0.4)',
+              }}>
+                <span style={{ fontSize: 20, fontWeight: 700, color: C.navy900 }}>21</span>
+                <span style={{ fontSize: 14, color: 'rgba(22,39,104,0.5)' }}> / 23</span>
+              </div>
+            </div>
+
+            {/* Document items 2-col grid */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px 16px' }}>
+              {CL_ITEMS.map((doc, i) => {
+                const dDelay = P.checklistIn + 8 + i * 3;
+                const dIn = spring({ frame, fps, config: { damping: 200 }, delay: dDelay });
+                const statusColor = doc.s === 'done' ? C.green600 : doc.s === 'missing' ? C.red500 : C.amber600;
+                const statusIcon = doc.s === 'done' ? '\u2713' : doc.s === 'missing' ? '\u2014' : '!';
+                return (
+                  <div key={i} style={{
+                    display: 'flex', alignItems: 'center', gap: 8, padding: '5px 0',
+                    borderBottom: '1px solid rgba(22,39,104,0.06)',
+                    opacity: interpolate(dIn, [0, 1], [0, 1]),
+                  }}>
+                    <div style={{
+                      width: 18, height: 18, borderRadius: 4, flexShrink: 0,
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      background: doc.s === 'done' ? 'rgba(34,197,94,0.12)' : doc.s === 'missing' ? 'rgba(239,68,68,0.1)' : 'rgba(245,158,11,0.12)',
+                    }}>
+                      <span style={{ fontSize: 10, fontWeight: 700, color: statusColor }}>{statusIcon}</span>
+                    </div>
+                    <span style={{
+                      fontSize: 12, fontWeight: 500,
+                      color: doc.s === 'done' ? 'rgba(22,39,104,0.5)' : C.navy900,
+                    }}>
+                      {doc.name}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Footer */}
+            <div style={{
+              marginTop: 12, paddingTop: 10, borderTop: '1px solid rgba(22,39,104,0.08)',
+              display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+            }}>
+              <span style={{ fontSize: 12, color: 'rgba(22,39,104,0.45)', fontWeight: 500 }}>
+                Completeness visible at every stage
+              </span>
+              <span style={{
+                fontSize: 11, fontWeight: 700, color: C.amber600,
+                background: 'rgba(245,158,11,0.1)', padding: '3px 10px', borderRadius: 4,
+              }}>
+                2 ACTION ITEMS
+              </span>
+            </div>
+          </div>
         </div>
       )}
     </AbsoluteFill>

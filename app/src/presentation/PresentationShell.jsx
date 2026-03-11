@@ -53,6 +53,8 @@ export default function PresentationShell() {
   // Keyboard navigation
   useEffect(() => {
     const handler = (e) => {
+      // Don't intercept keys when user is typing in an input
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
       if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
         if (e.target.tagName === 'BUTTON') return;
         e.preventDefault();

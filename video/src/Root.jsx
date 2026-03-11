@@ -22,7 +22,6 @@ import { MS1C_ProblemPain } from './micro/MS1C_ProblemPain';
 import { MS2A_PlatformReveal } from './micro/MS2A_PlatformReveal';
 import { MS3A_CapIntake } from './micro/MS3A_CapIntake';
 import { MS3B_CapValidation } from './micro/MS3B_CapValidation';
-import { MS3B2_CapWizard } from './micro/MS3B2_CapWizard';
 import { MS3C_CapRoles } from './micro/MS3C_CapRoles';
 import { MS3D_CapDeadline } from './micro/MS3D_CapDeadline';
 import { MS4A_ImpactResults } from './micro/MS4A_ImpactResults';
@@ -49,7 +48,6 @@ export const RemotionRoot = () => {
         <Composition id="MS2A-PlatformReveal" component={MS2A_PlatformReveal} durationInFrames={MS_FRAMES.platformReveal} fps={FPS} width={1920} height={1080} />
         <Composition id="MS3A-CapIntake" component={MS3A_CapIntake} durationInFrames={MS_FRAMES.capIntake} fps={FPS} width={1920} height={1080} />
         <Composition id="MS3B-CapValidation" component={MS3B_CapValidation} durationInFrames={MS_FRAMES.capValidation} fps={FPS} width={1920} height={1080} />
-        <Composition id="MS3B2-CapWizard" component={MS3B2_CapWizard} durationInFrames={MS_FRAMES.capWizard} fps={FPS} width={1920} height={1080} />
         <Composition id="MS3C-CapRoles" component={MS3C_CapRoles} durationInFrames={MS_FRAMES.capRoles} fps={FPS} width={1920} height={1080} />
         <Composition id="MS3D-CapDeadline" component={MS3D_CapDeadline} durationInFrames={MS_FRAMES.capDeadline} fps={FPS} width={1920} height={1080} />
         <Composition id="MS4A-ImpactResults" component={MS4A_ImpactResults} durationInFrames={MS_FRAMES.impactResults} fps={FPS} width={1920} height={1080} />

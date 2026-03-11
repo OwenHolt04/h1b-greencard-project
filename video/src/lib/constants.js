@@ -8,14 +8,13 @@ export const FPS = 30;
 
 // --- V2 Micro-Scene Durations (in seconds) ---
 export const MS_SECONDS = {
-  problemIntro: 14,     // 1A: Prajwal + fragment chaos (trimmed from 16)
+  problemIntro: 14,     // 1A: Prajwal + fragment chaos
   problemScale: 14,     // 1B: 3 agencies / 6 forms / 165 pages
   problemPain: 10,      // 1C: Contradiction pair — why it matters
-  platformReveal: 14,   // 2A: Convergence → one shared record (trimmed from 16)
-  capIntake: 18,        // 3A: Enter once, sync 6 forms (trimmed from 20)
-  capValidation: 26,    // 3B: HERO — scan, issues, fix, score
-  capWizard: 14,        // 3B2: Plain-language wizard + checklist
-  capRoles: 16,         // 3C: 3 stakeholder views
+  platformReveal: 14,   // 2A: Convergence → one shared record
+  capIntake: 18,        // 3A: Enter once, sync 6 forms
+  capValidation: 28,    // 3B: HERO — scan, issues, fix, score + completeness checklist
+  capRoles: 22,         // 3C: wizard-as-applicant → employer → attorney → synthesis
   capDeadline: 12,      // 3D: 102 days → managed
   impactResults: 16,    // 4A: 4 metrics with capability callbacks
   scopeClose: 16,       // 4B: Scope limits + closing
@@ -32,8 +31,7 @@ export const MS_TR = {
   '1C_2A': 25,   // fade (big emotional shift)
   '2A_3A': 18,   // fade
   '3A_3B': 15,   // fade
-  '3B_W':  15,   // fade (validation → wizard)
-  'W_3C':  15,   // fade (wizard → roles)
+  '3B_3C': 15,   // fade (validation → roles/wizard)
   '3C_3D': 15,   // fade
   '3D_4A': 18,   // fade
   '4A_4B': 20,   // fade
@@ -42,7 +40,7 @@ export const MS_TR = {
 const MS_TOTAL_GROSS = Object.values(MS_FRAMES).reduce((a, b) => a + b, 0);
 const MS_TOTAL_OVERLAP = Object.values(MS_TR).reduce((a, b) => a + b, 0);
 export const MS_TOTAL_FRAMES = MS_TOTAL_GROSS - MS_TOTAL_OVERLAP;
-// 5100 - 176 = 4924 frames = 164.1s = 2:44
+// 4620 - 161 = 4459 frames = 148.6s = 2:29
 
 // --- Legacy V1 Scene Durations (kept for old scene imports) ---
 export const SCENE_SECONDS = {

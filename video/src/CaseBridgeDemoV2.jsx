@@ -2,7 +2,6 @@ import React from 'react';
 import { AbsoluteFill, useCurrentFrame } from 'remotion';
 import { TransitionSeries, linearTiming } from '@remotion/transitions';
 import { fade } from '@remotion/transitions/fade';
-import { slide } from '@remotion/transitions/slide';
 import { MS_FRAMES, MS_TR, MS_TOTAL_FRAMES, C } from './lib/constants';
 
 import { MS1A_ProblemIntro } from './micro/MS1A_ProblemIntro';
@@ -11,7 +10,6 @@ import { MS1C_ProblemPain } from './micro/MS1C_ProblemPain';
 import { MS2A_PlatformReveal } from './micro/MS2A_PlatformReveal';
 import { MS3A_CapIntake } from './micro/MS3A_CapIntake';
 import { MS3B_CapValidation } from './micro/MS3B_CapValidation';
-import { MS3B2_CapWizard } from './micro/MS3B2_CapWizard';
 import { MS3C_CapRoles } from './micro/MS3C_CapRoles';
 import { MS3D_CapDeadline } from './micro/MS3D_CapDeadline';
 import { MS4A_ImpactResults } from './micro/MS4A_ImpactResults';
@@ -23,10 +21,10 @@ import { MS4B_ScopeClose } from './micro/MS4B_ScopeClose';
  * 10 micro-scenes following capability-first grammar:
  *   ACT 1: Problem (1A intro, 1B scale, 1C pain)
  *   ACT 2: Platform (2A reveal)
- *   ACT 3: Capabilities (3A intake, 3B validation, 3B2 wizard, 3C roles, 3D deadline)
+ *   ACT 3: Capabilities (3A intake, 3B validation+completeness, 3C wizard/roles, 3D deadline)
  *   ACT 4: Impact (4A results, 4B scope+close)
  *
- * Total: ~4924 frames = 2:44 at 30fps
+ * Total: ~4459 frames = 2:29 at 30fps
  */
 export const CaseBridgeDemoV2 = () => {
   const frame = useCurrentFrame();
@@ -79,25 +77,16 @@ export const CaseBridgeDemoV2 = () => {
           timing={linearTiming({ durationInFrames: MS_TR['3A_3B'] })}
         />
 
-        {/* 3B — Capability: Validation (HERO) */}
+        {/* 3B — Capability: Validation + Completeness */}
         <TransitionSeries.Sequence durationInFrames={MS_FRAMES.capValidation}>
           <MS3B_CapValidation />
         </TransitionSeries.Sequence>
         <TransitionSeries.Transition
           presentation={fade()}
-          timing={linearTiming({ durationInFrames: MS_TR['3B_W'] })}
+          timing={linearTiming({ durationInFrames: MS_TR['3B_3C'] })}
         />
 
-        {/* 3B2 — Capability: Plain-Language Wizard */}
-        <TransitionSeries.Sequence durationInFrames={MS_FRAMES.capWizard}>
-          <MS3B2_CapWizard />
-        </TransitionSeries.Sequence>
-        <TransitionSeries.Transition
-          presentation={fade()}
-          timing={linearTiming({ durationInFrames: MS_TR['W_3C'] })}
-        />
-
-        {/* 3C — Capability: Roles */}
+        {/* 3C — Capability: Wizard/Roles */}
         <TransitionSeries.Sequence durationInFrames={MS_FRAMES.capRoles}>
           <MS3C_CapRoles />
         </TransitionSeries.Sequence>

@@ -1,15 +1,39 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, CheckCircle, AlertTriangle, AlertCircle, Info, Loader2, Zap } from 'lucide-react';
+import { Search, CheckCircle, AlertTriangle, AlertCircle, Info, Loader2, Zap, ClipboardCheck, Circle } from 'lucide-react';
 import { useDemo } from '../context/DemoContext';
 import ReadinessScore from '../components/ReadinessScore';
 import { SceneShell, MaskedHeading, FocalCard } from './motion';
-import { validationIssues } from '../data/mockData';
+import { validationIssues, documentChecklist } from '../data/mockData';
 
 const severityConfig = {
   high: { label: 'High', color: 'bg-red-100 text-red-700', icon: AlertTriangle, iconColor: 'text-red-500' },
   medium: { label: 'Medium', color: 'bg-amber-100 text-amber-700', icon: AlertCircle, iconColor: 'text-amber-500' },
   low: { label: 'Low', color: 'bg-blue-100 text-blue-700', icon: Info, iconColor: 'text-blue-500' },
 };
+
+// Pre-compute I-485 checklist counts from mock data
+const i485Stage = documentChecklist.find((s) => s.stageNumber === 4);
+const i485Docs = i485Stage?.documents || [];
+const doneCount = i485Docs.filter((d) => d.status === 'done').length;
+const flaggedCount = i485Docs.filter((d) => d.status === 'flagged').length;
+const missingCount = i485Docs.filter((d) => d.status === 'missing').length;
+const pendingCount = i485Docs.filter((d) => d.status === 'pending').length;
+const totalCount = i485Docs.length;
+
+const actionItems = i485Docs.filter((d) => d.status !== 'done' && d.status !== 'na');
+
+// Stage summary for all 4 stages
+const stageSummary = documentChecklist.map((stage) => {
+  const total = stage.documents.filter((d) => d.status !== 'na').length;
+  const done = stage.documents.filter((d) => d.status === 'done').length;
+  return {
+    label: stage.stage.split('—')[0].trim(),
+    done,
+    total,
+    complete: stage.complete,
+    active: !stage.complete,
+  };
+});
 
 export default function SceneValidation() {
   const {
@@ -26,14 +50,14 @@ export default function SceneValidation() {
     <div className="h-screen w-full bg-surface flex flex-col items-center px-12 overflow-y-auto">
       <SceneShell maxWidth="max-w-3xl">
         {/* Scene heading */}
-        <MaskedHeading className="text-center mb-5">
+        <MaskedHeading className="text-center mb-4">
           <p className="text-xs text-slate-400 uppercase tracking-wider font-semibold mb-1">Validation Engine</p>
           <h2 className="font-serif text-3xl font-bold text-slate-900">Catch Issues Before Filing</h2>
           <p className="text-sm text-slate-500 mt-1">Pre-submission checks catch contradictions before they become RFEs.</p>
         </MaskedHeading>
 
         {/* Hero cluster: Score + Validation trigger */}
-        <FocalCard className="p-6 mb-4" delay={0.1}>
+        <FocalCard className="p-5 mb-3" delay={0.1}>
           <div className="flex items-center justify-between">
             <div className="flex-1">
               <h3 className="text-sm font-semibold text-slate-900 mb-1">Filing Readiness</h3>
@@ -91,7 +115,7 @@ export default function SceneValidation() {
               className="space-y-3"
             >
               {/* Hero Issue: Employer Name — Before/After swap */}
-              <div className={`rounded-2xl border-2 p-5 transition-all duration-500 ${
+              <div className={`rounded-2xl border-2 p-4 transition-all duration-500 ${
                 heroResolved
                   ? 'bg-green-50/50 border-green-300'
                   : 'bg-amber-50/50 border-amber-300'
@@ -154,8 +178,8 @@ export default function SceneValidation() {
                 </div>
               </div>
 
-              {/* Secondary issues — compact, subordinate */}
-              <div className="grid grid-cols-2 gap-2.5">
+              {/* Secondary issues + Filing Checklist — 3-column row */}
+              <div className="grid grid-cols-3 gap-2.5">
                 {secondaryIssues.map((issue) => {
                   const isResolved = issues[issue.id];
                   const config = severityConfig[issue.severity];
@@ -163,7 +187,7 @@ export default function SceneValidation() {
                   return (
                     <div
                       key={issue.id}
-                      className={`bg-white rounded-xl border p-3.5 transition-all duration-300 ${
+                      className={`bg-white rounded-xl border p-3 transition-all duration-300 ${
                         isResolved ? 'border-green-200 opacity-50' : 'border-slate-200'
                       }`}
                     >
@@ -176,16 +200,46 @@ export default function SceneValidation() {
                         <span className={`text-xs font-semibold ${isResolved ? 'text-green-700 line-through' : 'text-slate-900'}`}>
                           {issue.title}
                         </span>
-                        <span className={`ml-auto text-[9px] font-bold px-1.5 py-0.5 rounded-full ${
-                          isResolved ? 'bg-green-100 text-green-700' : config.color
-                        }`}>
-                          {isResolved ? 'Fixed' : config.label}
-                        </span>
                       </div>
-                      <p className="text-[11px] text-slate-500 leading-relaxed">{issue.plainDescription}</p>
+                      <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full ${
+                        isResolved ? 'bg-green-100 text-green-700' : config.color
+                      }`}>
+                        {isResolved ? 'Fixed' : config.label}
+                      </span>
+                      <p className="text-[10px] text-slate-500 leading-relaxed mt-1.5">{issue.plainDescription}</p>
                     </div>
                   );
                 })}
+
+                {/* Filing Checklist — compact inline */}
+                <div className="bg-white rounded-xl border border-navy-900/20 p-3">
+                  <div className="flex items-center gap-1.5 mb-2">
+                    <ClipboardCheck className="w-3.5 h-3.5 text-navy-900" />
+                    <span className="text-xs font-semibold text-slate-900">Filing Checklist</span>
+                  </div>
+                  <p className="text-lg font-bold text-navy-900 mb-1">{doneCount} / {totalCount}</p>
+                  <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden flex mb-2">
+                    <div className="bg-green-500 h-full rounded-l-full" style={{ width: `${(doneCount / totalCount) * 100}%` }} />
+                    <div className="bg-amber-500 h-full" style={{ width: `${(flaggedCount / totalCount) * 100}%` }} />
+                    <div className="bg-red-500 h-full" style={{ width: `${(missingCount / totalCount) * 100}%` }} />
+                    <div className="bg-slate-300 h-full rounded-r-full" style={{ width: `${(pendingCount / totalCount) * 100}%` }} />
+                  </div>
+                  <div className="space-y-1">
+                    {actionItems.map((doc, i) => {
+                      const sc = {
+                        flagged: { color: 'bg-amber-500', label: 'Flagged' },
+                        missing: { color: 'bg-red-500', label: 'Missing' },
+                        pending: { color: 'bg-slate-300', label: 'Pending' },
+                      }[doc.status] || { color: 'bg-slate-300', label: '—' };
+                      return (
+                        <div key={i} className="flex items-center gap-1.5 text-[10px]">
+                          <span className={`w-1.5 h-1.5 rounded-full ${sc.color} flex-shrink-0`} />
+                          <span className="text-slate-600 truncate">{doc.name.length > 28 ? doc.name.slice(0, 28) + '…' : doc.name}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
               </div>
             </motion.div>
           )}
