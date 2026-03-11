@@ -14,7 +14,7 @@ const problems = [
 export default function SceneCurrentState() {
   return (
     <div className="h-screen w-full bg-gradient-to-br from-navy-900 via-navy-800 to-navy-900 flex flex-col items-center px-12 overflow-y-auto">
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(248,242,182,0.04),transparent_60%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(248,242,182,0.08),transparent_60%)]" />
 
       <SceneShell maxWidth="max-w-4xl" className="relative text-center">
         <MaskedHeading className="mb-5">
@@ -37,9 +37,9 @@ export default function SceneCurrentState() {
               <div className="bg-white/[0.06] backdrop-blur-sm rounded-xl border border-white/10 p-4 text-left">
                 <div className="flex items-center gap-2 mb-1">
                   <p.icon className="w-4 h-4 text-red-400" />
-                  <h3 className="font-semibold text-white text-sm">{p.label}</h3>
+                  <h3 className="font-semibold text-white text-base">{p.label}</h3>
                 </div>
-                <p className="text-slate-400 text-xs leading-relaxed">{p.detail}</p>
+                <p className="text-slate-400 text-sm leading-relaxed">{p.detail}</p>
               </div>
             </StaggerItem>
           ))}

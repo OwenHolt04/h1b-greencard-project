@@ -15,11 +15,11 @@ const METRICS = [
 /**
  * Scene 9 — Final Impact (14s)
  *
- * Closing scene. Zoom out from Prajwal's case to systemic impact.
+ * Closing scene. Zoom out from Krishna's case to systemic impact.
  *
  * Visual arc:
  *   0-3s: Closing statement fades in (more breathing)
- *   3-5s: Prajwal's case summary line
+ *   3-5s: Krishna's case summary line
  *   5-9.5s: Metrics grid with staggered entrance
  *   9.5-14s: CaseBridge logo, accent line, fade out
  */
@@ -76,7 +76,7 @@ export const Scene9_FinalImpact = () => {
         </div>
       </div>
 
-      {/* Prajwal's case summary line */}
+      {/* Krishna's case summary line */}
       <div
         style={{
           opacity: interpolate(caseLineEnter, [0, 1], [0, 1]),

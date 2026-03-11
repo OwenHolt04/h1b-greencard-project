@@ -21,7 +21,7 @@ export default function SceneCaseWorkspace() {
         {/* Scene heading */}
         <MaskedHeading className="text-center mb-5">
           <p className="text-xs text-slate-400 uppercase tracking-wider font-semibold mb-1">Case Workspace</p>
-          <h2 className="font-serif text-3xl font-bold text-slate-900">Single Source of Truth</h2>
+          <h2 className="font-serif text-3xl font-bold text-navy-900">Single Source of Truth</h2>
         </MaskedHeading>
 
         {/* Hero: Case Identity + Readiness Score */}
@@ -29,7 +29,7 @@ export default function SceneCaseWorkspace() {
           <div className="flex items-center justify-between mb-4">
             <div>
               <p className="text-xs text-slate-400 uppercase tracking-wider font-medium">Case</p>
-              <p className="text-lg font-semibold text-slate-900">{caseRecord.caseName}</p>
+              <p className="text-lg font-semibold text-navy-900">{caseRecord.caseName}</p>
               <p className="text-xs text-slate-500">{caseRecord.caseId}</p>
             </div>
             <div className="flex items-center gap-3">
@@ -55,7 +55,7 @@ export default function SceneCaseWorkspace() {
                 </div>
                 <div>
                   <p className="text-[10px] text-slate-400">{p.role}</p>
-                  <p className="text-xs font-medium text-slate-700">{p.name}</p>
+                  <p className="text-xs font-medium text-navy-900">{p.name}</p>
                 </div>
               </div>
             ))}
@@ -64,7 +64,7 @@ export default function SceneCaseWorkspace() {
 
         {/* Timeline — dominant secondary */}
         <SupportingModule className="px-5 py-4 mb-3" delay={0.25}>
-          <h3 className="text-xs font-semibold text-slate-900 mb-2.5">Case Journey</h3>
+          <h3 className="text-xs font-semibold text-navy-900 mb-2.5">Case Journey</h3>
           <StageTimeline compact />
         </SupportingModule>
 
@@ -82,7 +82,7 @@ export default function SceneCaseWorkspace() {
                   {a.agency}
                 </span>
               </div>
-              <p className="text-xs font-medium text-slate-800 leading-snug">{a.status}</p>
+              <p className="text-xs font-medium text-navy-900 leading-snug">{a.status}</p>
             </div>
           ))}
         </motion.div>

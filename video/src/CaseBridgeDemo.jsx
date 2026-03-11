@@ -21,7 +21,7 @@ import { Scene9_FinalImpact } from './scenes/Scene9_FinalImpact';
 /**
  * CaseBridge Demo — Narrative Journey (9 Scenes, ~158s / ~2:38)
  *
- * Follows Prajwal Kulkarni's immigration case through:
+ * Follows Krishna's immigration case through:
  *   1. Current-state chaos (22s)
  *   2. Platform reveal (12s)
  *   3. Shared case workspace (18s)

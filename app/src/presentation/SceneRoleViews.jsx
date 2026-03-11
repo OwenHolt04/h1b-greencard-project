@@ -43,7 +43,7 @@ export default function SceneRoleViews() {
         {/* Scene heading */}
         <MaskedHeading className="text-center mb-3">
           <p className="text-xs text-slate-400 uppercase tracking-wider font-semibold mb-1">Stakeholder Views</p>
-          <h2 className="font-serif text-3xl font-bold text-slate-900">Same Case, Different Priorities</h2>
+          <h2 className="font-serif text-3xl font-bold text-navy-900">Same Case, Different Priorities</h2>
         </MaskedHeading>
 
         {/* Case anchor — compact, fixed across switches */}
@@ -53,7 +53,7 @@ export default function SceneRoleViews() {
           transition={{ delay: 0.1, duration: 0.3 }}
           className="flex items-center justify-center gap-3 text-xs text-slate-500 mb-3"
         >
-          <span className="font-medium text-slate-700">{applicant.fullName}</span>
+          <span className="font-medium text-navy-900">{applicant.fullName}</span>
           <span className="text-slate-300">&middot;</span>
           <span>{caseRecord.pathwayType}</span>
           <span className="text-slate-300">&middot;</span>
@@ -102,13 +102,13 @@ export default function SceneRoleViews() {
                   <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${badge.color}`}>
                     {badge.label}
                   </span>
-                  <h3 className="text-lg font-semibold text-slate-900 mt-2">{content.greeting}</h3>
+                  <h3 className="text-lg font-semibold text-navy-900 mt-2">{content.greeting}</h3>
                 </div>
                 <ReadinessScore score={readinessScore} size={52} strokeWidth={4} showLabel={false} />
               </div>
               <p className="text-sm text-slate-600 leading-relaxed mb-3">{content.statusSummary}</p>
               <div className="pt-3 border-t border-slate-100">
-                <h4 className="text-xs font-semibold text-slate-900 mb-1">Next Step</h4>
+                <h4 className="text-xs font-semibold text-navy-900 mb-1">Next Step</h4>
                 <p className="text-sm text-slate-700 leading-relaxed">{content.nextStep}</p>
               </div>
             </FocalCard>
@@ -117,7 +117,7 @@ export default function SceneRoleViews() {
             {currentRole === 'applicant' && (
               <div className="bg-white rounded-xl border border-slate-200/80 shadow-sm p-4">
                 <div className="flex items-center justify-between mb-2.5">
-                  <h4 className="text-sm font-semibold text-slate-900 flex items-center gap-1.5">
+                  <h4 className="text-sm font-semibold text-navy-900 flex items-center gap-1.5">
                     <Sparkles className="w-4 h-4 text-navy-900" />
                     Eligibility Check
                   </h4>
@@ -142,13 +142,13 @@ export default function SceneRoleViews() {
 
             {currentRole === 'employer' && (
               <div className="bg-white rounded-xl border border-slate-200/80 shadow-sm p-4">
-                <h4 className="text-sm font-semibold text-slate-900 mb-2">Sponsorship Cost Breakdown</h4>
+                <h4 className="text-sm font-semibold text-navy-900 mb-2">Sponsorship Cost Breakdown</h4>
                 <div className="space-y-1">
                   {sponsorshipCosts.map((item) => (
                     <div key={item.phase} className="flex items-center justify-between py-1 border-b border-slate-100 last:border-0">
                       <span className="text-xs text-slate-700">{item.phase}</span>
                       <div className="flex items-center gap-2">
-                        <span className="text-xs font-semibold text-slate-900">{item.cost}</span>
+                        <span className="text-xs font-semibold text-navy-900">{item.cost}</span>
                         <span className={`text-[9px] font-semibold px-1.5 py-0.5 rounded-full ${
                           item.status === 'Paid' ? 'bg-green-50 text-green-700'
                           : item.status === 'Upcoming' ? 'bg-amber-50 text-amber-700'
@@ -158,7 +158,7 @@ export default function SceneRoleViews() {
                     </div>
                   ))}
                   <div className="pt-1.5 flex items-center justify-between">
-                    <span className="text-xs font-semibold text-slate-900">Estimated Total</span>
+                    <span className="text-xs font-semibold text-navy-900">Estimated Total</span>
                     <span className="text-sm font-bold text-navy-900">$15,000–$22,000</span>
                   </div>
                 </div>

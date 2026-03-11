@@ -10,8 +10,6 @@ export const WK_SECONDS = {
   dashboardReveal: 24,
   smartIntake: 22,
   validationFix: 24,
-  plainLanguage: 20,
-  stakeholderDeadline: 22,
   impactClose: 24,
 };
 
@@ -23,8 +21,6 @@ export const WK_TR = {
   '1_2': 18,
   '2_3': 15,
   '3_4': 18,
-  '4_5': 15,
-  '5_6': 18,
 };
 
 const WK_GROSS = Object.values(WK_FRAMES).reduce((a, b) => a + b, 0);

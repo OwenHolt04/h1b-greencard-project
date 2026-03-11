@@ -52,7 +52,7 @@ export default function SceneValidation() {
         {/* Scene heading */}
         <MaskedHeading className="text-center mb-4">
           <p className="text-xs text-slate-400 uppercase tracking-wider font-semibold mb-1">Validation Engine</p>
-          <h2 className="font-serif text-3xl font-bold text-slate-900">Catch Issues Before Filing</h2>
+          <h2 className="font-serif text-3xl font-bold text-navy-900">Catch Issues Before Filing</h2>
           <p className="text-sm text-slate-500 mt-1">Pre-submission checks catch contradictions before they become RFEs.</p>
         </MaskedHeading>
 
@@ -60,7 +60,7 @@ export default function SceneValidation() {
         <FocalCard className="p-5 mb-3" delay={0.1}>
           <div className="flex items-center justify-between">
             <div className="flex-1">
-              <h3 className="text-sm font-semibold text-slate-900 mb-1">Filing Readiness</h3>
+              <h3 className="text-sm font-semibold text-navy-900 mb-1">Filing Readiness</h3>
               {!validationRun && !validationRunning && (
                 <>
                   <p className="text-xs text-slate-500 mb-3">Run pre-flight validation to check cross-form consistency.</p>
@@ -127,7 +127,7 @@ export default function SceneValidation() {
                     ) : (
                       <AlertCircle className="w-5 h-5 text-amber-500" />
                     )}
-                    <h4 className={`text-base font-semibold ${heroResolved ? 'text-green-800 line-through' : 'text-slate-900'}`}>
+                    <h4 className={`text-base font-semibold ${heroResolved ? 'text-green-800 line-through' : 'text-navy-900'}`}>
                       {heroIssue.title}
                     </h4>
                   </div>
@@ -197,7 +197,7 @@ export default function SceneValidation() {
                         ) : (
                           <Icon className={`w-3.5 h-3.5 ${config.iconColor}`} />
                         )}
-                        <span className={`text-xs font-semibold ${isResolved ? 'text-green-700 line-through' : 'text-slate-900'}`}>
+                        <span className={`text-xs font-semibold ${isResolved ? 'text-green-700 line-through' : 'text-navy-900'}`}>
                           {issue.title}
                         </span>
                       </div>
@@ -215,7 +215,7 @@ export default function SceneValidation() {
                 <div className="bg-white rounded-xl border border-navy-900/20 p-3">
                   <div className="flex items-center gap-1.5 mb-2">
                     <ClipboardCheck className="w-3.5 h-3.5 text-navy-900" />
-                    <span className="text-xs font-semibold text-slate-900">Filing Checklist</span>
+                    <span className="text-xs font-semibold text-navy-900">Filing Checklist</span>
                   </div>
                   <p className="text-lg font-bold text-navy-900 mb-1">{doneCount} / {totalCount}</p>
                   <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden flex mb-2">

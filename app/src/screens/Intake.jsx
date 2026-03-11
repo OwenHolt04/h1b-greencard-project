@@ -135,7 +135,7 @@ export default function Intake() {
           <label className="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">
             {field.label}
           </label>
-          <span className="text-[10px] text-accent font-semibold bg-accent/10 px-1.5 py-0.5 rounded">
+          <span className="text-[10px] text-navy-700 font-semibold bg-navy-900/8 px-1.5 py-0.5 rounded">
             &rarr; {field.syncTargets.length} forms
           </span>
           {wasFixed && <CheckCircle className="w-3 h-3 text-green-500" />}
@@ -455,7 +455,7 @@ export default function Intake() {
                     className="w-full flex items-center justify-center gap-2 bg-navy-900 hover:bg-navy-800 text-white font-semibold py-2 rounded-lg transition-colors cursor-pointer text-sm"
                   >
                     <Search className="w-3.5 h-3.5" />
-                    Run Pre-Flight Validation
+                    Run Pre-Submission Check
                   </button>
                 )}
                 {validationRunning && (

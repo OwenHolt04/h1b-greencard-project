@@ -2,22 +2,16 @@ import { useEffect, useState, useCallback } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useDemo } from '../context/DemoContext';
 import SceneCurrentState from './SceneCurrentState';
-import ScenePlatformIntro from './ScenePlatformIntro';
-import SceneCaseWorkspace from './SceneCaseWorkspace';
-import SceneSync from './SceneSync';
-import SceneValidation from './SceneValidation';
-import SceneRoleViews from './SceneRoleViews';
-import SceneDeadline from './SceneDeadline';
+import SceneSingleSource from './SceneSingleSource';
+import SceneSmartIntake from './SceneSmartIntake';
+import ScenePreSubmission from './ScenePreSubmission';
 import SceneImpact from './SceneImpact';
 
 const scenes = [
   { component: SceneCurrentState, label: 'Today' },
-  { component: ScenePlatformIntro, label: 'CaseBridge' },
-  { component: SceneCaseWorkspace, label: 'Workspace' },
-  { component: SceneSync, label: 'Sync' },
-  { component: SceneValidation, label: 'Validation' },
-  { component: SceneRoleViews, label: 'Roles' },
-  { component: SceneDeadline, label: 'Deadline' },
+  { component: SceneSingleSource, label: 'Case Record' },
+  { component: SceneSmartIntake, label: 'Smart Intake' },
+  { component: ScenePreSubmission, label: 'Validation' },
   { component: SceneImpact, label: 'Impact' },
 ];
 
@@ -95,7 +89,7 @@ export default function PresentationShell() {
       </AnimatePresence>
 
       {/* Bottom bar */}
-      <div className="fixed bottom-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-3 pointer-events-none">
+      <div className="fixed bottom-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-3 pointer-events-none bg-gradient-to-t from-white/60 to-transparent">
         <button
           onClick={handleExit}
           className="flex items-center gap-1.5 pointer-events-auto opacity-40 hover:opacity-70 transition-opacity cursor-pointer"

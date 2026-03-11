@@ -115,14 +115,14 @@ const PAIN_ANNOTATIONS = [
 /**
  * Scene 1 — Current State Chaos (22s)
  *
- * Prajwal's intro → scattered forms + pain annotations → stat lines reveal.
+ * Krishna's intro → scattered forms + pain annotations → stat lines reveal.
  * Visual arc: identity → chaos → pain → stark truth.
  */
 export const Scene1_CurrentStateChaos = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
-  // Phase 1: Prajwal's identity (0-5s)
+  // Phase 1: Krishna's identity (0-5s)
   const introEnter = spring({ frame, fps, config: { damping: 200 }, delay: Math.round(0.8 * fps) });
   const introSubEnter = spring({ frame, fps, config: { damping: 200 }, delay: Math.round(2.0 * fps) });
 
@@ -172,7 +172,7 @@ export const Scene1_CurrentStateChaos = () => {
         transform: `translate(${cameraShakeX}px, ${cameraShakeY}px)`,
       }}
     >
-      {/* Phase 1: Prajwal intro */}
+      {/* Phase 1: Krishna intro */}
       <div
         style={{
           position: 'absolute',

@@ -2,7 +2,7 @@ import { createContext, useContext, useReducer, useCallback, useMemo } from 'rea
 
 const DemoContext = createContext(null);
 
-const TOTAL_SCENES = 8;
+const TOTAL_SCENES = 5;
 
 const defaultState = {
   currentScreen: 'overview',

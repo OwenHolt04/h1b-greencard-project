@@ -8,7 +8,7 @@ import { FormFragment } from '../components/FormFragment';
  * MS1A — Problem Intro (14s/420f)
  *
  * TRUE MICRO-SCENE GRAMMAR:
- *   Phase 1 (0-4s): Prajwal's name, large, centered, ALONE. Human anchor.
+ *   Phase 1 (0-4s): Krishna's name, large, centered, ALONE. Human anchor.
  *   Phase 2 (4-9.5s): Real form fragments FLOOD in.
  *   Phase 3 (9.5-12s): Pain annotations appear near fragments.
  *   Phase 4 (12-14s): Everything dims. Setup for 1B.
@@ -20,7 +20,7 @@ export const MS1A_ProblemIntro = () => {
   const CX = 960;
   const CY = 540;
 
-  // Phase 1: Prajwal intro
+  // Phase 1: Krishna intro
   const nameIn = spring({ frame, fps, config: { damping: 200 }, delay: Math.round(0.5 * fps) });
   const subIn = spring({ frame, fps, config: { damping: 200 }, delay: Math.round(1.5 * fps) });
 
@@ -69,7 +69,7 @@ export const MS1A_ProblemIntro = () => {
       fontFamily: FONT_SANS, overflow: 'hidden',
       transform: `translate(${shakeX}px, ${shakeY}px)`,
     }}>
-      {/* ── Phase 1: Prajwal name (full screen, alone) ── */}
+      {/* ── Phase 1: Krishna name (full screen, alone) ── */}
       <div style={{
         position: 'absolute', top: CY, left: CX,
         transform: 'translate(-50%, -50%)', textAlign: 'center',

@@ -1,12 +1,12 @@
 // ============================================================================
 // CaseBridge — Seeded Mock Data
-// One flagship case: Prajwal Kulkarni → HPE → Immigration Attorney
+// One flagship case: Krishna → HPE → Immigration Attorney
 // All data deterministic and presentation-ready
 // ============================================================================
 
 export const applicant = {
-  fullName: 'Prajwal Kulkarni',
-  preferredName: 'Prajwal',
+  fullName: 'Krishna',
+  preferredName: 'Krishna',
   countryOfBirth: 'India',
   nationality: 'Indian',
   currentCity: 'San Jose, CA',
@@ -72,7 +72,7 @@ export const job = {
 
 export const caseRecord = {
   caseId: 'CB-2022-003291',
-  caseName: 'Kulkarni, Prajwal — EB-2 Green Card',
+  caseName: 'Krishna — EB-2 Green Card',
   currentStage: 'i485-prep',
   pathwayType: 'EB-2',
   priorityDate: 'March 15, 2022',
@@ -264,7 +264,7 @@ export const intakeSections = [
     id: 'identity',
     label: 'Identity',
     fields: [
-      { key: 'fullName', label: 'Full Legal Name', value: 'Prajwal Kulkarni', syncTargets: ['I-129', 'I-140', 'I-485', 'I-765', 'I-131', 'G-28'] },
+      { key: 'fullName', label: 'Full Legal Name', value: 'Krishna', syncTargets: ['I-129', 'I-140', 'I-485', 'I-765', 'I-131', 'G-28'] },
       { key: 'dateOfBirth', label: 'Date of Birth', value: 'August 22, 1997', syncTargets: ['I-129', 'I-485', 'I-765'] },
       { key: 'countryOfBirth', label: 'Country of Birth', value: 'India', syncTargets: ['I-129', 'I-140', 'I-485', 'I-765'] },
     ],
@@ -343,7 +343,7 @@ export const roleContent = {
   },
   employer: {
     greeting: 'Case active — deadlines approaching.',
-    statusSummary: "Prajwal Kulkarni's I-485 filing is in preparation after his EB-2 India priority date became current. H-1B extension will need initiation within 90 days. All internal approvals are current.",
+    statusSummary: "Krishna's I-485 filing is in preparation after his EB-2 India priority date became current. H-1B extension will need initiation within 90 days. All internal approvals are current.",
     nextStep: 'Extension filing auto-triggers at 90 days before expiry (March 17, 2026). Estimated extension cost: $2,500–4,000 including legal fees.',
     timeline: 'Sponsorship initiated March 2022. PERM certified, I-140 approved. Priority date became current Feb 2026 after multi-year wait. I-485 filing window now open. Extension approaching.',
     alerts: [
@@ -388,7 +388,7 @@ export const solvesDirect = [
 ];
 
 // ============================================================================
-// Document Checklist — stage-gated pre-flight requirements
+// Document Checklist — stage-gated pre-submission requirements
 // ============================================================================
 
 export const documentChecklist = [
@@ -557,7 +557,7 @@ export const formFieldTranslations = {
     plainTitle: 'Your Green Card Application',
     pageCount: 24,
     fields: [
-      { ref: 'Part 1, Item 1', gov: 'Your Current Legal Name (Do not provide a nickname) — Family Name (Last Name), Given Name (First Name), Middle Name (if applicable)', plain: 'Your full legal name exactly as it appears on your passport. No nicknames.', value: 'Kulkarni, Prajwal', source: 'Auto-filled from shared record' },
+      { ref: 'Part 1, Item 1', gov: 'Your Current Legal Name (Do not provide a nickname) — Family Name (Last Name), Given Name (First Name), Middle Name (if applicable)', plain: 'Your full legal name exactly as it appears on your passport. No nicknames.', value: 'Krishna', source: 'Auto-filled from shared record' },
       { ref: 'Part 1, Item 3', gov: 'Date of Birth (mm/dd/yyyy)', plain: 'Your birthday in month/day/year format.', value: '08/22/1997', source: 'Auto-filled from shared record' },
       { ref: 'Part 1, Item 7', gov: 'Place of Birth — City or Town of Birth, Country of Birth', plain: 'The city and country where you were born. This determines your "chargeability" — which visa queue you\'re in.', value: 'India', source: 'Auto-filled from shared record' },
       { ref: 'Part 1, Item 10', gov: 'Recent Immigration History — Passport or Travel Document Number Used at Last Arrival, Expiration Date, Country that Issued this Passport, Nonimmigrant Visa Number Used During Most Recent Arrival (if any)', plain: 'Details about the passport you used when you last entered the US. USCIS uses this to verify your legal entry.', value: 'P XXXXXXX · Exp 04/2031 · India', source: 'Auto-filled from shared record' },
@@ -574,7 +574,7 @@ export const formFieldTranslations = {
     fields: [
       { ref: 'Part 2, Item 1.d', gov: 'This petition is being filed for: A member of the professions holding an advanced degree or an alien of exceptional ability (who is NOT seeking a National Interest Waiver)', plain: 'This is the EB-2 category. It means you have a master\'s degree (your MBA) and the job requires that level of education.', value: 'Selected ✓ (EB-2 Advanced Degree)', source: 'Pre-selected based on classification' },
       { ref: 'Part 1, Item 2', gov: 'Company or Organization Name', plain: 'Your employer\'s exact legal name. Must match EXACTLY across I-140, I-485, and ETA-9089 — this is where the hyphen mismatch was caught.', value: 'Hewlett Packard Enterprise', source: 'Standardized by CaseBridge validation' },
-      { ref: 'Part 3, Item 1', gov: 'Information About the Person for Whom You Are Filing — Family Name, Given Name', plain: 'Your name as the beneficiary (the person being sponsored).', value: 'Kulkarni, Prajwal', source: 'Auto-filled from shared record' },
+      { ref: 'Part 3, Item 1', gov: 'Information About the Person for Whom You Are Filing — Family Name, Given Name', plain: 'Your name as the beneficiary (the person being sponsored).', value: 'Krishna', source: 'Auto-filled from shared record' },
       { ref: 'Part 4, Item 2.a', gov: 'Alien is in the United States and will apply for adjustment of status to that of lawful permanent resident', plain: 'You\'re already in the US on H-1B, so you\'ll adjust status here rather than going to a US consulate abroad.', value: 'Selected ✓', source: 'Auto-selected based on case type' },
       { ref: 'Part 5, Item 2', gov: 'Type of Business', plain: 'What your employer does. USCIS checks that the company is real and operating.', value: 'Enterprise IT Infrastructure', source: 'Auto-filled from employer record' },
       { ref: 'Part 5, Item 4', gov: 'Current Number of U.S. Employees', plain: 'How many people work at HPE in the US. Larger companies face less scrutiny on "ability to pay."', value: '~62,000', source: 'Auto-filled from employer record' },
@@ -587,7 +587,7 @@ export const formFieldTranslations = {
     pageCount: 7,
     fields: [
       { ref: 'Purpose', gov: 'Application Type: (c)(9) — Adjustment applicant', plain: 'You\'re applying for a work permit because you have a pending I-485. This gives you backup work authorization while waiting.', value: '(c)(9)', source: 'Auto-selected' },
-      { ref: 'Item 1', gov: 'Full Legal Name', plain: 'Your name — same as on all other forms. CaseBridge keeps this consistent.', value: 'Kulkarni, Prajwal', source: 'Auto-filled from shared record' },
+      { ref: 'Item 1', gov: 'Full Legal Name', plain: 'Your name — same as on all other forms. CaseBridge keeps this consistent.', value: 'Krishna', source: 'Auto-filled from shared record' },
       { ref: 'Item 16', gov: 'Have you ever been arrested, cited, charged, or detained by any law enforcement officer?', plain: 'Any interactions with police, even traffic tickets in some cases. Answer honestly — inconsistencies cause delays.', value: 'No', source: 'Auto-filled from intake' },
     ],
   },
@@ -597,7 +597,7 @@ export const formFieldTranslations = {
     pageCount: 6,
     fields: [
       { ref: 'Purpose', gov: 'I am applying for Advance Parole to allow me to return to the United States after temporary foreign travel', plain: 'This lets you travel internationally while your green card is pending. Without it, leaving the US could abandon your application.', value: 'Advance Parole', source: 'Auto-selected' },
-      { ref: 'Item 1', gov: 'Full Legal Name', plain: 'Your name — synced from the same shared record as all other forms.', value: 'Kulkarni, Prajwal', source: 'Auto-filled from shared record' },
+      { ref: 'Item 1', gov: 'Full Legal Name', plain: 'Your name — synced from the same shared record as all other forms.', value: 'Krishna', source: 'Auto-filled from shared record' },
       { ref: 'Item 3', gov: 'Date and place of last arrival in the United States', plain: 'When and where you last entered the US. Must match your I-94 record.', value: 'San Francisco, CA · 01/2025', source: 'Auto-filled from travel history' },
     ],
   },
@@ -635,7 +635,7 @@ export const triageComparison = {
     { time: 'Month 14', event: 'Decision (delayed ~6 months by RFE)', status: 'error' },
   ],
   with: [
-    { time: 'Day 1', event: 'Pre-flight validation catches 3 issues', status: 'success' },
+    { time: 'Day 1', event: 'Pre-submission validation catches 3 issues', status: 'success' },
     { time: 'Day 3', event: 'All issues resolved, package clean', status: 'success' },
     { time: 'Day 5', event: 'Filed — zero known inconsistencies', status: 'success' },
     { time: 'Month 3', event: 'USCIS review — no RFE triggered', status: 'success' },

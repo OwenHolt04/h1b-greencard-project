@@ -127,7 +127,7 @@ export default function Impact() {
           {scopeNote}
         </p>
         <p className="text-accent text-sm font-medium">
-          For Prajwal Kulkarni: no missed extension, no RFE from a hyphen, full case visibility after years of waiting.
+          For Krishna: no missed extension, no RFE from a hyphen, full case visibility after years of waiting.
         </p>
       </motion.div>
 

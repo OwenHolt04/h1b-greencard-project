@@ -7,12 +7,12 @@ export default function SceneImpact() {
   const metricEntries = Object.values(metrics);
 
   return (
-    <div className="h-screen w-full bg-surface flex flex-col items-center px-10 overflow-y-auto">
+    <div className="h-screen w-full bg-gradient-to-b from-surface to-white flex flex-col items-center px-10 overflow-y-auto">
       <SceneShell maxWidth="max-w-4xl">
         {/* Scene heading */}
         <MaskedHeading className="text-center mb-4">
           <p className="text-xs text-slate-400 uppercase tracking-wider font-semibold mb-1">Measurable Impact</p>
-          <h2 className="font-serif text-3xl font-bold text-slate-900">Process Improvement, Not Policy Reform</h2>
+          <h2 className="font-serif text-3xl font-bold text-navy-900">Process Improvement, Not Policy Reform</h2>
         </MaskedHeading>
 
         {/* Metrics strip */}
@@ -20,13 +20,13 @@ export default function SceneImpact() {
           {metricEntries.map((m) => (
             <StaggerItem key={m.label}>
               <div className="bg-white rounded-xl border border-slate-200/80 shadow-sm p-2.5 text-center">
-                <p className="text-[9px] text-slate-400 uppercase tracking-wider font-semibold mb-1">{m.label}</p>
+                <p className="text-[10px] text-slate-400 uppercase tracking-wider font-semibold mb-1">{m.label}</p>
                 <div className="flex items-center justify-center gap-1 mb-0.5">
-                  <span className="text-[10px] text-slate-400 line-through">{m.before}</span>
+                  <span className="text-[11px] text-slate-400 line-through">{m.before}</span>
                   <ArrowRight className="w-2.5 h-2.5 text-slate-300" />
-                  <span className="text-base font-bold text-green-700">{m.after}</span>
+                  <span className="text-lg font-bold text-green-700">{m.after}</span>
                 </div>
-                <span className="text-[10px] font-semibold text-green-600">{m.change}</span>
+                <span className="text-[11px] font-semibold text-green-600">{m.change}</span>
               </div>
             </StaggerItem>
           ))}
@@ -46,8 +46,8 @@ export default function SceneImpact() {
                   <div className="flex items-start gap-2">
                     <CheckCircle className="w-3.5 h-3.5 text-green-500 mt-0.5 flex-shrink-0" />
                     <div>
-                      <p className="text-xs font-semibold text-slate-900">{s.title}</p>
-                      <p className="text-[10px] text-slate-500">{s.detail}</p>
+                      <p className="text-sm font-semibold text-navy-900">{s.title}</p>
+                      <p className="text-[11px] text-slate-500">{s.detail}</p>
                     </div>
                   </div>
                 </StaggerItem>
@@ -59,7 +59,7 @@ export default function SceneImpact() {
           <StaggerGroup className="bg-white rounded-xl border border-slate-200/80 shadow-sm overflow-hidden" stagger={0.05} delay={0.4}>
             <div className="px-4 py-2.5 bg-slate-50 border-b border-slate-200 flex items-center gap-2">
               <BarChart3 className="w-4 h-4 text-slate-500" />
-              <h3 className="text-sm font-semibold text-slate-700">Requires Broader Reform</h3>
+              <h3 className="text-sm font-semibold text-navy-900">Requires Broader Reform</h3>
             </div>
             <div className="p-3.5 space-y-2">
               {requiresReform.map((r, i) => (
@@ -67,8 +67,8 @@ export default function SceneImpact() {
                   <div className="flex items-start gap-2">
                     <XCircle className="w-3.5 h-3.5 text-slate-300 mt-0.5 flex-shrink-0" />
                     <div>
-                      <p className="text-xs font-semibold text-slate-600">{r.title}</p>
-                      <p className="text-[10px] text-slate-400">{r.detail}</p>
+                      <p className="text-sm font-semibold text-slate-600">{r.title}</p>
+                      <p className="text-[11px] text-slate-400">{r.detail}</p>
                     </div>
                   </div>
                 </StaggerItem>
@@ -87,11 +87,11 @@ export default function SceneImpact() {
           <p className="font-serif text-xl text-white font-semibold leading-relaxed mb-1.5">
             &ldquo;A better process, even before broader reform.&rdquo;
           </p>
-          <p className="text-slate-400 text-[10px] max-w-lg mx-auto leading-relaxed mb-1.5">
+          <p className="text-slate-400 text-[11px] max-w-lg mx-auto leading-relaxed mb-1.5">
             {scopeNote}
           </p>
           <p className="text-accent text-xs font-medium">
-            For Prajwal Kulkarni: no missed extension, no RFE from a hyphen, full case visibility after years of waiting.
+            For Krishna: no missed extension, no RFE from a hyphen, full case visibility after years of waiting.
           </p>
         </motion.div>
       </SceneShell>

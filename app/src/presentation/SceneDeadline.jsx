@@ -7,7 +7,7 @@ export default function SceneDeadline() {
   const [managed, setManaged] = useState(false);
 
   return (
-    <div className="h-screen w-full bg-gradient-to-br from-amber-50 to-orange-50 flex flex-col items-center px-12 overflow-y-auto">
+    <div className="h-screen w-full bg-gradient-to-b from-surface to-white flex flex-col items-center px-12 overflow-y-auto">
       <SceneShell maxWidth="max-w-2xl">
         {/* Icon + label */}
         <MaskedHeading className="text-center mb-5">

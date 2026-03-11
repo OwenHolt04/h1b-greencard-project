@@ -8,25 +8,16 @@ import { C } from '../lib/constants';
 import { WK1_DashboardReveal } from './WK1_DashboardReveal';
 import { WK2_SmartIntake } from './WK2_SmartIntake';
 import { WK3_ValidationFix } from './WK3_ValidationFix';
-import { WK4_PlainLanguage } from './WK4_PlainLanguage';
-import { WK5_StakeholderDeadline } from './WK5_StakeholderDeadline';
 import { WK6_ImpactClose } from './WK6_ImpactClose';
 
 /**
- * CaseBridge Walkthrough — Website-Driven Branch
+ * CaseBridge Walkthrough — Website-Driven Presentation
  *
- * Alternate composition: polished guided website walkthrough
- * with cursor choreography, camera zooming, and script-synced beats.
- *
- * 6 scenes, ~2:12 at 30fps
- *
- * Scene map:
- *   WK1 (24s): Current State → Dashboard Reveal
- *   WK2 (22s): Smart Intake + Sync + Checklist
- *   WK3 (24s): Validation + Fix + Propagation
- *   WK4 (20s): Plain Language + Chatbot
- *   WK5 (22s): Employer + Attorney Views + Deadline
- *   WK6 (24s): Impact + Scope + Close
+ * 4 segments mapping to presentation screens:
+ *   WK1 (24s): Case Record / Single Source of Truth (with role tabs)
+ *   WK2 (22s): Smart Intake + Form Sync
+ *   WK3 (24s): Pre-Submission Validation + RFE Prevention + Fix
+ *   WK4 (24s): Impact + Scope + Close
  */
 export const CaseBridgeWalkthrough = () => {
   const frame = useCurrentFrame();
@@ -34,7 +25,7 @@ export const CaseBridgeWalkthrough = () => {
   return (
     <AbsoluteFill style={{ background: C.navy900 }}>
       <TransitionSeries>
-        {/* WK1 — Dashboard Reveal */}
+        {/* WK1 — Case Record / Single Source of Truth */}
         <TransitionSeries.Sequence durationInFrames={WK_FRAMES.dashboardReveal}>
           <WK1_DashboardReveal />
         </TransitionSeries.Sequence>
@@ -52,7 +43,7 @@ export const CaseBridgeWalkthrough = () => {
           timing={linearTiming({ durationInFrames: WK_TR['2_3'] })}
         />
 
-        {/* WK3 — Validation + Fix */}
+        {/* WK3 — Pre-Submission Validation + Fix */}
         <TransitionSeries.Sequence durationInFrames={WK_FRAMES.validationFix}>
           <WK3_ValidationFix />
         </TransitionSeries.Sequence>
@@ -61,25 +52,7 @@ export const CaseBridgeWalkthrough = () => {
           timing={linearTiming({ durationInFrames: WK_TR['3_4'] })}
         />
 
-        {/* WK4 — Plain Language */}
-        <TransitionSeries.Sequence durationInFrames={WK_FRAMES.plainLanguage}>
-          <WK4_PlainLanguage />
-        </TransitionSeries.Sequence>
-        <TransitionSeries.Transition
-          presentation={fade()}
-          timing={linearTiming({ durationInFrames: WK_TR['4_5'] })}
-        />
-
-        {/* WK5 — Stakeholder Views + Deadline */}
-        <TransitionSeries.Sequence durationInFrames={WK_FRAMES.stakeholderDeadline}>
-          <WK5_StakeholderDeadline />
-        </TransitionSeries.Sequence>
-        <TransitionSeries.Transition
-          presentation={fade()}
-          timing={linearTiming({ durationInFrames: WK_TR['5_6'] })}
-        />
-
-        {/* WK6 — Impact + Scope + Close */}
+        {/* WK4 — Impact + Scope + Close */}
         <TransitionSeries.Sequence durationInFrames={WK_FRAMES.impactClose}>
           <WK6_ImpactClose />
         </TransitionSeries.Sequence>

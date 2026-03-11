@@ -1,108 +1,195 @@
 import React from 'react';
-import { useCurrentFrame, useVideoConfig, interpolate, spring, AbsoluteFill, Easing } from 'remotion';
+import { useCurrentFrame, useVideoConfig, interpolate, spring, AbsoluteFill } from 'remotion';
 import { C, CASE } from '../lib/constants';
 import { FONT_SANS, FONT_DISPLAY } from '../lib/fonts';
 import {
   BrowserFrame, WebNavBar, AnimatedCursor,
   getCursorState, getCameraState, cameraStyle,
-  WebCard, SectionLabel, CONTENT, NAV_H,
+  WebCard, CONTENT, NAV_H,
 } from './shared';
 
 /**
- * WK2 — Smart Intake + Sync + Checklist (22s / 660f)
+ * WK2 — Smart Intake + Form Sync (22s / 660f)
  *
- * Script beat:
- *   "he only needs to enter his employer's legal name, Job details,
- *    Wage data, and all the repeated fields once."
+ * Script: "Krishna only enters his information once. Fields that today
+ *  get repeated across six or more filings now populate across the
+ *  entire package from a single entry."
  *
- * Visual: Intake 3-panel, cursor highlights fields, sync to forms, brief checklist
+ * Visual: Real form with sidebar navigation, visible input fields with
+ *  light blue backgrounds, section headers, sync badges. Cursor types
+ *  into employer field, sync ripples across 6 form cards.
+ *
+ * Phases:
+ *   0-3s:   Full layout appears — sidebar + form + form cards
+ *   3-8s:   Camera zooms into employer section, cursor highlights employer field
+ *   8-10s:  Cursor "edits" employer field (text appears letter by letter)
+ *   10-14s: Sync ripple — green flash propagates across 6 form cards
+ *   14-16s: "Enter once." kinetic text
+ *   16-22s: Camera shows full layout, "6 forms synced" badge
  */
 
-const SHARED_FIELDS = [
-  { label: 'Employer Legal Name', value: CASE.employer.name, syncCount: 6, highlight: true },
-  { label: 'Job Title', value: CASE.applicant.title, syncCount: 4 },
-  { label: 'SOC Code', value: CASE.applicant.soc, syncCount: 3 },
-  { label: 'Annual Salary', value: CASE.applicant.salary, syncCount: 4 },
-  { label: 'Prevailing Wage', value: '$142,000', syncCount: 2 },
-  { label: 'Worksite', value: 'San Jose, CA', syncCount: 2 },
+/* ── Sidebar sections ── */
+const SIDEBAR = [
+  { label: 'Employer Info', active: true },
+  { label: 'Beneficiary Info', active: false },
+  { label: 'Position Details', active: false },
+  { label: 'Wage & LCA', active: false },
+  { label: 'Recruitment', active: false },
+  { label: 'Work History', active: false },
+  { label: 'Generate Docs', active: false },
 ];
+
+/* ── Form fields for employer section (with real input styling) ── */
+const EMPLOYER_FIELDS = [
+  { label: 'Company / Organization Name', value: CASE.employer.name, syncCount: 4, fullWidth: true, editable: true },
+  { label: 'Federal Employer ID (FEIN)', value: 'XX-XXXXXXX', syncCount: 5, fullWidth: false },
+  { label: 'NAICS Code', value: '541512', syncCount: 3, fullWidth: false },
+  { label: 'Year Established', value: '2015', syncCount: 2, fullWidth: false },
+  { label: 'Total U.S. Employees', value: '~62,000', syncCount: 3, fullWidth: false },
+];
+
+const ADDRESS_FIELDS = [
+  { label: 'Street Address', value: '1701 E Mossy Oaks Rd', syncCount: 5, fullWidth: true },
+  { label: 'City', value: 'Spring', syncCount: 5, fullWidth: false },
+  { label: 'State', value: 'TX', syncCount: 5, fullWidth: false },
+  { label: 'ZIP Code', value: '77389', syncCount: 5, fullWidth: false },
+  { label: 'Phone', value: '(281) 370-0670', syncCount: 4, fullWidth: false },
+];
+
+const SHARED_FORMS = ['I-129', 'I-140', 'ETA-9089', 'ETA-9142A'];
 
 const FORMS = [
-  { code: 'ETA-9089', title: 'PERM Labor Cert', pct: 85 },
-  { code: 'I-140', title: 'Immigrant Petition', pct: 80 },
-  { code: 'I-485', title: 'Adjust Status', pct: 75 },
-  { code: 'I-765', title: 'Work Authorization', pct: 90 },
-  { code: 'I-131', title: 'Travel Document', pct: 88 },
-  { code: 'G-28', title: 'Attorney Notice', pct: 95 },
+  { code: 'ETA-9089', title: 'PERM Application', fields: 14, pct: 100 },
+  { code: 'I-140', title: 'Immigrant Petition', fields: 12, pct: 100 },
+  { code: 'I-485', title: 'Adjustment of Status', fields: 24, pct: 82 },
+  { code: 'I-765', title: 'Employment Auth (EAD)', fields: 7, pct: 90 },
+  { code: 'I-131', title: 'Advance Parole', fields: 6, pct: 88 },
+  { code: 'G-28', title: 'Attorney Representation', fields: 4, pct: 100 },
 ];
 
-const CHECKLIST = [
-  { name: 'I-485 (signed)', s: 'done' },
-  { name: 'I-765 (EAD)', s: 'done' },
-  { name: 'I-131 (Advance Parole)', s: 'done' },
-  { name: 'Employment verification', s: 'missing' },
-  { name: 'Birth certificate', s: 'done' },
-  { name: 'Medical exam (I-693)', s: 'done' },
-  { name: 'Travel history (5yr)', s: 'flagged' },
-  { name: 'Tax returns (3yr)', s: 'done' },
-  { name: 'Passport copies', s: 'done' },
-  { name: 'Degree evaluation', s: 'done' },
-  { name: 'I-94 record', s: 'done' },
-  { name: 'Photo (2x2)', s: 'done' },
-  { name: 'Employment letter', s: 'pending' },
-  { name: 'Prior H-1B approvals', s: 'done' },
-  { name: 'Marriage cert (if any)', s: 'done' },
-];
+const SIDEBAR_W = 180;
+const FORM_W = 620;
 
 export const WK2_SmartIntake = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
-  // Sync animation: starts at ~10s, green flash on form cards
+  // Typing animation for employer field (8-10s)
+  const typingStart = 8 * fps;
+  const typingEnd = 10 * fps;
+  const isTyping = frame >= typingStart && frame < typingEnd;
+  const fullText = CASE.employer.name;
+  const typedChars = isTyping
+    ? Math.floor(interpolate(frame, [typingStart, typingEnd - 10], [0, fullText.length], {
+        extrapolateLeft: 'clamp', extrapolateRight: 'clamp',
+      }))
+    : frame >= typingEnd ? fullText.length : 0;
+
+  // Sync animation: starts at ~10s
   const syncTrigger = 10 * fps;
   const syncing = frame >= syncTrigger;
   const syncFlash = syncing ? interpolate(frame - syncTrigger, [0, 10, 30], [0, 1, 0], {
     extrapolateLeft: 'clamp', extrapolateRight: 'clamp',
   }) : 0;
 
-  // Checklist appears at ~17s
-  const showChecklist = frame >= 17 * fps;
-  const checklistIn = spring({ frame, fps, config: { damping: 18, stiffness: 120 }, delay: Math.round(17 * fps) });
-
-  // Camera: zoom into fields, then pan to forms, then to checklist
+  // Camera
   const camera = getCameraState(frame, fps, [
     { t: 0, zoom: 1, focusX: CONTENT.width / 2, focusY: CONTENT.height / 2 },
     { t: 3, zoom: 1, focusX: CONTENT.width / 2, focusY: CONTENT.height / 2 },
-    { t: 6, zoom: 1.5, focusX: 280, focusY: 300 },              // zoom into shared fields
-    { t: 10, zoom: 1.5, focusX: 280, focusY: 300 },             // hold on fields
-    { t: 13, zoom: 1.4, focusX: CONTENT.width / 2, focusY: 350 }, // pan to forms
-    { t: 16, zoom: 1, focusX: CONTENT.width / 2, focusY: CONTENT.height / 2 }, // zoom out
-    { t: 17, zoom: 1.3, focusX: CONTENT.width / 2, focusY: 650 }, // zoom to checklist
-    { t: 21, zoom: 1, focusX: CONTENT.width / 2, focusY: CONTENT.height / 2 }, // zoom out
+    { t: 5, zoom: 1.5, focusX: SIDEBAR_W + 220, focusY: 280 },        // zoom into company name field
+    { t: 10, zoom: 1.5, focusX: SIDEBAR_W + 220, focusY: 280 },       // hold during typing
+    { t: 12, zoom: 1.15, focusX: CONTENT.width * 0.65, focusY: 350 }, // pan to show forms
+    { t: 16, zoom: 1, focusX: CONTENT.width / 2, focusY: CONTENT.height / 2 },
   ]);
 
   // Cursor
   const cursor = getCursorState(frame, fps, [
     { t: 0, x: 960, y: 500, visible: false },
     { t: 1, x: 960, y: 500, visible: true },
-    { t: 2, x: 520, y: 96, visible: true },                  // move to Intake tab
-    { t: 2.5, x: 520, y: 96, click: true, visible: true },    // click Intake
-    { t: 4, x: 300, y: 300, visible: true },                   // hover employer field
-    { t: 7, x: 300, y: 300, visible: true },                   // stay on field
-    { t: 8, x: 300, y: 360, visible: true },                   // move down to job title
-    { t: 9, x: 300, y: 420, visible: true },                   // SOC code
-    { t: 10, x: 800, y: 350, visible: true },                  // move to form cards
-    { t: 14, x: 800, y: 350, visible: true },
-    { t: 17, x: 700, y: 700, visible: true },                  // move to checklist
+    { t: 2, x: 520, y: 96, visible: true },                       // Intake tab
+    { t: 2.5, x: 520, y: 96, click: true, visible: true },
+    { t: 4, x: SIDEBAR_W + 300, y: 200, visible: true },          // hover form area
+    { t: 6, x: SIDEBAR_W + 300, y: 260, visible: true },          // hover company field
+    { t: 7.5, x: SIDEBAR_W + 350, y: 270, visible: true },        // click into field
+    { t: 8, x: SIDEBAR_W + 350, y: 270, click: true, visible: true },
+    { t: 10, x: SIDEBAR_W + 350, y: 270, visible: true },         // done typing
+    { t: 12, x: CONTENT.width - 300, y: 300, visible: true },     // move to form cards
+    { t: 15, x: 960, y: 400, visible: true },
     { t: 21, x: 960, y: 500, visible: false },
   ]);
 
-  // "Enter once" kinetic text
+  // "Enter once." kinetic
   const kineticFrame = 14 * fps;
   const kineticIn = spring({ frame, fps, config: { damping: 16, stiffness: 180 }, delay: kineticFrame });
   const kineticExit = interpolate(frame, [kineticFrame + 50, kineticFrame + 65], [1, 0], {
     extrapolateLeft: 'clamp', extrapolateRight: 'clamp',
   });
+
+  // Editable field highlight
+  const editFocused = frame >= 6 * fps && frame < 12 * fps;
+  const cursorBlink = Math.floor(frame / 15) % 2 === 0;
+
+  /* ── Render an input field ── */
+  const renderField = (f, fi, isEmployer) => {
+    const isEditable = f.editable;
+    const isActive = isEditable && editFocused;
+    const showTyped = isEditable && typedChars > 0;
+
+    return (
+      <div key={fi} style={{
+        gridColumn: f.fullWidth ? '1 / -1' : undefined,
+      }}>
+        {/* Label with sync badge */}
+        <div style={{
+          display: 'flex', alignItems: 'center', gap: 6,
+          marginBottom: 4,
+        }}>
+          <span style={{
+            fontSize: 9, fontWeight: 700, color: '#64748b',
+            textTransform: 'uppercase', letterSpacing: '0.04em',
+          }}>
+            {f.label}
+          </span>
+          <span style={{
+            fontSize: 8, color: '#94a3b8', fontWeight: 600,
+            background: '#f1f5f9', padding: '1px 6px', borderRadius: 4,
+          }}>
+            {'\u2192'} {f.syncCount} forms
+          </span>
+        </div>
+        {/* Input field — visible border + light blue bg */}
+        <div style={{
+          fontSize: 13, fontWeight: 600, color: C.navy900,
+          padding: '8px 12px', borderRadius: 8,
+          background: isActive ? '#eff6ff' : showTyped ? '#f0fdf4' : '#eff6ff80',
+          border: isActive ? '2px solid #3b82f6' : isEditable && !showTyped ? '2px dashed #f59e0b' : '1.5px solid #bfdbfe',
+          boxShadow: isActive ? '0 0 0 3px rgba(59,130,246,0.1)' : 'none',
+          display: 'flex', alignItems: 'center',
+          minHeight: 34,
+          transition: 'all 0.2s',
+        }}>
+          {showTyped ? (
+            <>
+              <span style={{ color: '#16a34a' }}>{fullText.slice(0, typedChars)}</span>
+              {isTyping && cursorBlink && (
+                <span style={{ borderRight: '2px solid #3b82f6', height: 16, marginLeft: 1 }} />
+              )}
+            </>
+          ) : (
+            <span style={{
+              color: isEditable ? '#b45309' : C.navy900,
+            }}>{f.value}</span>
+          )}
+          {isEditable && !isActive && !showTyped && (
+            <span style={{
+              marginLeft: 'auto', fontSize: 9, color: '#ffffff', fontWeight: 700,
+              background: C.navy900, padding: '2px 8px', borderRadius: 4,
+            }}>Fix {'\u2192'}</span>
+          )}
+        </div>
+      </div>
+    );
+  };
 
   return (
     <AbsoluteFill style={{
@@ -116,92 +203,155 @@ export const WK2_SmartIntake = () => {
           <div style={{
             position: 'absolute', top: NAV_H, left: 0,
             width: CONTENT.width, height: CONTENT.height - NAV_H,
-            display: 'grid', gridTemplateColumns: '380px 1fr 360px',
+            display: 'grid', gridTemplateColumns: `${SIDEBAR_W}px ${FORM_W}px 1fr`,
             gap: 0,
           }}>
-            {/* ── LEFT: Shared Case Data ── */}
+            {/* ── SIDEBAR: Section Navigation ── */}
             <div style={{
-              padding: '16px 20px',
               borderRight: '1px solid #e2e8f0',
-              background: '#f8fafc',
+              background: '#ffffff',
+              paddingTop: 8,
             }}>
+              {SIDEBAR.map((s, i) => (
+                <div key={i} style={{
+                  display: 'flex', alignItems: 'center', gap: 8,
+                  padding: '8px 16px',
+                  background: s.active ? C.navy900 : 'transparent',
+                  color: s.active ? '#ffffff' : '#64748b',
+                  fontSize: 11, fontWeight: s.active ? 700 : 500,
+                  cursor: 'default',
+                }}>
+                  <span style={{
+                    width: 7, height: 7, borderRadius: '50%',
+                    background: s.active ? '#60a5fa' : '#cbd5e1',
+                  }} />
+                  {s.label}
+                </div>
+              ))}
+              {/* Auto-sync badge */}
               <div style={{
-                fontSize: 16, fontWeight: 700, color: C.navy900, marginBottom: 4,
-              }}>Shared Case Data</div>
-              <div style={{ fontSize: 11, color: '#94a3b8', marginBottom: 16 }}>
-                Single source of truth
+                margin: '16px 12px 0',
+                padding: '8px 10px',
+                background: '#f0fdf4', borderRadius: 8,
+                border: '1px solid #bbf7d0',
+              }}>
+                <div style={{ fontSize: 8, fontWeight: 700, color: '#166534', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+                  Auto-Sync Active
+                </div>
+                <div style={{ fontSize: 8, color: '#16a34a', marginTop: 2 }}>
+                  Changes propagate to all 7 forms instantly
+                </div>
               </div>
-
-              {SHARED_FIELDS.map((f, i) => {
-                const isHighlighted = f.highlight && frame >= 4 * fps && frame < 12 * fps;
-                return (
-                  <div key={i} style={{
-                    marginBottom: 12, padding: '8px 10px', borderRadius: 8,
-                    background: isHighlighted ? 'rgba(22,39,104,0.04)' : 'transparent',
-                    border: isHighlighted ? '1px solid rgba(22,39,104,0.15)' : '1px solid transparent',
-                  }}>
-                    <div style={{
-                      display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                    }}>
-                      <div style={{ fontSize: 10, color: '#94a3b8', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-                        {f.label}
-                      </div>
-                      <div style={{ fontSize: 9, color: '#94a3b8' }}>
-                        {'\u2192'} {f.syncCount} forms
-                      </div>
-                    </div>
-                    <div style={{
-                      fontSize: 14, fontWeight: 600, color: C.navy900, marginTop: 3,
-                      padding: '4px 8px', borderRadius: 4,
-                      background: '#ffffff', border: '1px solid #e2e8f0',
-                    }}>
-                      {f.value}
-                    </div>
-                  </div>
-                );
-              })}
             </div>
 
-            {/* ── CENTER: Filing Package (Form Cards) ── */}
-            <div style={{ padding: '16px 20px' }}>
+            {/* ── CENTER: Form Content ── */}
+            <div style={{
+              borderRight: '1px solid #e2e8f0',
+              background: '#ffffff',
+              overflowY: 'hidden',
+            }}>
+              {/* Form header */}
               <div style={{
-                display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                marginBottom: 16,
+                padding: '14px 20px',
+                borderBottom: '1px solid #e2e8f0',
               }}>
-                <div>
-                  <div style={{ fontSize: 16, fontWeight: 700, color: C.navy900 }}>Filing Package</div>
-                  <div style={{ fontSize: 11, color: '#94a3b8' }}>6 forms auto-populated</div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div>
+                    <div style={{ fontSize: 16, fontWeight: 700, color: C.navy900 }}>Employer Information</div>
+                    <div style={{ fontSize: 9, color: '#94a3b8', marginTop: 2 }}>
+                      Shared across: I-129 Part 1, I-140 Part 1, ETA-9089 Sec C, ETA-9142A Sec B
+                    </div>
+                  </div>
+                  <div style={{ display: 'flex', gap: 4 }}>
+                    {SHARED_FORMS.map((f) => (
+                      <span key={f} style={{
+                        fontSize: 9, padding: '2px 8px', borderRadius: 4,
+                        background: C.navy900 + '12', color: C.navy900, fontWeight: 600,
+                      }}>{f}</span>
+                    ))}
+                  </div>
                 </div>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10 }}>
+              {/* Company Identity section */}
+              <div style={{ padding: '16px 20px' }}>
+                <div style={{
+                  fontSize: 9, fontWeight: 700, color: '#94a3b8',
+                  textTransform: 'uppercase', letterSpacing: '0.06em',
+                  marginBottom: 10,
+                }}>Company Identity</div>
+
+                <div style={{
+                  display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)',
+                  gap: '10px 16px',
+                }}>
+                  {EMPLOYER_FIELDS.map((f, i) => renderField(f, i, true))}
+                </div>
+
+                {/* Mailing Address section */}
+                <div style={{
+                  marginTop: 20, paddingTop: 12,
+                  borderTop: '1px solid #e2e8f0',
+                }}>
+                  <div style={{
+                    display: 'flex', alignItems: 'center', gap: 8,
+                    marginBottom: 10,
+                  }}>
+                    <span style={{
+                      fontSize: 9, fontWeight: 700, color: '#94a3b8',
+                      textTransform: 'uppercase', letterSpacing: '0.06em',
+                    }}>Mailing Address</span>
+                    <span style={{ fontSize: 8, color: '#cbd5e1' }}>{'\u2192'} propagates to all forms</span>
+                  </div>
+
+                  <div style={{
+                    display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)',
+                    gap: '10px 16px',
+                  }}>
+                    {ADDRESS_FIELDS.map((f, i) => renderField(f, i + 10, false))}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* ── RIGHT: Downstream Forms ── */}
+            <div style={{ padding: '16px 16px', background: '#f8fafc' }}>
+              <div style={{
+                display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                marginBottom: 12,
+              }}>
+                <div style={{ fontSize: 14, fontWeight: 700, color: C.navy900 }}>Filing Package</div>
+                <div style={{ fontSize: 10, color: '#94a3b8' }}>6 forms</div>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 8 }}>
                 {FORMS.map((f, i) => {
                   const formSynced = syncing && frame >= syncTrigger + i * 5;
                   return (
                     <WebCard key={i} glow={formSynced && syncFlash > 0.1} style={{
                       borderTop: `3px solid ${formSynced ? '#22c55e' : C.navy900 + '30'}`,
-                      transition: 'border-color 0.3s',
                     }}>
                       <div style={{
                         display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                        marginBottom: 8,
+                        marginBottom: 4,
                       }}>
-                        <span style={{ fontSize: 14, fontWeight: 700, color: C.navy900 }}>{f.code}</span>
-                        {formSynced && <span style={{ fontSize: 10, color: '#22c55e', fontWeight: 700 }}>{'\u2713'} Synced</span>}
+                        <span style={{ fontSize: 12, fontWeight: 700, color: C.navy900 }}>{f.code}</span>
+                        {formSynced
+                          ? <span style={{ fontSize: 8, color: '#22c55e', fontWeight: 700 }}>{'\u2713'} Synced</span>
+                          : <span style={{ fontSize: 8, background: '#f1f5f9', padding: '1px 6px', borderRadius: 8, color: '#64748b', fontWeight: 600 }}>{f.pct}%</span>
+                        }
                       </div>
-                      <div style={{ fontSize: 10, color: '#64748b' }}>{f.title}</div>
-                      {/* Progress bar */}
-                      <div style={{
-                        marginTop: 8, height: 4, borderRadius: 2,
-                        background: '#e2e8f0',
-                      }}>
+                      <div style={{ fontSize: 9, color: '#64748b', marginBottom: 4 }}>{f.title}</div>
+                      <div style={{ fontSize: 8, color: '#94a3b8' }}>{f.fields} fields synced</div>
+
+                      {formSynced && (
                         <div style={{
-                          height: '100%', borderRadius: 2,
-                          width: `${f.pct}%`,
-                          background: formSynced ? '#22c55e' : C.navy900,
-                        }} />
-                      </div>
-                      <div style={{ fontSize: 9, color: '#94a3b8', marginTop: 4 }}>{f.pct}% complete</div>
+                          marginTop: 5, padding: '3px 6px', borderRadius: 4,
+                          background: '#dcfce7', fontSize: 8, color: '#166534',
+                        }}>
+                          {'\u2713'} Employer name updated
+                        </div>
+                      )}
                     </WebCard>
                   );
                 })}
@@ -210,105 +360,20 @@ export const WK2_SmartIntake = () => {
               {/* Sync count badge */}
               {syncing && (
                 <div style={{
-                  marginTop: 16, textAlign: 'center',
+                  marginTop: 12, textAlign: 'center',
                   opacity: interpolate(frame - syncTrigger, [0, 15], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }),
                 }}>
                   <span style={{
-                    display: 'inline-block', padding: '6px 18px', borderRadius: 20,
+                    display: 'inline-block', padding: '5px 14px', borderRadius: 16,
                     background: '#dcfce7', border: '1px solid #22c55e40',
-                    fontSize: 13, fontWeight: 700, color: '#166534',
+                    fontSize: 11, fontWeight: 700, color: '#166534',
                   }}>
                     6 forms synced from 1 entry
                   </span>
                 </div>
               )}
             </div>
-
-            {/* ── RIGHT: Validation Panel ── */}
-            <div style={{
-              padding: '16px 20px',
-              borderLeft: '1px solid #e2e8f0',
-              background: '#f8fafc',
-            }}>
-              <div style={{ fontSize: 16, fontWeight: 700, color: C.navy900, marginBottom: 4 }}>
-                Validation Engine
-              </div>
-              <div style={{ fontSize: 11, color: '#94a3b8', marginBottom: 16 }}>
-                Pre-filing quality checks
-              </div>
-
-              {/* Score placeholder */}
-              <div style={{
-                width: 80, height: 80, borderRadius: '50%',
-                border: '4px solid #e2e8f0', margin: '0 auto 16px',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-              }}>
-                <span style={{ fontSize: 14, color: '#94a3b8' }}>?</span>
-              </div>
-
-              {/* Validation button */}
-              <div style={{
-                padding: '10px 16px', borderRadius: 8, textAlign: 'center',
-                background: C.navy900, color: '#ffffff',
-                fontSize: 13, fontWeight: 700,
-              }}>
-                Run Pre-Flight Validation
-              </div>
-
-              <div style={{ fontSize: 11, color: '#94a3b8', marginTop: 12, textAlign: 'center' }}>
-                Checks cross-form consistency before filing
-              </div>
-            </div>
           </div>
-
-          {/* ── CHECKLIST (bottom overlay, slides up) ── */}
-          {showChecklist && (
-            <div style={{
-              position: 'absolute', bottom: 0, left: 0, right: 0,
-              background: '#ffffff', borderTop: '1px solid #e2e8f0',
-              padding: '16px 28px',
-              transform: `translateY(${interpolate(checklistIn, [0, 1], [100, 0])}%)`,
-              opacity: interpolate(checklistIn, [0, 1], [0, 1]),
-            }}>
-              <div style={{
-                display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                marginBottom: 10,
-              }}>
-                <div>
-                  <span style={{ fontSize: 14, fontWeight: 700, color: C.navy900 }}>I-485 Filing Checklist</span>
-                  <span style={{ fontSize: 12, color: '#94a3b8', marginLeft: 12 }}>Document Readiness</span>
-                </div>
-                <div style={{
-                  padding: '4px 12px', borderRadius: 6,
-                  background: '#fef3c7', border: '1px solid #f59e0b40',
-                }}>
-                  <span style={{ fontSize: 16, fontWeight: 700, color: '#92400e' }}>12</span>
-                  <span style={{ fontSize: 12, color: '#92400e' }}> / 15</span>
-                </div>
-              </div>
-
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '4px 12px' }}>
-                {CHECKLIST.map((doc, i) => {
-                  const statusIcon = doc.s === 'done' ? '\u2713' : doc.s === 'missing' ? '\u2014' : doc.s === 'flagged' ? '!' : '\u25CB';
-                  const statusColor = doc.s === 'done' ? '#16a34a' : doc.s === 'missing' ? '#ef4444' : doc.s === 'flagged' ? '#f59e0b' : '#94a3b8';
-                  return (
-                    <div key={i} style={{
-                      display: 'flex', alignItems: 'center', gap: 6, padding: '3px 0',
-                      fontSize: 11, color: doc.s === 'done' ? '#94a3b8' : '#334155', fontWeight: doc.s === 'done' ? 400 : 600,
-                    }}>
-                      <span style={{
-                        width: 16, height: 16, borderRadius: 3, flexShrink: 0,
-                        display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-                        background: `${statusColor}15`, color: statusColor,
-                        fontSize: 9, fontWeight: 700,
-                      }}>{statusIcon}</span>
-                      {doc.name}
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          )}
         </div>
       </BrowserFrame>
 

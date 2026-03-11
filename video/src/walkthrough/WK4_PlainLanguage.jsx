@@ -124,7 +124,7 @@ export const WK4_PlainLanguage = () => {
                 {/* Greeting */}
                 <WebCard style={{ marginBottom: 16, background: '#eff6ff', borderColor: '#3b82f640' }}>
                   <div style={{ fontSize: 18, fontWeight: 700, color: C.navy900 }}>
-                    Your case is on track, Prajwal.
+                    Your case is on track, Krishna.
                   </div>
                   <div style={{ fontSize: 13, color: '#64748b', marginTop: 4 }}>
                     Priority date is current. I-485 filing in preparation. 5 of 8 milestones complete.

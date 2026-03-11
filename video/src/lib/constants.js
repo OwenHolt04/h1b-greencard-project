@@ -8,7 +8,7 @@ export const FPS = 30;
 
 // --- V2 Micro-Scene Durations (in seconds) ---
 export const MS_SECONDS = {
-  problemIntro: 14,     // 1A: Prajwal + fragment chaos
+  problemIntro: 14,     // 1A: Krishna + fragment chaos
   problemScale: 14,     // 1B: 3 agencies / 6 forms / 165 pages
   problemPain: 10,      // 1C: Contradiction pair — why it matters
   platformReveal: 14,   // 2A: Convergence → one shared record
@@ -59,10 +59,10 @@ export const TOTAL_FRAMES = Object.values(SCENE_FRAMES).reduce((a, b) => a + b, 
 export const BEAT_FRAMES = SCENE_FRAMES;
 export const BEAT_SECONDS = SCENE_SECONDS;
 
-// --- Prajwal's Case Data ---
+// --- Krishna's Case Data ---
 export const CASE = {
   applicant: {
-    name: 'Prajwal Kulkarni',
+    name: 'Krishna',
     country: 'India',
     degree: 'MBA, UC Davis GSM 2024',
     title: 'Senior Product Manager',
@@ -108,7 +108,7 @@ export const C = {
 
 // --- V2 On-Screen Labels (short, complementary to VO) ---
 export const LABELS = {
-  ms1a: { name: 'Prajwal Kulkarni', sub: 'Sr. Product Manager \u2022 H-1B \u2022 EB-2 India' },
+  ms1a: { name: 'Krishna', sub: 'Sr. Product Manager \u2022 H-1B \u2022 EB-2 India' },
   ms1b: { lines: ['3 agencies.', '6 forms.', '165+ pages.', '0 dashboards.'] },
   ms2a: { title: 'CaseBridge', sub: 'One shared case record' },
   ms3a: { label: 'Enter once.' },
@@ -122,8 +122,8 @@ export const LABELS = {
 
 // --- Legacy ---
 export const CAPTIONS = {
-  scene1: { intro: 'Prajwal Kulkarni', introSub: 'Senior Product Manager. H-1B holder. EB-2 India candidate.', line1: '3 agencies.', line2: '6 forms.', line3: '0 dashboards.', sub: 'One inconsistency can reset months of progress.' },
-  scene2: { main: 'One shared case record', sub: 'Prajwal\u2019s case \u2014 one record, three stakeholders, all aligned.' },
+  scene1: { intro: 'Krishna', introSub: 'Senior Product Manager. H-1B holder. EB-2 India candidate.', line1: '3 agencies.', line2: '6 forms.', line3: '0 dashboards.', sub: 'One inconsistency can reset months of progress.' },
+  scene2: { main: 'One shared case record', sub: 'Krishna\u2019s case \u2014 one record, three stakeholders, all aligned.' },
   scene3: { main: 'A single workspace for the entire case', sub: 'Timeline, agency status, and next steps \u2014 all in one view.' },
   scene4: { main: 'Enter once. Sync across 6 forms.', sub: 'One source of truth \u2014 no re-keying, no contradictions.' },
   scene5: { main: 'Catch errors before filing', sub: 'Today: ~25% of filings trigger RFEs. Target: <5%.' },

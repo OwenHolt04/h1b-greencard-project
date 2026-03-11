@@ -10,8 +10,6 @@ import { WK_TOTAL_FRAMES, WK_FRAMES, WK_FPS } from './walkthrough/shared';
 import { WK1_DashboardReveal } from './walkthrough/WK1_DashboardReveal';
 import { WK2_SmartIntake } from './walkthrough/WK2_SmartIntake';
 import { WK3_ValidationFix } from './walkthrough/WK3_ValidationFix';
-import { WK4_PlainLanguage } from './walkthrough/WK4_PlainLanguage';
-import { WK5_StakeholderDeadline } from './walkthrough/WK5_StakeholderDeadline';
 import { WK6_ImpactClose } from './walkthrough/WK6_ImpactClose';
 
 // --- V1 scenes (legacy) ---
@@ -65,9 +63,7 @@ export const RemotionRoot = () => {
         <Composition id="WK1-DashboardReveal" component={WK1_DashboardReveal} durationInFrames={WK_FRAMES.dashboardReveal} fps={WK_FPS} width={1920} height={1080} />
         <Composition id="WK2-SmartIntake" component={WK2_SmartIntake} durationInFrames={WK_FRAMES.smartIntake} fps={WK_FPS} width={1920} height={1080} />
         <Composition id="WK3-ValidationFix" component={WK3_ValidationFix} durationInFrames={WK_FRAMES.validationFix} fps={WK_FPS} width={1920} height={1080} />
-        <Composition id="WK4-PlainLanguage" component={WK4_PlainLanguage} durationInFrames={WK_FRAMES.plainLanguage} fps={WK_FPS} width={1920} height={1080} />
-        <Composition id="WK5-StakeholderDeadline" component={WK5_StakeholderDeadline} durationInFrames={WK_FRAMES.stakeholderDeadline} fps={WK_FPS} width={1920} height={1080} />
-        <Composition id="WK6-ImpactClose" component={WK6_ImpactClose} durationInFrames={WK_FRAMES.impactClose} fps={WK_FPS} width={1920} height={1080} />
+        <Composition id="WK4-ImpactClose" component={WK6_ImpactClose} durationInFrames={WK_FRAMES.impactClose} fps={WK_FPS} width={1920} height={1080} />
       </Folder>
 
       {/* V2 individual micro-scenes for preview */}

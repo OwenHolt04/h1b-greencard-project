@@ -76,7 +76,7 @@ export default function ScenePlatformIntro() {
                       {cap.kano}
                     </span>
                   </div>
-                  <h3 className="font-semibold text-slate-900 text-[15px] mb-1">{cap.title}</h3>
+                  <h3 className="font-semibold text-navy-900 text-[15px] mb-1">{cap.title}</h3>
                   <p className="text-slate-500 text-sm leading-relaxed mb-3">{cap.description}</p>
                   <div className="pt-2 border-t border-slate-100">
                     <span className="text-navy-900 font-bold text-sm">{cap.metric}</span>

@@ -129,7 +129,7 @@ export const WK3_ValidationFix = () => {
             position: 'absolute', top: NAV_H, left: 0,
             width: CONTENT.width, height: CONTENT.height - NAV_H,
             display: 'grid', gridTemplateColumns: '380px 1fr 360px',
-            gap: 0,
+            gap: 0, paddingTop: 4,
           }}>
             {/* LEFT: Shared fields (dimmed during validation focus) */}
             <div style={{
@@ -218,7 +218,7 @@ export const WK3_ValidationFix = () => {
                 background: validationStarted ? '#64748b' : C.navy900,
                 color: '#ffffff', fontSize: 13, fontWeight: 700,
               }}>
-                {isScanning ? 'Analyzing...' : validationStarted ? 'Validation Complete' : 'Run Pre-Flight Validation'}
+                {isScanning ? 'Analyzing...' : validationStarted ? 'Validation Complete' : 'Run Pre-Submission Check'}
               </div>
 
               {/* Scan line indicator */}
@@ -228,6 +228,26 @@ export const WK3_ValidationFix = () => {
                   background: `linear-gradient(90deg, transparent, ${C.accent}, transparent)`,
                   width: `${scanProgress * 100}%`,
                 }} />
+              )}
+
+              {/* RFE Alert Banner */}
+              {issuesVisible && !fixApplied && (
+                <div style={{
+                  marginBottom: 10, padding: '8px 12px', borderRadius: 8,
+                  background: '#fef2f2', border: '1px solid #fecaca',
+                  display: 'flex', alignItems: 'center', gap: 8,
+                  opacity: interpolate(frame - P.issuesAppear, [0, 15], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }),
+                }}>
+                  <span style={{ fontSize: 14 }}>{'\u26A0\uFE0F'}</span>
+                  <div>
+                    <div style={{ fontSize: 11, fontWeight: 700, color: '#991b1b' }}>
+                      RFE Risk: 3 issues detected
+                    </div>
+                    <div style={{ fontSize: 9, color: '#b91c1c' }}>
+                      ~25% chance of Request for Evidence. Resolve before submission.
+                    </div>
+                  </div>
+                </div>
               )}
 
               {/* Issues */}
