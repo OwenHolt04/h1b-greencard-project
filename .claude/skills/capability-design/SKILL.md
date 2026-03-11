@@ -119,7 +119,7 @@ When designing demo features, follow these rules:
 
 1. **One capability = one demo moment** — don't combine capabilities into a single screen
 2. **Show the before/after** — every demo moment should imply what the current state looks like
-3. **Use the same case data** — all capabilities demonstrated through the flagship case (Yuto Sato → Helix Systems → Chen & Patel Immigration)
+3. **Use the same case data** — all capabilities demonstrated through the flagship case (Yuto Sato → Helix Systems → Immigration Attorney)
 4. **Make state changes visible** — validation scores, progress bars, status changes should animate
 5. **Design for capture** — every interaction should be scriptable for Remotion
 6. **Follow Kano order** — demonstrate Basics first (intake, validation), then Performance (dashboard, extensions), then Delighters (wizard, notifications)

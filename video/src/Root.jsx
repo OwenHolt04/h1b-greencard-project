@@ -1,9 +1,10 @@
 import React from 'react';
 import { Composition, Folder } from 'remotion';
 import { CaseBridgeDemo } from './CaseBridgeDemo';
-import { TOTAL_FRAMES, FPS, SCENE_FRAMES } from './lib/constants';
+import { CaseBridgeDemoV2 } from './CaseBridgeDemoV2';
+import { TOTAL_FRAMES, FPS, SCENE_FRAMES, MS_FRAMES, MS_TOTAL_FRAMES } from './lib/constants';
 
-// --- Individual scene compositions for preview/iteration ---
+// --- V1 scenes (legacy) ---
 import { Scene1_CurrentStateChaos } from './scenes/Scene1_CurrentStateChaos';
 import { Scene2_PlatformReveal } from './scenes/Scene2_PlatformReveal';
 import { Scene3_CaseWorkspace } from './scenes/Scene3_CaseWorkspace';
@@ -14,21 +15,50 @@ import { Scene7_DeadlineProtection } from './scenes/Scene7_DeadlineProtection';
 import { Scene8_ScopeClarification } from './scenes/Scene8_ScopeClarification';
 import { Scene9_FinalImpact } from './scenes/Scene9_FinalImpact';
 
+// --- V2 micro-scenes ---
+import { MS1A_ProblemIntro } from './micro/MS1A_ProblemIntro';
+import { MS1B_ProblemScale } from './micro/MS1B_ProblemScale';
+import { MS1C_ProblemPain } from './micro/MS1C_ProblemPain';
+import { MS2A_PlatformReveal } from './micro/MS2A_PlatformReveal';
+import { MS3A_CapIntake } from './micro/MS3A_CapIntake';
+import { MS3B_CapValidation } from './micro/MS3B_CapValidation';
+import { MS3B2_CapWizard } from './micro/MS3B2_CapWizard';
+import { MS3C_CapRoles } from './micro/MS3C_CapRoles';
+import { MS3D_CapDeadline } from './micro/MS3D_CapDeadline';
+import { MS4A_ImpactResults } from './micro/MS4A_ImpactResults';
+import { MS4B_ScopeClose } from './micro/MS4B_ScopeClose';
+
 export const RemotionRoot = () => {
   return (
     <>
-      {/* Main composition — full narrative demo */}
+      {/* V2 — Main composition (micro-scene architecture) */}
       <Composition
-        id="CaseBridgeDemo"
-        component={CaseBridgeDemo}
-        durationInFrames={TOTAL_FRAMES}
+        id="CaseBridgeDemoV2"
+        component={CaseBridgeDemoV2}
+        durationInFrames={MS_TOTAL_FRAMES}
         fps={FPS}
         width={1920}
         height={1080}
       />
 
-      {/* Individual scenes for preview and iteration */}
-      <Folder name="Scenes">
+      {/* V2 individual micro-scenes for preview */}
+      <Folder name="V2-MicroScenes">
+        <Composition id="MS1A-ProblemIntro" component={MS1A_ProblemIntro} durationInFrames={MS_FRAMES.problemIntro} fps={FPS} width={1920} height={1080} />
+        <Composition id="MS1B-ProblemScale" component={MS1B_ProblemScale} durationInFrames={MS_FRAMES.problemScale} fps={FPS} width={1920} height={1080} />
+        <Composition id="MS1C-ProblemPain" component={MS1C_ProblemPain} durationInFrames={MS_FRAMES.problemPain} fps={FPS} width={1920} height={1080} />
+        <Composition id="MS2A-PlatformReveal" component={MS2A_PlatformReveal} durationInFrames={MS_FRAMES.platformReveal} fps={FPS} width={1920} height={1080} />
+        <Composition id="MS3A-CapIntake" component={MS3A_CapIntake} durationInFrames={MS_FRAMES.capIntake} fps={FPS} width={1920} height={1080} />
+        <Composition id="MS3B-CapValidation" component={MS3B_CapValidation} durationInFrames={MS_FRAMES.capValidation} fps={FPS} width={1920} height={1080} />
+        <Composition id="MS3B2-CapWizard" component={MS3B2_CapWizard} durationInFrames={MS_FRAMES.capWizard} fps={FPS} width={1920} height={1080} />
+        <Composition id="MS3C-CapRoles" component={MS3C_CapRoles} durationInFrames={MS_FRAMES.capRoles} fps={FPS} width={1920} height={1080} />
+        <Composition id="MS3D-CapDeadline" component={MS3D_CapDeadline} durationInFrames={MS_FRAMES.capDeadline} fps={FPS} width={1920} height={1080} />
+        <Composition id="MS4A-ImpactResults" component={MS4A_ImpactResults} durationInFrames={MS_FRAMES.impactResults} fps={FPS} width={1920} height={1080} />
+        <Composition id="MS4B-ScopeClose" component={MS4B_ScopeClose} durationInFrames={MS_FRAMES.scopeClose} fps={FPS} width={1920} height={1080} />
+      </Folder>
+
+      {/* V1 — Legacy (kept for reference) */}
+      <Folder name="V1-Legacy">
+        <Composition id="CaseBridgeDemo" component={CaseBridgeDemo} durationInFrames={TOTAL_FRAMES} fps={FPS} width={1920} height={1080} />
         <Composition id="Scene1-CurrentStateChaos" component={Scene1_CurrentStateChaos} durationInFrames={SCENE_FRAMES.currentStateChaos} fps={FPS} width={1920} height={1080} />
         <Composition id="Scene2-PlatformReveal" component={Scene2_PlatformReveal} durationInFrames={SCENE_FRAMES.platformReveal} fps={FPS} width={1920} height={1080} />
         <Composition id="Scene3-CaseWorkspace" component={Scene3_CaseWorkspace} durationInFrames={SCENE_FRAMES.caseWorkspace} fps={FPS} width={1920} height={1080} />

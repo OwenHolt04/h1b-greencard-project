@@ -40,7 +40,7 @@ Demo priority order follows Kano:
 
 The website is NOT a full SaaS mock. It is a **presentation-optimized, scenario-driven prototype** anchored on:
 
-- One flagship case: Yuto Sato (applicant) → Helix Systems (employer) → Maya Chen, Chen & Patel Immigration (attorney)
+- One flagship case: Yuto Sato (applicant) → Helix Systems (employer) → Maya Chen, Immigration Attorney (attorney)
 - One shared data model with deterministic mock state
 - **5 core screens**: Overview → Smart Intake + Validation → Case Dashboard → Stakeholder Views → Impact + Scope
 - Designed for Remotion capture (deterministic, visually legible, stateful interactions)

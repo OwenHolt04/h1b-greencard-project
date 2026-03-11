@@ -144,7 +144,7 @@ Use one fictional case only.
 ### Suggested case profile
 - applicant: Yuto Sato
 - employer: Helix Systems
-- attorney: Maya Chen, Chen & Patel Immigration
+- attorney: Maya Chen, Immigration Attorney
 - stage: I-485 package preparation with earlier PERM / I-140 history visible
 - H-1B expiration within ~90 to 120 days
 - one small but believable cross-form inconsistency

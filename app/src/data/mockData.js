@@ -1,6 +1,6 @@
 // ============================================================================
 // CaseBridge — Seeded Mock Data
-// One flagship case: Prajwal Kulkarni → HPE → Chen & Patel Immigration
+// One flagship case: Prajwal Kulkarni → HPE → Immigration Attorney
 // All data deterministic and presentation-ready
 // ============================================================================
 
@@ -43,7 +43,7 @@ export const employer = {
 };
 
 export const attorney = {
-  lawFirm: 'Chen & Patel Immigration',
+  lawFirm: 'Immigration Attorney',
   attorneyName: 'Maya Chen',
   contactEmail: 'maya.chen@chenpatel.law',
   barNumber: 'CA-XXXXXX',
@@ -616,7 +616,7 @@ export const formFieldTranslations = {
     plainTitle: 'Your Attorney Authorization',
     pageCount: 3,
     fields: [
-      { ref: 'Part 2', gov: 'I hereby enter my appearance as attorney for and on behalf of the following named person(s)', plain: 'This form officially authorizes Maya Chen to represent you. Without it, USCIS won\'t communicate with your attorney.', value: 'Maya Chen · Chen & Patel Immigration', source: 'Auto-filled from case team' },
+      { ref: 'Part 2', gov: 'I hereby enter my appearance as attorney for and on behalf of the following named person(s)', plain: 'This form officially authorizes Maya Chen to represent you. Without it, USCIS won\'t communicate with your attorney.', value: 'Maya Chen · Immigration Attorney', source: 'Auto-filled from case team' },
     ],
   },
 };

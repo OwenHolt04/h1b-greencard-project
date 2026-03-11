@@ -7,9 +7,32 @@ import { FONT_SANS, FONT_DISPLAY } from '../lib/fonts';
 import { Caption } from '../components/Caption';
 
 /**
- * Source fields that propagate to downstream forms.
- * Each source field has a list of destination form indices.
+ * Scene 4 — Enter Once, Sync Everywhere (20s / 600 frames)
+ *
+ * Center-first composition: source field appears centered,
+ * then propagation paths draw outward to surrounding form cards.
+ *
+ * Visual arc:
+ *   0-3s: Source field (Employer Name) appears centered with glow
+ *   3-5s: Form cards appear in a tight ring around center
+ *   5-9s: Connector paths draw from source outward to each form
+ *         Animated pulse travels along each path
+ *   9-11s: Each form card flashes green as sync completes
+ *   11-13s: Source field #2 (SOC Code) appears below, same sync pulse
+ *   13-16s: Second sync completes
+ *   16-18s: "Entered once." kinetic caption
+ *   18-20s: All synced state visible
  */
+
+const FORMS = [
+  { code: 'ETA-9089', name: 'PERM Application' },
+  { code: 'I-140', name: 'Immigrant Petition' },
+  { code: 'I-485', name: 'Adjustment of Status' },
+  { code: 'I-765', name: 'Employment Auth' },
+  { code: 'I-131', name: 'Advance Parole' },
+  { code: 'G-28', name: 'Attorney Rep.' },
+];
+
 const SOURCE_FIELDS = [
   {
     label: 'Employer Legal Name',
@@ -25,99 +48,79 @@ const SOURCE_FIELDS = [
   },
 ];
 
-const FORMS = [
-  { code: 'ETA-9089', name: 'PERM Application' },
-  { code: 'I-140', name: 'Immigrant Petition' },
-  { code: 'I-485', name: 'Adjustment of Status' },
-  { code: 'I-765', name: 'Employment Auth' },
-  { code: 'I-131', name: 'Advance Parole' },
-  { code: 'G-28', name: 'Attorney Rep.' },
-];
+/* Form card positions: 2 rows of 3, centered below the source field */
+const CX = 960;
+const CY = 340; // source field center Y
+const FORM_W = 260;
+const FORM_H = 80;
+const FORM_GAP_X = 20;
+const FORM_GAP_Y = 16;
+const ROW_W = FORM_W * 3 + FORM_GAP_X * 2;
+const ROW_LEFT = CX - ROW_W / 2;
 
-/** Positions for form cards in a vertical stack on the right side */
 const FORM_POSITIONS = [
-  { x: 1340, y: 120 },
-  { x: 1340, y: 240 },
-  { x: 1340, y: 360 },
-  { x: 1340, y: 480 },
-  { x: 1340, y: 600 },
-  { x: 1340, y: 720 },
+  { x: ROW_LEFT, y: 530 },
+  { x: ROW_LEFT + FORM_W + FORM_GAP_X, y: 530 },
+  { x: ROW_LEFT + (FORM_W + FORM_GAP_X) * 2, y: 530 },
+  { x: ROW_LEFT, y: 530 + FORM_H + FORM_GAP_Y },
+  { x: ROW_LEFT + FORM_W + FORM_GAP_X, y: 530 + FORM_H + FORM_GAP_Y },
+  { x: ROW_LEFT + (FORM_W + FORM_GAP_X) * 2, y: 530 + FORM_H + FORM_GAP_Y },
 ];
 
-/** SVG path from source field to destination form card */
+/** SVG connector from source center to form card center */
 const getConnectorPath = (sourceY, destIdx) => {
   const dest = FORM_POSITIONS[destIdx];
-  const sx = 660; // right edge of source card area
-  const sy = sourceY;
-  const dx = dest.x - 10;
-  const dy = dest.y + 40;
-  const mx = (sx + dx) / 2;
-  return `M ${sx} ${sy} C ${mx} ${sy}, ${mx} ${dy}, ${dx} ${dy}`;
+  const sx = CX;
+  const sy = sourceY + 50; // bottom of source card
+  const dx = dest.x + FORM_W / 2;
+  const dy = dest.y;
+  const my = sy + (dy - sy) * 0.5;
+  return `M ${sx} ${sy} C ${sx} ${my}, ${dx} ${my}, ${dx} ${dy}`;
 };
 
-/** Get position on cubic bezier at parameter t (0-1) */
+/** Get position on cubic bezier at parameter t */
 const bezierPoint = (sourceY, destIdx, t) => {
   const dest = FORM_POSITIONS[destIdx];
-  const sx = 660, sy = sourceY;
-  const dx = dest.x - 10, dy = dest.y + 40;
-  const mx = (sx + dx) / 2;
-  // P0=(sx,sy), P1=(mx,sy), P2=(mx,dy), P3=(dx,dy)
+  const sx = CX, sy = sourceY + 50;
+  const dx = dest.x + FORM_W / 2, dy = dest.y;
+  const my = sy + (dy - sy) * 0.5;
   const u = 1 - t;
   return {
-    x: u * u * u * sx + 3 * u * u * t * mx + 3 * u * t * t * mx + t * t * t * dx,
-    y: u * u * u * sy + 3 * u * u * t * sy + 3 * u * t * t * dy + t * t * t * dy,
+    x: u * u * u * sx + 3 * u * u * t * sx + 3 * u * t * t * dx + t * t * t * dx,
+    y: u * u * u * sy + 3 * u * u * t * my + 3 * u * t * t * my + t * t * t * dy,
   };
 };
 
-/**
- * Scene 4 — Enter Once, Sync Everywhere (20s)
- *
- * Source field → animated connector pulse → destination form cards flash green.
- * No browser chrome. Dark space with floating modules.
- *
- * Visual arc:
- *   0-3s: Source field card #1 (Employer Name) appears center-left, value glows
- *   3-5s: Destination form cards appear in a column on the right
- *   5-9s: Connector paths draw from source to each destination form
- *         Animated pulse travels along each path
- *   9-11s: Each form card flashes green as sync completes
- *   11-13s: Source field #2 (SOC Code) appears below, same sync animation
- *   13-16s: Second sync pulse completes
- *   16-18s: "Entered once." kinetic caption
- *   18-20s: All synced state visible
- */
 export const Scene4_IntakeSync = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
-  /* ── Source field #1 (Employer Name) ── */
+  /* ── Source field #1 ── */
   const src1Enter = spring({ frame, fps, config: { damping: 18, stiffness: 100 }, delay: Math.round(0.5 * fps) });
   const src1GlowPulse = interpolate(Math.sin(frame / 12), [-1, 1], [0.3, 0.6]);
   const src1GlowFade = interpolate(frame, [5 * fps, 7 * fps], [1, 0.15], {
     extrapolateLeft: 'clamp', extrapolateRight: 'clamp',
   });
 
-  /* ── Destination form cards ── */
+  /* ── Form cards ── */
   const formsEnter = spring({ frame, fps, config: { damping: 200 }, delay: Math.round(3 * fps) });
 
-  /* ── Sync 1: connector paths draw + pulse travel ── */
+  /* ── Sync 1 ── */
   const sync1Start = Math.round(5 * fps);
   const sync1Progress = interpolate(frame, [sync1Start, sync1Start + 3 * fps], [0, 1], {
     extrapolateLeft: 'clamp', extrapolateRight: 'clamp',
     easing: Easing.out(Easing.quad),
   });
-  // Pulse position along path (0-1, staggered per destination)
   const sync1Pulse = interpolate(frame, [sync1Start + 1 * fps, sync1Start + 3 * fps], [0, 1], {
     extrapolateLeft: 'clamp', extrapolateRight: 'clamp',
   });
-  // Form flash timing (when pulse arrives)
   const sync1FlashBase = sync1Start + Math.round(2.5 * fps);
 
-  /* ── Source field #2 (SOC Code) ── */
+  /* ── Source field #2 ── */
   const src2Enter = spring({ frame, fps, config: { damping: 18, stiffness: 100 }, delay: Math.round(11 * fps) });
   const src2GlowPulse = interpolate(Math.sin((frame - 11 * fps) / 12), [-1, 1], [0.3, 0.6]);
 
-  /* ── Sync 2: SOC code sync ── */
+  /* ── Sync 2 ── */
   const sync2Start = Math.round(12 * fps);
   const sync2Progress = interpolate(frame, [sync2Start, sync2Start + 2.5 * fps], [0, 1], {
     extrapolateLeft: 'clamp', extrapolateRight: 'clamp',
@@ -131,15 +134,14 @@ export const Scene4_IntakeSync = () => {
     extrapolateLeft: 'clamp', extrapolateRight: 'clamp',
   });
 
-  /* ── Synced count badge ── */
+  /* ── Badge ── */
   const badgeEnter = spring({ frame, fps, config: { damping: 200 }, delay: Math.round(15 * fps) });
 
-  /* ── Title label ── */
+  /* ── Title ── */
   const titleEnter = spring({ frame, fps, config: { damping: 200 }, delay: Math.round(0.3 * fps) });
 
-  const sourceCardX = 120;
-  const sourceCard1Y = 200;
-  const sourceCard2Y = 480;
+  const sourceCardW = 520;
+  const sourceCardLeft = CX - sourceCardW / 2;
 
   return (
     <AbsoluteFill
@@ -148,9 +150,9 @@ export const Scene4_IntakeSync = () => {
         fontFamily: FONT_SANS, overflow: 'hidden',
       }}
     >
-      {/* ── Section title ── */}
+      {/* ── Section title — centered ── */}
       <div style={{
-        position: 'absolute', top: 60, left: sourceCardX,
+        position: 'absolute', top: 55, left: 0, right: 0, textAlign: 'center',
         opacity: interpolate(titleEnter, [0, 1], [0, 1]),
       }}>
         <div style={{ fontSize: 14, color: 'rgba(255,255,255,0.3)', fontWeight: 600, letterSpacing: '0.08em' }}>
@@ -158,26 +160,16 @@ export const Scene4_IntakeSync = () => {
         </div>
       </div>
 
-      {/* ── Destination forms title ── */}
+      {/* ═══════ SOURCE FIELD #1: Employer Name — Centered ═══════ */}
       <div style={{
-        position: 'absolute', top: 60, left: FORM_POSITIONS[0].x,
-        opacity: interpolate(formsEnter, [0, 1], [0, 1]),
-      }}>
-        <div style={{ fontSize: 14, color: 'rgba(255,255,255,0.3)', fontWeight: 600, letterSpacing: '0.08em' }}>
-          FILING PACKAGE
-        </div>
-      </div>
-
-      {/* ═══════ SOURCE FIELD #1: Employer Name ═══════ */}
-      <div style={{
-        position: 'absolute', left: sourceCardX, top: sourceCard1Y, width: 520,
+        position: 'absolute', left: sourceCardLeft, top: 110, width: sourceCardW,
         opacity: interpolate(src1Enter, [0, 1], [0, 1]),
         transform: `translateY(${interpolate(src1Enter, [0, 1], [20, 0])}px) scale(${interpolate(src1Enter, [0, 1], [0.95, 1])})`,
       }}>
         <div style={{
           background: 'rgba(255,255,255,0.04)',
           border: `1px solid rgba(59,130,246,${0.15 + src1GlowPulse * src1GlowFade * 0.3})`,
-          borderLeft: `4px solid ${C.blue500}`,
+          borderTop: `4px solid ${C.blue500}`,
           borderRadius: 14, padding: '24px 32px',
           boxShadow: `0 0 ${30 * src1GlowPulse * src1GlowFade}px rgba(59,130,246,${0.1 * src1GlowFade})`,
         }}>
@@ -185,7 +177,7 @@ export const Scene4_IntakeSync = () => {
             EMPLOYER LEGAL NAME
           </div>
           <div style={{
-            fontSize: 28, fontWeight: 700, color: C.white,
+            fontSize: 26, fontWeight: 700, color: C.white,
             textShadow: `0 0 ${20 * src1GlowPulse * src1GlowFade}px rgba(59,130,246,0.3)`,
           }}>
             {CASE.employer.name}
@@ -196,25 +188,23 @@ export const Scene4_IntakeSync = () => {
         </div>
       </div>
 
-      {/* ═══════ SOURCE FIELD #2: SOC Code ═══════ */}
+      {/* ═══════ SOURCE FIELD #2: SOC Code — Centered below ═══════ */}
       <div style={{
-        position: 'absolute', left: sourceCardX, top: sourceCard2Y, width: 520,
+        position: 'absolute', left: sourceCardLeft, top: 290, width: sourceCardW,
         opacity: interpolate(src2Enter, [0, 1], [0, 1]),
         transform: `translateY(${interpolate(src2Enter, [0, 1], [20, 0])}px) scale(${interpolate(src2Enter, [0, 1], [0.95, 1])})`,
       }}>
         <div style={{
           background: 'rgba(255,255,255,0.04)',
           border: `1px solid rgba(248,242,182,${0.1 + (frame > 11 * fps ? src2GlowPulse * 0.2 : 0)})`,
-          borderLeft: `4px solid ${C.accent}`,
+          borderTop: `4px solid ${C.accent}`,
           borderRadius: 14, padding: '24px 32px',
           boxShadow: frame > 11 * fps ? `0 0 ${20 * src2GlowPulse}px rgba(248,242,182,0.08)` : 'none',
         }}>
           <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.35)', fontWeight: 600, letterSpacing: '0.06em', marginBottom: 12 }}>
             SOC CODE
           </div>
-          <div style={{
-            fontSize: 28, fontWeight: 700, color: C.white,
-          }}>
+          <div style={{ fontSize: 26, fontWeight: 700, color: C.white }}>
             {CASE.applicant.soc}
           </div>
           <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.3)', marginTop: 10 }}>
@@ -223,12 +213,26 @@ export const Scene4_IntakeSync = () => {
         </div>
       </div>
 
-      {/* ═══════ DESTINATION FORM CARDS ═══════ */}
+      {/* ── Propagation node — pulsing accent dot between source and forms ── */}
+      {frame > sync1Start && (
+        <div style={{
+          position: 'absolute', left: CX - 12, top: 468, width: 24, height: 24,
+          borderRadius: 12, background: `rgba(59,130,246,0.15)`,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          zIndex: 3,
+        }}>
+          <div style={{
+            width: 8, height: 8, borderRadius: 4, background: C.blue500,
+            transform: `scale(${1 + interpolate(Math.sin(frame / 8), [-1, 1], [0, 0.4])})`,
+          }} />
+        </div>
+      )}
+
+      {/* ═══════ DESTINATION FORM CARDS — 2x3 grid centered below ═══════ */}
       {FORMS.map((form, i) => {
         const fEnter = spring({ frame, fps, config: { damping: 200 }, delay: Math.round(3 * fps) + i * 5 });
         const pos = FORM_POSITIONS[i];
 
-        // Check if this form received sync from source 1
         const isSrc1Target = SOURCE_FIELDS[0].destinations.includes(i);
         const src1SyncedAt = isSrc1Target ? sync1FlashBase + SOURCE_FIELDS[0].destinations.indexOf(i) * 6 : Infinity;
         const src1Synced = frame > src1SyncedAt;
@@ -236,7 +240,6 @@ export const Scene4_IntakeSync = () => {
           extrapolateLeft: 'clamp', extrapolateRight: 'clamp',
         }) : 0;
 
-        // Check if this form received sync from source 2
         const isSrc2Target = SOURCE_FIELDS[1].destinations.includes(i);
         const src2SyncedAt = isSrc2Target ? sync2FlashBase + SOURCE_FIELDS[1].destinations.indexOf(i) * 6 : Infinity;
         const src2Synced = frame > src2SyncedAt;
@@ -249,31 +252,31 @@ export const Scene4_IntakeSync = () => {
 
         return (
           <div key={i} style={{
-            position: 'absolute', left: pos.x, top: pos.y, width: 420,
+            position: 'absolute', left: pos.x, top: pos.y, width: FORM_W,
             opacity: interpolate(fEnter, [0, 1], [0, 1]),
-            transform: `translateX(${interpolate(fEnter, [0, 1], [30, 0])}px)`,
+            transform: `translateY(${interpolate(fEnter, [0, 1], [16, 0])}px)`,
           }}>
             <div style={{
               background: anySynced
                 ? `rgba(34,197,94,${0.04 + totalFlash * 0.08})`
                 : 'rgba(255,255,255,0.04)',
               border: `1px solid ${anySynced ? `rgba(34,197,94,${0.15 + totalFlash * 0.3})` : 'rgba(255,255,255,0.08)'}`,
-              borderRadius: 12, padding: '16px 24px',
+              borderRadius: 12, padding: '14px 18px',
               boxShadow: totalFlash > 0 ? `0 0 ${20 * totalFlash}px rgba(34,197,94,0.15)` : 'none',
               display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+              height: FORM_H,
             }}>
               <div>
-                <div style={{ fontSize: 20, fontWeight: 700, color: C.white }}>{form.code}</div>
-                <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.4)', marginTop: 2 }}>{form.name}</div>
+                <div style={{ fontSize: 18, fontWeight: 700, color: C.white }}>{form.code}</div>
+                <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.35)', marginTop: 2 }}>{form.name}</div>
               </div>
               {anySynced && (
                 <div style={{
-                  display: 'flex', alignItems: 'center', gap: 6,
-                  padding: '4px 12px', borderRadius: 9999,
+                  display: 'flex', alignItems: 'center', gap: 4,
+                  padding: '3px 10px', borderRadius: 9999,
                   background: 'rgba(34,197,94,0.15)',
                 }}>
-                  <span style={{ fontSize: 14, color: C.green500, fontWeight: 700 }}>{'\u2713'}</span>
-                  <span style={{ fontSize: 13, color: C.green500, fontWeight: 600 }}>Synced</span>
+                  <span style={{ fontSize: 13, color: C.green500, fontWeight: 700 }}>{'\u2713'}</span>
                 </div>
               )}
             </div>
@@ -281,35 +284,34 @@ export const Scene4_IntakeSync = () => {
         );
       })}
 
-      {/* ═══════ CONNECTOR PATHS: Source 1 → Destinations ═══════ */}
+      {/* ═══════ CONNECTOR PATHS: Source 1 → Forms (downward propagation) ═══════ */}
       {sync1Progress > 0 && (
         <svg style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 3 }}>
           {SOURCE_FIELDS[0].destinations.map((destIdx, i) => {
-            const pathData = getConnectorPath(sourceCard1Y + 60, destIdx);
-            const stagger = i * 0.15;
-            const lineProgress = interpolate(sync1Progress, [stagger, stagger + 0.6], [0, 1], {
+            const pathData = getConnectorPath(170, destIdx);
+            const stagger = i * 0.12;
+            const lineProgress = interpolate(sync1Progress, [stagger, stagger + 0.5], [0, 1], {
               extrapolateLeft: 'clamp', extrapolateRight: 'clamp',
             });
-            const dashLen = 300;
+            const dashLen = 400;
             const dashOffset = interpolate(lineProgress, [0, 1], [dashLen, 0]);
-            // Traveling pulse dot
-            const pulsePos = interpolate(sync1Pulse, [stagger, Math.min(stagger + 0.7, 1)], [0, 1], {
+
+            const pulsePos = interpolate(sync1Pulse, [stagger, Math.min(stagger + 0.6, 1)], [0, 1], {
               extrapolateLeft: 'clamp', extrapolateRight: 'clamp',
             });
 
             return (
               <React.Fragment key={i}>
                 <path d={pathData} fill="none"
-                  stroke={C.blue500} strokeWidth="2" opacity={0.5}
+                  stroke={C.blue500} strokeWidth="2" opacity={0.4}
                   strokeDasharray={dashLen} strokeDashoffset={dashOffset}
                 />
-                {/* Glowing pulse traveling along the path */}
-                {pulsePos > 0.01 && pulsePos < 0.99 && (() => {
-                  const pt = bezierPoint(sourceCard1Y + 60, destIdx, pulsePos);
+                {pulsePos > 0.05 && pulsePos < 0.95 && (() => {
+                  const pt = bezierPoint(170, destIdx, pulsePos);
                   return (
                     <>
-                      <circle cx={pt.x} cy={pt.y} r="12" fill={C.blue500} opacity={0.2} />
-                      <circle cx={pt.x} cy={pt.y} r="6" fill={C.blue500} opacity={0.8} />
+                      <circle cx={pt.x} cy={pt.y} r="10" fill={C.blue500} opacity={0.15} />
+                      <circle cx={pt.x} cy={pt.y} r="5" fill={C.blue500} opacity={0.7} />
                     </>
                   );
                 })()}
@@ -319,21 +321,21 @@ export const Scene4_IntakeSync = () => {
         </svg>
       )}
 
-      {/* ═══════ CONNECTOR PATHS: Source 2 → Destinations ═══════ */}
+      {/* ═══════ CONNECTOR PATHS: Source 2 → Forms ═══════ */}
       {sync2Progress > 0 && (
         <svg style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 3 }}>
           {SOURCE_FIELDS[1].destinations.map((destIdx, i) => {
-            const pathData = getConnectorPath(sourceCard2Y + 60, destIdx);
-            const stagger = i * 0.2;
-            const lineProgress = interpolate(sync2Progress, [stagger, stagger + 0.6], [0, 1], {
+            const pathData = getConnectorPath(350, destIdx);
+            const stagger = i * 0.15;
+            const lineProgress = interpolate(sync2Progress, [stagger, stagger + 0.5], [0, 1], {
               extrapolateLeft: 'clamp', extrapolateRight: 'clamp',
             });
-            const dashLen = 300;
+            const dashLen = 400;
             const dashOffset = interpolate(lineProgress, [0, 1], [dashLen, 0]);
 
             return (
               <path key={i} d={pathData} fill="none"
-                stroke={C.accent} strokeWidth="2" opacity={0.5}
+                stroke={C.accent} strokeWidth="2" opacity={0.4}
                 strokeDasharray={dashLen} strokeDashoffset={dashOffset}
               />
             );
@@ -344,7 +346,7 @@ export const Scene4_IntakeSync = () => {
       {/* ═══════ Synced badge ═══════ */}
       {frame > 15 * fps && (
         <div style={{
-          position: 'absolute', bottom: 200, left: '50%', transform: 'translateX(-50%)',
+          position: 'absolute', bottom: 180, left: '50%', transform: 'translateX(-50%)',
           opacity: interpolate(badgeEnter, [0, 1], [0, 1]),
           zIndex: 10,
         }}>

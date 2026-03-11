@@ -32,26 +32,23 @@ const ISSUES = [
   },
 ];
 
-const AFFECTED_FORMS = ['ETA-9089', 'I-140', 'I-485'];
-
 /**
  * Scene 5 — Catch Errors Before Filing (25s / 750 frames)
  *
- * THE HERO SCENE. Strongest proof moment.
- * Dark space, floating modules, focus mask, connector lines, score morph.
+ * THE HERO SCENE. Centered, capability-first composition.
  *
  * Visual arc:
- *   0-2s: "Pre-Flight Validation" title + scan button appear center
+ *   0-2s: "Pre-Flight Validation" title + readiness ring (?) centered
  *   2-3.5s: Button pulses, then "clicked"
- *   3.5-5s: Scanning animation — horizontal scan line sweeps
- *   5-8.5s: Three issue cards drop in with stagger, severity-ranked
- *   8.5-12s: Focus mask — everything dims except employer-name issue
- *            Connector lines draw from issue → affected form badges
- *   12-15s: Fix applied — field value morphs, green flash, issue card morphs to resolved
- *   15-17.5s: Three form cards flash green sequentially — "synced"
- *   17.5-20.5s: Score rises 72→80 as a centered hero animation
- *   20.5-23s: "Caught earlier." kinetic caption
- *   23-25s: Remaining callout settles
+ *   3.5-5s: Scan line sweeps across centered area
+ *   5-8.5s: Three issue cards drop in as centered stack
+ *   8.5-12.5s: Hero focus — employer-name issue highlights,
+ *              others dim, before/after values appear centered below,
+ *              form badges cluster below values
+ *   12.5-15s: Fix applied — green flash, values morph, issue resolves
+ *   15-17.5s: Form badges flash green, score rises 72→80
+ *   17.5-20.5s: "Caught earlier." kinetic caption
+ *   20.5-25s: All issues visible, employer resolved, remaining callout
  */
 export const Scene5_ValidationMoment = () => {
   const frame = useCurrentFrame();
@@ -66,12 +63,19 @@ export const Scene5_ValidationMoment = () => {
     issue2: Math.round(6.5 * fps),
     issue3: Math.round(7.5 * fps),
     focusIn: Math.round(9 * fps),
+    valuesIn: Math.round(9.8 * fps),
+    formsIn: Math.round(10.5 * fps),
     fixApplied: Math.round(12.5 * fps),
     formSync: Math.round(15 * fps),
     scoreRise: Math.round(17.5 * fps),
     kinetic: Math.round(20.5 * fps),
     remaining: Math.round(23 * fps),
   };
+
+  /* ── Layout ── */
+  const CX = 960;
+  const CARD_W = 700;
+  const cardLeft = CX - CARD_W / 2;
 
   /* ── Title + button ── */
   const titleEnter = spring({ frame, fps, config: { damping: 200 }, delay: P.titleIn });
@@ -84,17 +88,23 @@ export const Scene5_ValidationMoment = () => {
     ? interpolate(frame, [P.scanStart, P.scanEnd], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
     : -1;
 
-  /* ── Issue appearance ── */
   const showIssues = frame >= P.scanEnd;
 
-  /* ── Focus mask on employer-name issue ── */
-  const focusMask = interpolate(frame, [P.focusIn, P.focusIn + 20, P.fixApplied - 10, P.fixApplied], [0, 0.7, 0.7, 0], {
+  /* ── Focus on employer-name hero issue ── */
+  const heroFocusIn = interpolate(frame, [P.focusIn, P.focusIn + 20], [0, 1], {
     extrapolateLeft: 'clamp', extrapolateRight: 'clamp',
   });
+  const heroFocusOut = interpolate(frame, [P.fixApplied + 30, P.fixApplied + 50], [0, 1], {
+    extrapolateLeft: 'clamp', extrapolateRight: 'clamp',
+  });
+  const focusAmount = Math.max(0, heroFocusIn - heroFocusOut);
+  const focusMask = focusAmount * 0.8;
 
-  /* ── Connector lines from employer issue to affected forms ── */
-  const connectorEnter = spring({ frame, fps, config: { damping: 200 }, delay: P.focusIn + 15 });
-  const connectorDash = interpolate(connectorEnter, [0, 1], [200, 0]);
+  /* ── Before/after values ── */
+  const valuesEnter = spring({ frame, fps, config: { damping: 200 }, delay: P.valuesIn });
+
+  /* ── Form badges ── */
+  const formsEnter = spring({ frame, fps, config: { damping: 200 }, delay: P.formsIn });
 
   /* ── Fix state ── */
   const fieldFixed = frame >= P.fixApplied;
@@ -102,14 +112,8 @@ export const Scene5_ValidationMoment = () => {
     extrapolateLeft: 'clamp', extrapolateRight: 'clamp',
   });
 
-  /* ── Form sync flashes ── */
-  const syncActive = frame >= P.formSync;
-
   /* ── Score animation ── */
   const scoreVisible = frame >= P.issue1;
-  const scoreValue = interpolate(frame - P.scoreRise, [0, 2.5 * fps], [72, 80], {
-    extrapolateLeft: 'clamp', extrapolateRight: 'clamp',
-  });
 
   /* ── Kinetic caption ── */
   const kineticEnter = spring({ frame, fps, config: { damping: 16, stiffness: 180 }, delay: P.kinetic });
@@ -117,10 +121,13 @@ export const Scene5_ValidationMoment = () => {
     extrapolateLeft: 'clamp', extrapolateRight: 'clamp',
   });
 
-  /* ── Layout positions ── */
-  const issueCardX = 100;
-  const issueCardW = 700;
-  const formAreaX = 880;
+  /* ── Issue card Y positions ── */
+  const issueY = [170, 330, 480];
+
+  /* ── During focus, hero issue shifts up and scales ── */
+  const heroScale = interpolate(focusAmount, [0, 1], [1, 1.04]);
+  const heroYShift = interpolate(focusAmount, [0, 1], [0, -20]);
+  const nonHeroOpacity = interpolate(focusAmount, [0, 1], [1, 0.08]);
 
   return (
     <AbsoluteFill
@@ -132,74 +139,73 @@ export const Scene5_ValidationMoment = () => {
       {/* ── Focus mask overlay ── */}
       {focusMask > 0 && (
         <div style={{
-          position: 'absolute', inset: 0, background: 'rgba(14,26,74,0.85)',
+          position: 'absolute', inset: 0, background: 'rgba(14,26,74,0.88)',
           opacity: focusMask, zIndex: 10, pointerEvents: 'none',
         }} />
       )}
 
-      {/* ── Title + Button area ── */}
+      {/* ── Title area — centered ── */}
       <div style={{
-        position: 'absolute', top: 50, left: issueCardX, right: 100,
-        display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start',
+        position: 'absolute', top: 50, left: 0, right: 0,
+        display: 'flex', justifyContent: 'center', alignItems: 'flex-start',
         opacity: interpolate(titleEnter, [0, 1], [0, 1]),
         transform: `translateY(${interpolate(titleEnter, [0, 1], [16, 0])}px)`,
         zIndex: 15,
       }}>
-        <div>
-          <div style={{ fontSize: 36, fontWeight: 700, color: C.white, fontFamily: FONT_DISPLAY }}>
-            Pre-Flight Validation
+        <div style={{ width: CARD_W + 200, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+          <div>
+            <div style={{ fontSize: 36, fontWeight: 700, color: C.white, fontFamily: FONT_DISPLAY }}>
+              Pre-Flight Validation
+            </div>
+            <div style={{ fontSize: 17, color: 'rgba(255,255,255,0.45)', marginTop: 6 }}>
+              {isScanning ? 'Analyzing case data\u2026'
+                : showIssues
+                  ? fieldFixed ? '1 resolved. 2 remaining for attorney review.' : `${frame >= P.issue3 ? 3 : frame >= P.issue2 ? 2 : 1} issue${frame >= P.issue2 ? 's' : ''} found`
+                  : 'Run validation to check filing readiness'}
+            </div>
           </div>
-          <div style={{ fontSize: 17, color: 'rgba(255,255,255,0.45)', marginTop: 6 }}>
-            {isScanning ? 'Analyzing case data\u2026'
-              : showIssues
-                ? fieldFixed ? '1 resolved. 2 remaining for attorney review.' : `${frame >= P.issue3 ? 3 : frame >= P.issue2 ? 2 : 1} issue${frame >= P.issue2 ? 's' : ''} found`
-                : 'Run validation to check filing readiness'}
+
+          {/* Score or button */}
+          <div style={{ zIndex: 15 }}>
+            {!showIssues && !isScanning ? (
+              <div style={{
+                padding: '14px 32px', borderRadius: 10,
+                background: C.accent, color: C.navy900,
+                fontSize: 18, fontWeight: 700,
+                boxShadow: buttonPulse > 0
+                  ? `0 0 0 ${6 + buttonPulse * 10}px rgba(248,242,182,${0.2 + buttonPulse * 0.3})`
+                  : 'none',
+                transform: `scale(${1 + buttonPulse * 0.03})`,
+              }}>
+                Check Readiness
+              </div>
+            ) : scoreVisible ? (
+              <ReadinessScore
+                fromScore={72}
+                toScore={frame >= P.scoreRise ? 80 : 72}
+                animDelay={P.scoreRise}
+                animDuration={Math.round(2.5 * fps)}
+                size={110}
+                label=""
+                popOnChange={frame >= P.scoreRise}
+              />
+            ) : null}
           </div>
         </div>
-
-        {/* Validation button (pre-scan) */}
-        {!showIssues && !isScanning && (
-          <div style={{
-            padding: '14px 32px', borderRadius: 10,
-            background: C.accent, color: C.navy900,
-            fontSize: 18, fontWeight: 700,
-            boxShadow: buttonPulse > 0
-              ? `0 0 0 ${6 + buttonPulse * 10}px rgba(248,242,182,${0.2 + buttonPulse * 0.3})`
-              : 'none',
-            transform: `scale(${1 + buttonPulse * 0.03})`,
-          }}>
-            Check Readiness
-          </div>
-        )}
-
-        {/* Readiness score */}
-        {scoreVisible && (
-          <div style={{ zIndex: 15 }}>
-            <ReadinessScore
-              fromScore={72}
-              toScore={frame >= P.scoreRise ? 80 : 72}
-              animDelay={P.scoreRise}
-              animDuration={Math.round(2.5 * fps)}
-              size={130}
-              label=""
-              popOnChange={frame >= P.scoreRise}
-            />
-          </div>
-        )}
       </div>
 
       {/* ── Scan line ── */}
       {isScanning && (
         <div style={{
-          position: 'absolute', left: issueCardX, width: issueCardW + 400,
-          top: 140 + scanY * 700, height: 3, zIndex: 20,
+          position: 'absolute', left: cardLeft - 40, width: CARD_W + 80,
+          top: 150 + scanY * 500, height: 3, zIndex: 20,
           background: `linear-gradient(90deg, transparent, ${C.accent}, transparent)`,
           boxShadow: `0 0 20px ${C.accent}`,
           opacity: 0.7,
         }} />
       )}
 
-      {/* ═══════ ISSUE CARDS ═══════ */}
+      {/* ═══════ ISSUE CARDS — Centered Stack ═══════ */}
       {showIssues && ISSUES.map((issue, i) => {
         const issueDelay = [P.issue1, P.issue2, P.issue3][i];
         if (frame < issueDelay) return null;
@@ -207,15 +213,22 @@ export const Scene5_ValidationMoment = () => {
         const iEnter = spring({ frame: frame - issueDelay, fps, config: { damping: 20, stiffness: 200 } });
         const isEmployer = issue.id === 'employer-name';
         const isResolved = isEmployer && fieldFixed;
-        const isFocused = isEmployer && focusMask > 0;
+        const isFocused = isEmployer && focusAmount > 0;
 
-        const cardY = 160 + i * 170;
+        // Position
+        const baseY = issueY[i];
+        const yOffset = isFocused ? heroYShift : 0;
+        const scale = isFocused ? heroScale : 1;
+        const opacity = isFocused || isEmployer
+          ? (isResolved ? 0.5 : interpolate(iEnter, [0, 1], [0, 1]))
+          : interpolate(iEnter, [0, 1], [0, 1]) * nonHeroOpacity;
 
         return (
           <div key={i} style={{
-            position: 'absolute', left: issueCardX, top: cardY, width: issueCardW,
-            opacity: isResolved ? 0.5 : interpolate(iEnter, [0, 1], [0, 1]),
-            transform: `translateX(${interpolate(iEnter, [0, 1], [40, 0])}px)`,
+            position: 'absolute', left: cardLeft, top: baseY + yOffset, width: CARD_W,
+            opacity,
+            transform: `translateY(${interpolate(iEnter, [0, 1], [30, 0])}px) scale(${scale})`,
+            transformOrigin: 'center top',
             zIndex: isFocused ? 20 : 5,
           }}>
             <div style={{
@@ -230,7 +243,7 @@ export const Scene5_ValidationMoment = () => {
                 ? `0 0 ${30 * fixFlash}px rgba(34,197,94,0.3)`
                 : isFocused ? '0 0 20px rgba(245,158,11,0.1)' : 'none',
             }}>
-              {/* Severity + title */}
+              {/* Severity + title row */}
               <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 8 }}>
                 <div style={{
                   padding: '3px 12px', borderRadius: 9999, fontSize: 13, fontWeight: 700,
@@ -283,104 +296,164 @@ export const Scene5_ValidationMoment = () => {
         );
       })}
 
-      {/* ═══════ AFFECTED FORM CARDS (right side) ═══════ */}
-      {showIssues && (
+      {/* ═══════ BEFORE/AFTER VALUE COMPARISON — Hero Focus Element ═══════ */}
+      {focusAmount > 0 && (
         <div style={{
-          position: 'absolute', right: 120, top: 170,
-          display: 'flex', flexDirection: 'column', gap: 16, zIndex: focusMask > 0 ? 20 : 5,
+          position: 'absolute', top: 520, left: CX - 380, width: 760,
+          opacity: interpolate(valuesEnter, [0, 1], [0, 1]),
+          transform: `translateY(${interpolate(valuesEnter, [0, 1], [16, 0])}px)`,
+          zIndex: 25,
         }}>
-          <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.3)', fontWeight: 600, letterSpacing: '0.08em', marginBottom: 4 }}>
-            AFFECTED FORMS
+          {/* Label */}
+          <div style={{
+            fontSize: 12, color: 'rgba(255,255,255,0.3)', fontWeight: 600,
+            letterSpacing: '0.08em', marginBottom: 14, textAlign: 'center',
+          }}>
+            FIELD VALUE COMPARISON
           </div>
-          {AFFECTED_FORMS.map((formCode, i) => {
-            const fEnter = spring({ frame, fps, config: { damping: 200 }, delay: P.issue1 + 20 + i * 8 });
-            const synced = syncActive && fieldFixed;
-            const syncFlash = synced
-              ? interpolate(frame - (P.formSync + i * 10), [0, 8, 22], [0, 1, 0], {
-                  extrapolateLeft: 'clamp', extrapolateRight: 'clamp',
-                })
-              : 0;
 
-            return (
-              <div key={i} style={{
-                opacity: interpolate(fEnter, [0, 1], [0, 1]),
-                transform: `translateX(${interpolate(fEnter, [0, 1], [20, 0])}px)`,
+          <div style={{ display: 'flex', alignItems: 'center', gap: 20, justifyContent: 'center' }}>
+            {/* Wrong value */}
+            <div style={{
+              flex: 1, padding: '16px 20px', borderRadius: 10,
+              background: fieldFixed ? 'rgba(255,255,255,0.02)' : 'rgba(245,158,11,0.08)',
+              border: `1px solid ${fieldFixed ? 'rgba(255,255,255,0.06)' : 'rgba(245,158,11,0.25)'}`,
+              textAlign: 'center',
+            }}>
+              <div style={{ fontSize: 11, color: fieldFixed ? 'rgba(255,255,255,0.2)' : C.amber500, fontWeight: 600, letterSpacing: '0.05em', marginBottom: 8 }}>
+                CURRENT (WRONG)
+              </div>
+              <div style={{
+                fontSize: 20, fontWeight: 700, fontFamily: FONT_SANS,
+                color: fieldFixed ? 'rgba(255,255,255,0.2)' : C.white,
+                textDecoration: fieldFixed ? 'line-through' : 'none',
+                letterSpacing: '0.01em',
               }}>
-                <div style={{
+                {CASE.employer.wrongName}
+              </div>
+            </div>
+
+            {/* Arrow */}
+            <div style={{
+              fontSize: 28, color: fieldFixed ? C.green500 : 'rgba(255,255,255,0.25)',
+              flexShrink: 0, fontWeight: 700,
+            }}>
+              {'\u2192'}
+            </div>
+
+            {/* Correct value */}
+            <div style={{
+              flex: 1, padding: '16px 20px', borderRadius: 10,
+              background: fieldFixed
+                ? `rgba(34,197,94,${0.06 + fixFlash * 0.12})`
+                : 'rgba(255,255,255,0.02)',
+              border: `1px solid ${fieldFixed ? `rgba(34,197,94,${0.25 + fixFlash * 0.3})` : 'rgba(255,255,255,0.06)'}`,
+              textAlign: 'center',
+              boxShadow: fixFlash > 0 ? `0 0 ${24 * fixFlash}px rgba(34,197,94,0.2)` : 'none',
+            }}>
+              <div style={{ fontSize: 11, color: fieldFixed ? C.green500 : 'rgba(255,255,255,0.2)', fontWeight: 600, letterSpacing: '0.05em', marginBottom: 8 }}>
+                CORRECTED
+              </div>
+              <div style={{
+                fontSize: 20, fontWeight: 700, fontFamily: FONT_SANS,
+                color: fieldFixed ? C.green500 : 'rgba(255,255,255,0.2)',
+                letterSpacing: '0.01em',
+              }}>
+                {CASE.employer.name}
+              </div>
+            </div>
+          </div>
+
+          {/* Affected form badges — centered row below */}
+          <div style={{
+            display: 'flex', justifyContent: 'center', gap: 10, marginTop: 20,
+            opacity: interpolate(formsEnter, [0, 1], [0, 1]),
+            transform: `translateY(${interpolate(formsEnter, [0, 1], [8, 0])}px)`,
+          }}>
+            <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.3)', marginRight: 4, alignSelf: 'center' }}>Synced across:</span>
+            {ISSUES[1].forms.map((formCode, i) => {
+              const synced = fieldFixed && frame >= P.formSync;
+              const syncFlash = synced
+                ? interpolate(frame - (P.formSync + i * 10), [0, 8, 22], [0, 1, 0], {
+                    extrapolateLeft: 'clamp', extrapolateRight: 'clamp',
+                  })
+                : 0;
+
+              return (
+                <div key={i} style={{
+                  padding: '8px 20px', borderRadius: 10,
                   background: synced
-                    ? `rgba(34,197,94,${0.04 + syncFlash * 0.1})`
+                    ? `rgba(34,197,94,${0.06 + syncFlash * 0.12})`
                     : 'rgba(255,255,255,0.04)',
                   border: `1px solid ${synced ? `rgba(34,197,94,${0.2 + syncFlash * 0.3})` : 'rgba(255,255,255,0.08)'}`,
-                  borderRadius: 12, padding: '20px 28px', width: 320,
-                  boxShadow: syncFlash > 0 ? `0 0 ${20 * syncFlash}px rgba(34,197,94,0.15)` : 'none',
-                  display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                  boxShadow: syncFlash > 0 ? `0 0 ${16 * syncFlash}px rgba(34,197,94,0.15)` : 'none',
+                  display: 'flex', alignItems: 'center', gap: 8,
                 }}>
-                  <div>
-                    <div style={{ fontSize: 22, fontWeight: 700, color: C.white }}>{formCode}</div>
-                    <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.4)', marginTop: 2 }}>
-                      {fieldFixed
-                        ? `Employer: ${CASE.employer.name}`
-                        : `Employer: ${CASE.employer.wrongName}`}
-                    </div>
-                  </div>
+                  <span style={{ fontSize: 17, fontWeight: 700, color: C.white }}>{formCode}</span>
                   {synced && (
-                    <span style={{ fontSize: 16, color: C.green500, fontWeight: 700 }}>{'\u2713'}</span>
+                    <span style={{ fontSize: 14, color: C.green500, fontWeight: 700 }}>{'\u2713'}</span>
                   )}
                 </div>
-              </div>
-            );
-          })}
-
-          {/* Score callout after fix */}
-          {frame >= P.remaining && (() => {
-            const callEnter = spring({ frame: frame - P.remaining, fps, config: { damping: 200 } });
-            return (
-              <div style={{
-                marginTop: 16, padding: '14px 20px', borderRadius: 12,
-                background: 'rgba(245,158,11,0.08)',
-                border: '1px solid rgba(245,158,11,0.2)',
-                borderLeft: `3px solid ${C.amber500}`,
-                opacity: interpolate(callEnter, [0, 1], [0, 1]),
-                transform: `translateY(${interpolate(callEnter, [0, 1], [10, 0])}px)`,
-                width: 320,
-              }}>
-                <div style={{ fontSize: 14, fontWeight: 600, color: C.amber500 }}>
-                  72 {'\u2192'} 80. SOC/wage requires attorney review.
-                </div>
-              </div>
-            );
-          })()}
+              );
+            })}
+          </div>
         </div>
       )}
 
-      {/* ═══════ CONNECTOR LINES: Issue → Affected Forms ═══════ */}
-      {focusMask > 0 && connectorEnter > 0 && (
-        <svg style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 15 }}>
-          {/* Employer issue card (index 1, y=330) → form cards on right */}
-          {AFFECTED_FORMS.map((_, i) => {
-            const sx = issueCardX + issueCardW;
-            const sy = 330 + 80;
-            const dx = 1920 - 120 - 320;
-            const dy = 210 + i * (80 + 16) + 30;
-            const mx = (sx + dx) / 2;
-            return (
-              <path key={i}
-                d={`M ${sx} ${sy} C ${mx} ${sy}, ${mx} ${dy}, ${dx} ${dy}`}
-                fill="none" stroke={C.amber500} strokeWidth="1.5"
-                opacity={interpolate(connectorEnter, [0, 1], [0, 0.4])}
-                strokeDasharray="200" strokeDashoffset={connectorDash}
-              />
-            );
-          })}
-        </svg>
-      )}
+      {/* ═══════ Score rise hero moment ═══════ */}
+      {frame >= P.scoreRise && frame < P.kinetic && (() => {
+        const scoreHeroEnter = spring({ frame: frame - P.scoreRise, fps, config: { damping: 18, stiffness: 120 } });
+        return (
+          <div style={{
+            position: 'absolute', top: '50%', left: '50%',
+            transform: `translate(-50%, -50%) scale(${interpolate(scoreHeroEnter, [0, 1], [0.85, 1])})`,
+            zIndex: 30,
+            opacity: interpolate(scoreHeroEnter, [0, 1], [0, 1]),
+            textAlign: 'center',
+          }}>
+            <ReadinessScore
+              fromScore={72}
+              toScore={80}
+              animDelay={0}
+              animDuration={Math.round(2 * fps)}
+              size={200}
+              label=""
+              popOnChange
+            />
+            <div style={{ fontSize: 18, color: 'rgba(255,255,255,0.5)', marginTop: 16, fontWeight: 500 }}>
+              72 {'\u2192'} 80 {'\u2014'} one fix, measurable improvement
+            </div>
+          </div>
+        );
+      })()}
+
+      {/* ═══════ Remaining callout ═══════ */}
+      {frame >= P.remaining && (() => {
+        const callEnter = spring({ frame: frame - P.remaining, fps, config: { damping: 200 } });
+        return (
+          <div style={{
+            position: 'absolute', bottom: 160, left: CX - 250, width: 500,
+            padding: '16px 24px', borderRadius: 12,
+            background: 'rgba(245,158,11,0.08)',
+            border: '1px solid rgba(245,158,11,0.2)',
+            borderLeft: `3px solid ${C.amber500}`,
+            opacity: interpolate(callEnter, [0, 1], [0, 1]),
+            transform: `translateY(${interpolate(callEnter, [0, 1], [10, 0])}px)`,
+            zIndex: 25, textAlign: 'center',
+          }}>
+            <div style={{ fontSize: 15, fontWeight: 600, color: C.amber500 }}>
+              2 remaining issues require attorney review. Score: 80/100.
+            </div>
+          </div>
+        );
+      })()}
 
       {/* ═══════ Kinetic caption: "Caught earlier." ═══════ */}
       {frame >= P.kinetic && frame < P.kinetic + 65 && (
         <div style={{
           position: 'absolute', top: '45%', left: '50%',
           transform: `translate(-50%, -50%) scale(${interpolate(kineticEnter, [0, 1], [0.85, 1])})`,
-          zIndex: 30, pointerEvents: 'none',
+          zIndex: 35, pointerEvents: 'none',
           opacity: interpolate(kineticEnter, [0, 1], [0, 1]) * kineticExit,
         }}>
           <div style={{

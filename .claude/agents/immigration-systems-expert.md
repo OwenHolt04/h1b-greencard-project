@@ -82,7 +82,7 @@ H-1B → PWD → PERM (ETA-9089) → I-140 → Priority Date → I-485 → Green
 All analysis and demo features reference one canonical case:
 - **Applicant:** Yuto Sato — Japanese national, MS CS Stanford, H-1B since 2019
 - **Employer:** Helix Systems, Inc. — enterprise software, San Jose
-- **Attorney:** Maya Chen, Chen & Patel Immigration
+- **Attorney:** Maya Chen, Immigration Attorney
 - **Stage:** I-485 package preparation, H-1B expiring in 102 days
 
 ### Structural Constraint (always acknowledge)

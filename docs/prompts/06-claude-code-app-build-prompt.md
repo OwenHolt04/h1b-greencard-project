@@ -40,7 +40,7 @@ If you are **highly confident** that a revision to screen structure, module hier
 - The translation of project metrics into visual elements
 
 ### You Must Preserve
-1. One flagship fictional case (Yuto Sato, Helix Systems, Chen & Patel Immigration)
+1. One flagship fictional case (Yuto Sato, Helix Systems, Immigration Attorney)
 2. A single shared case record as the conceptual center
 3. Role-based views for applicant, employer/HR, and attorney
 4. Smart intake + form sync + validation as a major demo moment with the specific issues from Spec 3 (employer name mismatch, SOC/wage mismatch, travel history gap)
@@ -115,7 +115,7 @@ All deterministic and repeatable:
 Use the exact fictional case from Spec 3:
 - **Applicant:** Yuto Sato, Japanese national, MS CS Stanford, H-1B since 2019, priority date March 2024
 - **Employer:** Helix Systems, Inc., enterprise software, San Jose, HR owner Rachel Torres
-- **Attorney:** Maya Chen, Chen & Patel Immigration
+- **Attorney:** Maya Chen, Immigration Attorney
 - **Stage:** I-485 package preparation
 - **H-1B expiry:** June 15, 2026 (102 days)
 - **Issues:** employer name format mismatch (medium), SOC/wage survey mismatch (high), travel history gap (low)
